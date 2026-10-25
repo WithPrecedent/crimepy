@@ -1,0 +1,33 @@
+{
+  "template": "https://github.com/WithPrecedent/snickerdoodle",
+  "commit": "51b83c5f5273e9f66d7860b84f574b58f08050c4",
+  "checkout": null,
+  "context": {
+    "cookiecutter": {
+      "project_name": "crimepy",
+      "package_name": "crimepy",
+      "repo_name": "crimepy",
+      "author_name": "Corey Rayburn Yung",
+      "author_email": "coreyrayburnyung@gmail.com",
+      "github_user": "WithPrecedent",
+      "description": "Accessible tools for downloading, combining, munging, analyzing, and plotting crime data",
+      "version": "0.0.1",
+      "url": "https://github.com/WithPrecedent/crimepy",
+      "development_status": "Development Status :: 3 - Alpha",
+      "license": "Apache Software License 2.0",
+      "badge_style": "for-the-badge",
+      "github_actions": true,
+      "pre_commit": true,
+      "dependabot": true,
+      "mkdocs": true,
+      "mypy": true,
+      "pypi": true,
+      "code_coverage": true,
+      "commit_to_github": false,
+      "virtual_environment": false,
+      "_template": "https://github.com/WithPrecedent/snickerdoodle",
+      "_commit": "51b83c5f5273e9f66d7860b84f574b58f08050c4"
+    }
+  },
+  "directory": null
+}

@@ -1,0 +1,159 @@
+"""Small tools that the rest of crimepy shares.
+
+Contents:
+    data_folder: returns the folder where crimepy saves data.
+    to_bool: makes a boolean from a boolean or text.
+    to_list: makes a list from one item or several.
+    to_names: makes a list of names from names or text separated by commas.
+    to_years: makes a list of years from years, ranges, and text.
+
+"""
+
+from __future__ import annotations
+
+import pathlib
+import re
+from collections.abc import Iterable
+from typing import Any
+
+from . import options
+
+# A range of years written as text, such as "2019-2023" or "2019:2023".
+_RANGE: re.Pattern[str] = re.compile(r'^\s*(\d{4})\s*[-:]\s*(\d{4})\s*$')
+# Text that means true or false.
+_TRUE: frozenset[str] = frozenset({'true', 'yes', 'y', '1', 'on'})
+_FALSE: frozenset[str] = frozenset({'false', 'no', 'n', '0', 'off', 'none', ''})
+
+
+def data_folder(folder: pathlib.Path | str | None = None) -> pathlib.Path:
+    """Returns the folder where crimepy saves data, making it if needed.
+
+    Args:
+        folder: the folder to use. Defaults to `None`, in which case it is
+            `options.DATA_FOLDER`.
+
+    Returns:
+        The folder.
+
+    """
+    path = pathlib.Path(folder or options.DATA_FOLDER).expanduser()
+    path.mkdir(parents = True, exist_ok = True)
+    return path
+
+
+def to_bool(item: Any) -> bool:
+    """Returns `item` as a boolean.
+
+    Args:
+        item: a boolean, a number, or text (such as "true", "yes", "1",
+            "false", "no", or "0", as a settings file may give it).
+
+    Raises:
+        ValueError: if text is not a boolean.
+
+    Returns:
+        The boolean.
+
+    """
+    if isinstance(item, str):
+        text = item.strip().lower()
+        if text in _TRUE:
+            return True
+        if text in _FALSE:
+            return False
+        message = f'{item!r} is not true or false'
+        raise ValueError(message)
+    return bool(item)
+
+
+def to_list(item: Any) -> list[Any]:
+    """Returns `item` as a list.
+
+    Args:
+        item: `None`, one item, or an iterable of items. Text is one item.
+
+    Returns:
+        An empty list for `None`, the items of an iterable, and otherwise a
+            list with `item` in it.
+
+    """
+    if item is None:
+        return []
+    if isinstance(item, (str, bytes)) or not isinstance(item, Iterable):
+        return [item]
+    return list(item)
+
+
+def to_names(item: Any) -> list[str]:
+    """Returns `item` as a list of names.
+
+    Args:
+        item: `None`, a name, names separated by commas (as a settings file
+            may give them, such as "DE, MD"), or an iterable of names.
+
+    Returns:
+        The names, without blanks around them.
+
+    """
+    names: list[str] = []
+    for part in to_list(item):
+        names.extend(n.strip() for n in str(part).split(',') if n.strip())
+    return names
+
+
+def to_years(years: Any) -> list[int]:
+    """Returns a sorted list of years without duplicates.
+
+    Args:
+        years: a year, a `range`, text with years separated by commas or
+            spaces, a range of years as text ("2019-2023", which includes
+            both ends), or an iterable of any of them.
+
+    Raises:
+        ValueError: if a year is not a whole number.
+
+    Returns:
+        The years.
+
+    """
+    found: set[int] = set()
+    for item in to_list(years):
+        if isinstance(item, str):
+            for part in re.split(r'[,\s]+', item.strip()):
+                if not part:
+                    continue
+                matched = _RANGE.match(part)
+                if matched:
+                    first, last = (int(y) for y in matched.groups())
+                    found.update(range(min(first, last), max(first, last) + 1))
+                else:
+                    found.add(_to_year(part))
+        elif isinstance(item, range):
+            found.update(item)
+        elif isinstance(item, Iterable):
+            found.update(to_years(list(item)))
+        else:
+            found.add(_to_year(item))
+    return sorted(found)
+
+
+def _to_year(item: Any) -> int:
+    """Returns `item` as a year.
+
+    Args:
+        item: a year, as a number or text.
+
+    Raises:
+        ValueError: if `item` is not a whole number.
+
+    Returns:
+        The year.
+
+    """
+    if isinstance(item, float) and item.is_integer():
+        return int(item)
+    text = str(item).strip()
+    if not text.isdigit():
+        message = f'{item!r} is not a year'
+        raise ValueError(message)
+    return int(text)

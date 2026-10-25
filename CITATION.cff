@@ -1,0 +1,27 @@
+cff-version: 1.2.0
+message: "If you use crimepy in your research, please cite it as below."
+type: software
+title: "crimepy: Accessible tools for downloading, combining, munging, analyzing, and plotting crime data"
+abstract: >-
+  A Python package that downloads the FBI's National Incident-Based
+  Reporting System (NIBRS) master files for any year, turns them into flat
+  tables for pandas, joins the segments of incidents, and analyzes and plots
+  the results, built on amos for reproducible empirical research.
+authors:
+  - given-names: Corey Rayburn
+    family-names: Yung
+    email: coreyrayburnyung@gmail.com
+    orcid: "https://orcid.org/0000-0001-6524-9956"
+version: 0.0.1
+license: Apache-2.0
+repository-code: "https://github.com/WithPrecedent/crimepy"
+url: "https://WithPrecedent.github.io/crimepy"
+keywords:
+  - crime
+  - criminology
+  - empirical legal studies
+  - fbi
+  - nibrs
+  - open science
+  - reproducibility
+  - uniform crime reporting
