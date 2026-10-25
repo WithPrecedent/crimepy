@@ -86,7 +86,6 @@ class _Deflate64(io.RawIOBase):
     """
 
     def __init__(self, path: pathlib.Path, info: zipfile.ZipInfo) -> None:
-        """Opens the archive at the start of the member's data."""
         import inflate64  # noqa: PLC0415
 
         super().__init__()
@@ -143,7 +142,7 @@ def open_master(path: pathlib.Path | str) -> Iterator[IO[bytes]]:
         ValueError: if a zip archive is empty.
 
     Yields:
-        The text of the master file.
+        IO[bytes]: the text of the master file.
 
     """
     path = pathlib.Path(path)
@@ -176,7 +175,7 @@ def records(path: pathlib.Path | str) -> Iterator[bytes]:
         path: path of a master file (see `open_master`).
 
     Yields:
-        Each record, as bytes.
+        bytes: each record.
 
     """
     with open_master(path) as stream:
@@ -306,9 +305,9 @@ def tables(
             chunk. Defaults to `None`.
 
     Yields:
-        For each chunk, a `dict` of the tables that have records in it, by
-            name. The "agencies" table, which is small, comes in the last
-            chunk.
+        dict[str, pa.Table]: for each chunk, the tables that have records in
+            it, by name. The "agencies" table, which is small, comes in the
+            last chunk.
 
     """
     wanted = _wanted(names)
