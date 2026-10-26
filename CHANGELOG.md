@@ -4,7 +4,7 @@ All notable changes to this project will be documented in this file.
 
 <!-- insertion marker -->
 
-## Unreleased
+## 0.1.0
 
 * **Breaking:** `crimepy` is built on `amos` datasets.
   `crimepy.nibrs.load`, `load_tables`, `read`, and `tables.build` (and its
@@ -24,6 +24,9 @@ All notable changes to this project will be documented in this file.
 * Downloads of master files that break (as they do when the CDE's 15-minute
   link expires during a slow download) resume where they stopped, with a new
   link.
+* `crimepy` requires `amos` 0.4.1.
+* The README has a BibTeX entry for citing `crimepy`, and `CITATION.cff` has
+  the date of the release.
 
 ## 0.0.1
 
