@@ -258,6 +258,23 @@ thousands of law enforcement agencies that report to it. The positions of the
 fields follow the FBI's "NIBRS Flatfile Yearly Master Record Descriptions",
 which the Crime Data Explorer distributes with the master files.
 
+## Citation
+
+If you use `crimepy` in your research, please cite it. GitHub's "Cite this
+repository" button reads the same information from
+[`CITATION.cff`](https://www.github.com/WithPrecedent/crimepy/blob/main/CITATION.cff).
+
+```bibtex
+@software{yung_crimepy,
+  author  = {Yung, Corey Rayburn},
+  title   = {crimepy: Accessible tools for downloading, combining, munging, analyzing, and plotting crime data},
+  version = {0.1.0},
+  year    = {2026},
+  url     = {https://github.com/WithPrecedent/crimepy},
+  license = {Apache-2.0}
+}
+```
+
 ## License
 
 Use of this repository is authorized under the [Apache Software License 2.0](https://www.github.com/WithPrecedent/crimepy/blob/main/LICENSE).
