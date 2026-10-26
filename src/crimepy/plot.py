@@ -86,10 +86,10 @@ class TrendPlot(amos.Plot):
 
         """
         table = analyze.trend(
-            item.data, 
-            by, 
-            date = date, 
-            freq = freq, 
+            item.data,
+            by,
+            date = date,
+            freq = freq,
             top = top)
         axes = figure.add_subplot()
         for column in table.columns:
