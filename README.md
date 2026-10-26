@@ -20,8 +20,9 @@ yearly master files of every incident that participating law enforcement
 agencies reported, from 1991 to the latest year, published by the FBI's
 [Crime Data Explorer](https://cde.ucr.cjis.gov/LATEST/webapp/#/pages/downloads).
 `crimepy` turns those fixed-width files into flat tables that work in
-`pandas`, and it is built on [`amos`](https://github.com/WithPrecedent/amos),
-so a whole study (from loading the data to modeling and figures) can be
+`pandas`, and it is built on [`amos`](https://github.com/WithPrecedent/amos):
+every table is an `amos.Dataset`, every analysis is an `amos` technique, and
+a whole study (from loading the data to modeling and figures) can be
 described in a settings file.
 
 ## Why use crimepy?
@@ -29,6 +30,10 @@ described in a settings file.
 * **Any year, in one line.** `crimepy.nibrs.load('victims', '2015-2023')`
   downloads the master files that are missing, parses them, and returns one
   table, with "data_year" saying which year each row came from.
+* **Ready for amos.** Tables come as `amos` datasets, which hold the data
+  (a `pandas` data frame), its label and groups for modeling, and the
+  tables, figures, and models that analyses add to them, so any `amos`
+  model, validator, or plot works on them directly.
 * **Flat tables with labels.** Every segment of the master files becomes a
   table with one column per field. Codes become labeled categories ("20"
   becomes "Residence/Home"), dates become dates, ages become numbers, and
@@ -51,9 +56,10 @@ described in a settings file.
   only agencies that reported all year, clearance rates, cross-tabulations,
   and reporting coverage, and figures of trends, the most common values, the
   hours and days of incidents, and age pyramids.
-* **Reproducible studies.** Every technique is an `amos` technique, so a
-  study can load NIBRS data, reshape it, model it, and draw it from a plain
-  settings file that doubles as a description of the methods.
+* **Reproducible studies.** Every analysis and figure is an `amos`
+  technique, so a study can load NIBRS data, reshape it, model it, and draw
+  it from a plain settings file that doubles as a description of the
+  methods.
 
 ## Getting started
 
@@ -89,11 +95,14 @@ pip install crimepy[analysis]
 import crimepy
 
 victims = crimepy.nibrs.load('victims', years = '2021-2023', states = 'DE')
-victims[['data_year', 'incident_date', 'offense_1', 'victim_age', 'victim_sex']].head()
+victims.data[['data_year', 'incident_date', 'offense_1', 'victim_age', 'victim_sex']].head()
 ```
 
-The first call downloads and converts each year, which takes a few minutes
-for a recent year. The tables of the master files are:
+`load` returns an `amos.Dataset`, whose `data` is the table (a `pandas`
+data frame). Pass `label` (and `groups`) to make it ready for modeling:
+`crimepy.nibrs.load('victims', 2023, label = 'victim_age')`. The first call
+downloads and converts each year, which takes a few minutes for a recent
+year. The tables of the master files are:
 
 | Table | One row for each |
 | --- | --- |
@@ -108,25 +117,26 @@ for a recent year. The tables of the master files are:
 | `window_clearances`, `window_properties`, `window_arrestees` | partial report of an incident that began before its agency reported to NIBRS |
 
 Pass `columns` to load only some columns, and `decode = False` to keep the
-FBI's codes instead of their labels. `crimepy.nibrs.read` reads tables
-straight from a master file, without saving anything, which suits a quick
-look:
+FBI's codes instead of their labels. `crimepy.nibrs.load_frame` returns the
+table as a plain data frame. `crimepy.nibrs.read` reads tables straight from
+a master file, without saving anything, which suits a quick look:
 
 ```python
-frames = crimepy.nibrs.read('nibrs-2023.zip', limit = 100_000)
+datasets = crimepy.nibrs.read('nibrs-2023.zip', limit = 100_000)
+datasets['offenses'].data.head()
 ```
 
 #### Combine the segments of incidents
 
 ```python
 incidents = crimepy.nibrs.tables.build('incidents', '2021-2023', states = 'DE')
-incidents[['incident_date', 'offense_count', 'firearm', 'arrested', 'days_to_arrest', 'cleared']].head()
+incidents.data[['incident_date', 'offense_count', 'firearm', 'arrested', 'days_to_arrest', 'cleared']].head()
 ```
 
-`build` makes one row for each of the `incidents`, `victims`, `offenses`,
-`offenders`, or `arrestees`, with the details of its incident and agency.
-`crimepy.combine.stack` and `crimepy.combine.merge` stack and join any
-tables while keeping their categories.
+`build` makes a dataset with one row for each of the `incidents`, `victims`,
+`offenses`, `offenders`, or `arrestees`, with the details of its incident
+and agency. `crimepy.combine.stack` and `crimepy.combine.merge` stack and
+join any datasets (or data frames) while keeping their categories.
 
 #### Analyze
 
@@ -143,9 +153,13 @@ victims = crimepy.nibrs.tables.build('victims', 2023, states = 'DE')
 analyze.crosstab(victims, 'victim_sex', 'relationship', normalize = 'index')
 ```
 
-`crime_rates` counts only agencies that reported in every month of the year,
-both for the crimes and for the population, so that agencies that did not
-report do not lower the rates.
+Each function applies an `amos` technique (see `crimepy.techniques`) and
+returns its table, which a dataset also keeps in its `tables` (such as
+`incidents.tables['clearance_rates']`). `count` makes a new dataset of counts,
+ready to model. `crime_rates` counts only agencies that reported in every
+month of the year, both for the crimes and for the population, so that
+agencies that did not report do not lower the rates. Without a table of
+agencies, it loads the agencies of the data's years and states.
 
 #### Plot
 
@@ -157,6 +171,9 @@ crimepy.plot.top_values(offenses, 'location')
 crimepy.plot.time_heatmap(incidents)
 crimepy.plot.age_pyramid(victims, person = 'victim')
 ```
+
+Each function returns the figure, and a dataset also keeps it in its
+`figures` (such as `offenses.figures['trend_plot']`).
 
 Figures have `amos`'s style for scientific journals, with colors that
 people with color blindness can tell apart.

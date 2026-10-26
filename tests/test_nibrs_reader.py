@@ -5,10 +5,20 @@ from __future__ import annotations
 import datetime
 import pathlib
 
+from typing import Any
+
+import amos
 import pandas as pd
 import pytest
 
 from crimepy.nibrs import codes, layouts, reader
+
+
+def _read(*args: Any, **kwargs: Any) -> dict[str, pd.DataFrame]:
+    """Reads tables with `reader.read`, checking that they are datasets."""
+    datasets = reader.read(*args, **kwargs)
+    assert all(isinstance(d, amos.Dataset) for d in datasets.values())
+    return {name: dataset.data for name, dataset in datasets.items()}
 
 
 def test_layouts_have_no_overlapping_fields() -> None:
@@ -96,7 +106,7 @@ def test_parse_of_no_records_has_the_layouts_columns() -> None:
 
 
 def test_read_makes_every_table(master_2004: pathlib.Path) -> None:
-    frames = reader.read(master_2004)
+    frames = _read(master_2004)
     assert set(frames) == set(layouts.SEGMENTS)
     assert len(frames['administrative']) == 2
     assert len(frames['offenses']) == 2
@@ -109,7 +119,7 @@ def test_read_makes_every_table(master_2004: pathlib.Path) -> None:
 
 
 def test_read_decodes_fields(master_2004: pathlib.Path) -> None:
-    frames = reader.read(master_2004)
+    frames = _read(master_2004)
     offenses = frames['offenses'].set_index('incident_number')
     burglary = offenses.loc['E0DROSC-2 N']
     assert burglary['offense_code'] == 'Burglary/Breaking & Entering'
@@ -137,7 +147,7 @@ def test_read_decodes_fields(master_2004: pathlib.Path) -> None:
 
 
 def test_read_joins_split_batch_headers(master_2004: pathlib.Path) -> None:
-    agencies = reader.read(master_2004, 'agencies')['agencies']
+    agencies = _read(master_2004, 'agencies')['agencies']
     assert list(agencies['ori']) == ['ALAST0000', 'AZ0111300']
     tempe = agencies.set_index('ori').loc['AZ0111300']
     assert tempe['city'] == 'TEMPE'
@@ -155,7 +165,7 @@ def test_read_joins_split_batch_headers(master_2004: pathlib.Path) -> None:
 
 
 def test_read_of_a_recent_year(master_2025: pathlib.Path) -> None:
-    frames = reader.read(master_2025, decode = False)
+    frames = _read(master_2025, decode = False)
     offender = frames['offenders'].iloc[0]
     assert offender['offender_age'] == 25
     assert offender['offender_sex'] == 'F'
@@ -171,10 +181,10 @@ def test_read_of_a_recent_year(master_2025: pathlib.Path) -> None:
 
 
 def test_read_keeps_states(master_2004: pathlib.Path) -> None:
-    frames = reader.read(master_2004, ['agencies', 'victims'], states = 'AL')
+    frames = _read(master_2004, ['agencies', 'victims'], states = 'AL')
     assert list(frames['agencies']['ori']) == ['ALAST0000']
     assert frames['victims'].empty
-    frames = reader.read(master_2004, 'victims', states = ['az'])
+    frames = _read(master_2004, 'victims', states = ['az'])
     assert len(frames['victims']) == 2
     with pytest.raises(ValueError, match = 'state'):
         reader.read(master_2004, states = 'Arizona')
@@ -189,7 +199,7 @@ def test_tables_parses_in_chunks(master_2004: pathlib.Path) -> None:
 
 
 def test_read_stops_at_the_limit(master_2004: pathlib.Path) -> None:
-    frames = reader.read(master_2004, limit = 8)
+    frames = _read(master_2004, limit = 8)
     assert len(frames['administrative']) == 1
     assert frames['victims'].empty
 

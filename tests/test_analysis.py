@@ -44,12 +44,18 @@ def agencies() -> pd.DataFrame:
 
 
 def test_count(incidents: pd.DataFrame) -> None:
-    assert analyze.count(incidents)['count'].item() == 6
-    by_state = analyze.count(incidents, 'state')
+    counted = analyze.count(incidents)
+    assert isinstance(counted, amos.Dataset)
+    assert counted.label == 'count'
+    assert counted.data['count'].item() == 6
+    by_state = analyze.count(incidents, 'state').data
     assert dict(zip(by_state['state'], by_state['count'], strict = True)) == {'DE': 3, 'MD': 3}
-    monthly = analyze.count(incidents, freq = 'MS')
+    monthly = analyze.count(incidents, freq = 'MS').data
     assert list(monthly.columns) == ['period', 'count']
     assert monthly['count'].sum() == 6
+    dataset = amos.Dataset.create(incidents, label = 'cleared')
+    assert len(analyze.count(dataset, 'state').data) == 2
+    assert len(dataset.data) == 6
 
 
 def test_trend(incidents: pd.DataFrame) -> None:
@@ -100,10 +106,48 @@ def test_crosstab_and_coverage(
     assert covered.loc[(2023, 'MD'), 'share_reporting'] == 1
 
 
+@pytest.mark.parametrize(
+    ('describe', 'kwargs', 'name'),
+    [
+        (analyze.trend, {'by': 'state', 'freq': 'YS'}, 'crime_trend'),
+        (analyze.clearance_rates, {'by': 'state'}, 'clearance_rates'),
+        (analyze.crosstab, {'rows': 'state', 'columns': 'victim_sex'}, 'crosstab')])
+def test_analyses_accept_datasets(
+    incidents: pd.DataFrame,
+    describe: object,
+    kwargs: dict[str, object],
+    name: str) -> None:
+    from_frame = describe(incidents, **kwargs)  # type: ignore[operator]
+    dataset = amos.Dataset.create(incidents)
+    from_dataset = describe(dataset, **kwargs)  # type: ignore[operator]
+    pd.testing.assert_frame_equal(from_frame, from_dataset)
+    assert dataset.tables[name] is from_dataset
+
+
+def test_coverage_and_percent_change_of_datasets(
+    incidents: pd.DataFrame,
+    agencies: pd.DataFrame) -> None:
+    dataset = amos.Dataset.create(agencies)
+    analyze.coverage(dataset)
+    assert 'coverage' in dataset.tables
+    events = amos.Dataset.create(incidents)
+    change = crimepy.techniques.PercentChange().apply(
+        events, freq = 'YS').tables['percent_change']
+    assert change['count'].tolist()[1:] == [0.0]
+    assert analyze.percent_change(analyze.trend(incidents, freq = 'YS'))['count'].tolist()[1:] == [0.0]
+
+
+def test_crime_rates_load_agencies(data_folder: pathlib.Path) -> None:
+    incidents = crimepy.nibrs.tables.build('incidents', 2004, folder = data_folder)
+    table = analyze.crime_rates(incidents, folder = data_folder)
+    assert table.set_index('state').loc['AZ', 'count'] == 2
+    assert 'crime_rates' in incidents.tables
+
+
 def test_stack_keeps_categories() -> None:
     first = pd.DataFrame({'x': pd.Categorical(['a', 'b']), 'y': [1, 2]})
     second = pd.DataFrame({'x': pd.Categorical(['c']), 'z': [3]})
-    stacked = combine.stack([first, second], source = 'year', labels = [2022, 2023])
+    stacked = combine.stack([first, second], source = 'year', labels = [2022, 2023]).data
     assert isinstance(stacked['x'].dtype, pd.CategoricalDtype)
     assert list(stacked['x']) == ['a', 'b', 'c']
     assert list(stacked['year']) == [2022, 2022, 2023]
@@ -117,9 +161,23 @@ def test_stack_keeps_categories() -> None:
 def test_merge_keeps_categories() -> None:
     left = pd.DataFrame({'k': pd.Categorical(['a', 'b']), 'x': [1, 2]})
     right = pd.DataFrame({'k': pd.Categorical(['b', 'c']), 'x': [3, 4]})
-    merged = combine.merge(left, right, 'k')
+    merged = combine.merge(left, right, 'k').data
     assert isinstance(merged['k'].dtype, pd.CategoricalDtype)
     assert merged['x_right'].tolist()[1] == 3
+
+
+def test_combining_keeps_label_and_groups() -> None:
+    first = amos.Dataset.create(
+        pd.DataFrame({'k': ['a', 'b'], 'y': [1.5, 2.5], 'g': [1, 2]}),
+        label = 'y', groups = 'g')
+    second = pd.DataFrame({'k': ['c'], 'y': [3.5], 'g': [3]})
+    stacked = combine.stack([second, first])
+    assert (stacked.label, stacked.groups) == ('y', ['g'])
+    assert len(stacked.data) == 3
+    merged = combine.merge(
+        first, pd.DataFrame({'k': ['a'], 'z': [9]}), 'k')
+    assert (merged.label, merged.groups) == ('y', ['g'])
+    assert combine.stack([second]).label is None
 
 
 @pytest.mark.parametrize(
@@ -136,6 +194,9 @@ def test_plots_return_figures(
     figure = draw(incidents, title = 'A figure', **kwargs)  # type: ignore[operator]
     assert figure.axes
     assert figure.get_suptitle() == 'A figure'
+    dataset = amos.Dataset.create(incidents)
+    drawn = draw(dataset, **kwargs)  # type: ignore[operator]
+    assert list(dataset.figures.values()) == [drawn]
 
 
 def test_techniques_are_in_the_amos_library() -> None:
@@ -144,7 +205,12 @@ def test_techniques_are_in_the_amos_library() -> None:
         'decode_nibrs': 'munger',
         'count_crimes': 'shaper',
         'crime_trend': 'describer',
+        'population_rates': 'describer',
+        'crime_rates': 'describer',
         'clearance_rates': 'describer',
+        'percent_change': 'describer',
+        'crosstab': 'describer',
+        'coverage': 'describer',
         'trend_plot': 'plot',
         'top_values': 'plot',
         'time_heatmap': 'plot',

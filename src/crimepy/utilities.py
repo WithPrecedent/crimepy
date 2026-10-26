@@ -3,6 +3,8 @@
 Contents:
     data_folder: returns the folder where crimepy saves data.
     to_bool: makes a boolean from a boolean or text.
+    to_dataset: makes an `amos.Dataset` from a dataset or a data frame.
+    to_frame: returns the data frame of a dataset or a data frame.
     to_list: makes a list from one item or several.
     to_names: makes a list of names from names or text separated by commas.
     to_years: makes a list of years from years, ranges, and text.
@@ -15,6 +17,9 @@ import pathlib
 import re
 from collections.abc import Iterable
 from typing import Any
+
+import amos
+import pandas as pd
 
 from . import options
 
@@ -64,6 +69,35 @@ def to_bool(item: Any) -> bool:
         message = f'{item!r} is not true or false'
         raise ValueError(message)
     return bool(item)
+
+
+def to_dataset(item: Any, **kwargs: Any) -> amos.Dataset:
+    """Returns `item` as an `amos.Dataset`.
+
+    Args:
+        item: an `amos.Dataset` (which is returned as it is) or anything that
+            `amos.Dataset.create` accepts, such as a `pandas.DataFrame`.
+        **kwargs: arguments for `amos.Dataset.create`, such as "label" and
+            "groups". A dataset keeps any of them that it already has.
+
+    Returns:
+        The dataset.
+
+    """
+    return amos.Dataset.create(item, **kwargs)
+
+
+def to_frame(item: Any) -> pd.DataFrame:
+    """Returns the data frame of `item`.
+
+    Args:
+        item: an `amos.Dataset` or a `pandas.DataFrame`.
+
+    Returns:
+        The data of the dataset, or the data frame itself.
+
+    """
+    return item.data if isinstance(item, amos.Dataset) else item
 
 
 def to_list(item: Any) -> list[Any]:

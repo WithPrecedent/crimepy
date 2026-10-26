@@ -5,17 +5,20 @@ of the year as a parquet file in the "nibrs/tables/{year}" folder of the data
 folder. `load` then reads any table of any years from those files, keeping
 only the states and columns asked for, which takes seconds instead of the
 minutes that parsing a master file takes. `load` downloads and converts the
-years that are missing, so it is usually the only function needed:
+years that are missing, so it is usually the only function needed. It
+returns an `amos.Dataset`, whose `data` is the table:
 
 ```python
 import crimepy
 
 victims = crimepy.nibrs.load('victims', years = '2021-2023', states = 'DE')
+victims.data.head()
 ```
 
 Contents:
     convert: converts the master files of years to parquet files.
-    load: loads a table of years into a `pandas` data frame.
+    load: loads a table of years into an `amos.Dataset`.
+    load_frame: loads a table of years into a `pandas` data frame.
     load_tables: loads several tables of years.
     table_path: returns where a table of a year is saved.
 
@@ -29,6 +32,7 @@ import sys
 from collections.abc import Sequence
 from typing import Any
 
+import amos
 import pandas as pd
 import pyarrow.dataset as ds
 import pyarrow.parquet as pq
@@ -114,11 +118,65 @@ def load(
     columns: Sequence[str] | None = None,
     decode: bool = True,
     fetch: bool = True,
+    progress: bool = True,
+    label: str | None = None,
+    task: str | None = None,
+    groups: Sequence[str] | str | None = None) -> amos.Dataset:
+    """Loads a table of NIBRS data for years into an `amos.Dataset`.
+
+    The years are stacked into one table, with "data_year" saying which
+    master file each row came from. The table is the dataset's `data`.
+
+    Args:
+        table: the name of the table (see `load_frame`).
+        years: a year, years, or a range of years (see
+            `crimepy.utilities.to_years`).
+        folder: the data folder. Defaults to `None`, in which case it is
+            `crimepy.options.DATA_FOLDER`.
+        states: postal abbreviations (such as "DE") or numeric state codes
+            of the states to keep. Defaults to `None`, which keeps every
+            state.
+        columns: the columns to load. Defaults to `None`, which loads them
+            all.
+        decode: whether to replace codes with their labels. Defaults to
+            `True`.
+        fetch: whether to download and convert years that have not been
+            converted. Defaults to `True`.
+        progress: whether to show the progress of downloads and conversions.
+            Defaults to `True`.
+        label: the column that models predict. Defaults to `None`.
+        task: "classify" or "regress". Defaults to `None`, in which case
+            `amos` infers it from the label.
+        groups: columns that identify groups of rows (such as "ori").
+            Defaults to `None`.
+
+    Returns:
+        The dataset.
+
+    """
+    frame = load_frame(
+        table, years, folder = folder, states = states, columns = columns,
+        decode = decode, fetch = fetch, progress = progress)
+    return amos.Dataset.create(
+        frame, label = label, task = task,
+        groups = utilities.to_names(groups) or None)
+
+
+def load_frame(
+    table: str,
+    years: Any,
+    *,
+    folder: pathlib.Path | str | None = None,
+    states: Sequence[str] | str | None = None,
+    columns: Sequence[str] | None = None,
+    decode: bool = True,
+    fetch: bool = True,
     progress: bool = True) -> pd.DataFrame:
     """Loads a table of NIBRS data for years into a `pandas` data frame.
 
     The years are stacked into one table, with "data_year" saying which
-    master file each row came from.
+    master file each row came from. `load` returns the same table as an
+    `amos.Dataset`.
 
     Args:
         table: the name of the table: "administrative", "offenses",
@@ -185,16 +243,17 @@ def load(
 def load_tables(
     tables: Sequence[str] | str | None,
     years: Any,
-    **kwargs: Any) -> dict[str, pd.DataFrame]:
+    **kwargs: Any) -> dict[str, amos.Dataset]:
     """Loads several tables of NIBRS data for years.
 
     Args:
-        tables: the names of the tables (see `load`). `None` loads them all.
+        tables: the names of the tables (see `load_frame`). `None` loads them
+            all.
         years: a year, years, or a range of years.
         **kwargs: arguments for `load` (except "columns").
 
     Returns:
-        Each table, by name.
+        A dataset of each table, by name.
 
     """
     return {

@@ -1,10 +1,12 @@
 """Analyses of crime data that researchers often need.
 
-The functions work on any table with one row for each event (an incident,
-offense, victim, or arrest), such as those of `crimepy.nibrs.tables`, and
-return tidy tables:
+Each function applies one of the `amos` techniques of `crimepy.techniques`,
+so the same analysis can be named in a project's settings. The functions
+take an `amos.Dataset` or a data frame with one row for each event (an
+incident, offense, victim, or arrest), such as those of `crimepy.nibrs.load`
+and `crimepy.nibrs.tables.build`:
 
-* `count`: the number of rows in each group and period.
+* `count`: the number of rows in each group and period, as a new dataset.
 * `trend`: counts over time, one column for each group.
 * `rates`: counts per 100,000 people (or another base).
 * `crime_rates`: the rate of crime in each group, using the population of the
@@ -13,6 +15,10 @@ return tidy tables:
 * `percent_change`: the change from one period to the next.
 * `crosstab`: counts (or shares) of two variables against each other.
 * `coverage`: how many agencies reported, and how many people they serve.
+
+Each function but `count` returns a table. Given a dataset, it also stores
+the table in the dataset's `tables`, under the technique's name (such as
+"clearance_rates").
 
 Contents:
     clearance_rates: the share of incidents cleared in each group.
@@ -31,20 +37,24 @@ from __future__ import annotations
 from collections.abc import Sequence
 from typing import Any, Literal
 
+import amos
 import pandas as pd
 
-from . import utilities
+from . import techniques, utilities
 
 
 def count(
-    data: pd.DataFrame,
+    data: amos.Dataset | pd.DataFrame,
     by: Sequence[str] | str | None = None,
     *,
     date: str | None = None,
     freq: str | None = None,
     weight: str | None = None,
-    name: str = 'count') -> pd.DataFrame:
+    name: str = 'count') -> amos.Dataset:
     """Returns the number of rows in each group (and period).
+
+    Applies `crimepy.techniques.CountCrimes` to a copy of the data, so a
+    dataset that is passed keeps its rows.
 
     Args:
         data: one row for each event.
@@ -60,28 +70,17 @@ def count(
         name: name of the column of counts. Defaults to "count".
 
     Returns:
-        A table with a column for each group (and "period"), and the counts.
-            Groups with no rows are left out.
+        A dataset with a column for each group (and "period") and the counts,
+            which are its label. Groups with no rows are left out.
 
     """
-    keys = utilities.to_list(by)
-    groupers: list[Any] = list(keys)
-    if freq is not None:
-        date = date or 'incident_date'
-        groupers.append(pd.Grouper(key = date, freq = freq))
-    if not groupers:
-        total = data[weight].sum() if weight else len(data)
-        return pd.DataFrame({name: [total]})
-    grouped = data.groupby(groupers, observed = True, dropna = False)
-    counts = grouped[weight].sum() if weight else grouped.size()
-    table = counts.rename(name).reset_index()
-    if freq is not None:
-        table = table.rename(columns = {date: 'period'})
-    return table[table[name] > 0].reset_index(drop = True)
+    return techniques.CountCrimes().apply(
+        utilities.to_dataset(utilities.to_frame(data)), label = name, by = by,
+        date = date, freq = freq, weight = weight, name = name)
 
 
 def trend(
-    data: pd.DataFrame,
+    data: amos.Dataset | pd.DataFrame,
     by: str | None = None,
     *,
     date: str = 'incident_date',
@@ -104,22 +103,14 @@ def trend(
             for each group (0 in periods with none).
 
     """
-    counted = count(data, by, date = date, freq = freq)
-    if by is None:
-        return counted.set_index('period')
-    wide = counted.pivot_table(
-        index = 'period', columns = by, values = 'count', aggfunc = 'sum',
-        fill_value = 0, observed = True)
-    if top is not None:
-        largest = wide.sum().nlargest(top).index
-        wide = wide[largest]
-    wide.columns = [str(c) for c in wide.columns]
-    return wide
+    return _describe(
+        techniques.CrimeTrend(), data, by = by, date = date, freq = freq,
+        top = top)
 
 
 def rates(
-    counts: pd.DataFrame,
-    population: pd.DataFrame | str,
+    counts: amos.Dataset | pd.DataFrame,
+    population: amos.Dataset | pd.DataFrame | str,
     *,
     on: Sequence[str] | str | None = None,
     count: str = 'count',
@@ -144,28 +135,19 @@ def rates(
             (missing where the population is 0 or missing).
 
     """
-    table = counts.copy()
-    column = 'population'
-    if isinstance(population, str):
-        column = population
-    else:
-        keys = utilities.to_list(on) or [
-            c for c in population.columns
-            if c in table.columns and c != 'population']
-        table = table.merge(population, on = keys, how = 'left')
-    people = pd.to_numeric(table[column], errors = 'coerce').astype('Float64')
-    people = people.where(people > 0)
-    table[name] = table[count] / people * per
-    return table
+    return _describe(
+        techniques.PopulationRates(), counts, population = population, on = on,
+        count = count, per = per, name = name)
 
 
 def crime_rates(
-    events: pd.DataFrame,
-    agencies: pd.DataFrame,
+    events: amos.Dataset | pd.DataFrame,
+    agencies: amos.Dataset | pd.DataFrame | None = None,
     by: Sequence[str] | str = ('data_year', 'state'),
     *,
     months: int = 12,
-    per: float = 100_000) -> pd.DataFrame:
+    per: float = 100_000,
+    folder: Any = None) -> pd.DataFrame:
     """Returns the number of events per `per` people in each group.
 
     Only agencies that reported in at least `months` months of the year (see
@@ -177,38 +159,28 @@ def crime_rates(
         events: one row for each event (such as an incident), with
             "data_year" and "agency_ori" (or "ori").
         agencies: the agencies, with "data_year", "ori", "population", and
-            "months_active".
+            "months_active". Defaults to `None`, in which case the agencies
+            of the years (and states) of `events` are loaded.
         by: columns of the agencies to group by. Defaults to ("data_year",
             "state").
         months: the fewest months an agency must have reported in. Defaults
             to 12.
         per: the number of people that rates are per. Defaults to 100,000.
+        folder: the data folder to load agencies from. Defaults to `None`, in
+            which case it is `crimepy.options.DATA_FOLDER`.
 
     Returns:
         A table with a column for each group, "count", "population",
             "agencies", and "rate".
 
     """
-    keys = utilities.to_list(by)
-    active = agencies[agencies['months_active'].fillna(0) >= months]
-    active = active.drop_duplicates(['data_year', 'ori'])
-    key = 'agency_ori' if 'agency_ori' in events.columns else 'ori'
-    columns = [k for k in keys if k not in ('data_year',)]
-    kept = events[['data_year', key]].merge(
-        active[['data_year', 'ori', *[c for c in columns if c in active.columns]]],
-        left_on = ['data_year', key], right_on = ['data_year', 'ori'],
-        how = 'inner', suffixes = ('_event', ''))
-    counts = kept.groupby(keys, observed = True).size().rename('count')
-    people = active.groupby(keys, observed = True).agg(
-        population = ('population', 'sum'), agencies = ('ori', 'nunique'))
-    table = people.join(counts, how = 'left').reset_index()
-    table['count'] = table['count'].fillna(0).astype('Int64')
-    table = rates(table, 'population', per = per)
-    return table[[*keys, 'count', 'population', 'agencies', 'rate']]
+    return _describe(
+        techniques.CrimeRates(), events, agencies = agencies, by = by,
+        months = months, per = per, folder = folder)
 
 
 def clearance_rates(
-    incidents: pd.DataFrame,
+    incidents: amos.Dataset | pd.DataFrame,
     by: Sequence[str] | str | None = None,
     *,
     cleared: str = 'cleared') -> pd.DataFrame:
@@ -226,21 +198,12 @@ def clearance_rates(
             "clearance_rate" (from 0 to 1).
 
     """
-    keys = utilities.to_list(by)
-    flags = incidents[cleared].astype('boolean').fillna(False).astype(int)
-    if keys:
-        grouped = flags.groupby(
-            [incidents[k] for k in keys], observed = True, dropna = False)
-        table = grouped.agg(['size', 'sum']).reset_index()
-    else:
-        table = pd.DataFrame({'size': [len(flags)], 'sum': [flags.sum()]})
-    table = table.rename(columns = {'size': 'incidents', 'sum': 'cleared'})
-    table['clearance_rate'] = table['cleared'] / table['incidents']
-    return table
+    return _describe(
+        techniques.ClearanceRates(), incidents, by = by, cleared = cleared)
 
 
 def percent_change(
-    data: pd.DataFrame | pd.Series,
+    data: amos.Dataset | pd.DataFrame | pd.Series,
     periods: int = 1) -> pd.DataFrame | pd.Series:
     """Returns the percent change from one period to the next.
 
@@ -254,11 +217,13 @@ def percent_change(
         The change, in percent, with the index of `data`.
 
     """
-    return data.pct_change(periods = periods, fill_method = None) * 100
+    if isinstance(data, pd.Series):
+        return data.pct_change(periods = periods, fill_method = None) * 100
+    return _describe(techniques.PercentChange(), data, periods = periods)
 
 
 def crosstab(
-    data: pd.DataFrame,
+    data: amos.Dataset | pd.DataFrame,
     rows: str,
     columns: str,
     *,
@@ -279,13 +244,13 @@ def crosstab(
         The table.
 
     """
-    return pd.crosstab(
-        data[rows], data[columns], normalize = normalize, margins = margins,
-        dropna = True)
+    return _describe(
+        techniques.Crosstab(), data, rows = rows, columns = columns,
+        normalize = normalize, margins = margins)
 
 
 def coverage(
-    agencies: pd.DataFrame,
+    agencies: amos.Dataset | pd.DataFrame,
     by: Sequence[str] | str = ('data_year', 'state'),
     *,
     months: int = 12) -> pd.DataFrame:
@@ -307,20 +272,24 @@ def coverage(
             share of the population served by agencies that reported).
 
     """
-    keys = utilities.to_list(by)
-    table = agencies.copy()
-    if 'covered_by_ori' in table.columns:
-        table = table[table['covered_by_ori'].isna()]
-    reporting = table['months_active'].fillna(0) >= months
-    table['_reporting'] = reporting.astype(int)
-    table['_population'] = table['population'].fillna(0)
-    table['_population_reporting'] = table['_population'].where(reporting, 0)
-    summary = table.groupby(keys, observed = True).agg(
-        agencies = ('ori', 'nunique'),
-        reporting = ('_reporting', 'sum'),
-        population = ('_population', 'sum'),
-        population_reporting = ('_population_reporting', 'sum')).reset_index()
-    share = summary['population_reporting'] / summary['population'].where(
-        summary['population'] > 0)
-    summary['share_reporting'] = share
-    return summary
+    return _describe(techniques.Coverage(), agencies, by = by, months = months)
+
+
+def _describe(
+    technique: amos.Describer,
+    data: amos.Dataset | pd.DataFrame,
+    **kwargs: Any) -> pd.DataFrame:
+    """Applies a describer to `data` and returns its table.
+
+    Args:
+        technique: the describer.
+        data: a dataset (which keeps the table in its `tables`) or a data
+            frame.
+        **kwargs: parameters for the describer.
+
+    Returns:
+        The table.
+
+    """
+    dataset = technique.apply(utilities.to_dataset(data), **kwargs)
+    return dataset.tables[technique.name]

@@ -3,8 +3,9 @@
 Each figure is an `amos.Plot`, so it can be named in the "artist" stage of
 an `amos` project's settings, and it has `amos`'s style for scientific
 figures (with colors that people with color blindness can tell apart). Each
-also has a function that draws it from a data frame and returns the
-`matplotlib` figure:
+also has a function that draws it from an `amos.Dataset` (or a data frame)
+and returns the `matplotlib` figure. A dataset also keeps the figure in its
+`figures`, under the plot's name (such as "trend_plot"):
 
 ```python
 import crimepy
@@ -12,6 +13,7 @@ import crimepy
 incidents = crimepy.nibrs.tables.build('incidents', '2021-2023', states = 'DE')
 figure = crimepy.plot.trend(incidents, by = 'offense_category', top = 5)
 figure.savefig('trend.png')
+incidents.figures['trend_plot']
 ```
 
 Every function takes the parameters of `amos.Plot.apply`: "width" and
@@ -38,7 +40,7 @@ import amos
 import numpy as np
 import pandas as pd
 
-from . import analyze
+from . import analyze, utilities
 
 _WEEKDAYS: tuple[str, ...] = (
     'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday',
@@ -83,7 +85,12 @@ class TrendPlot(amos.Plot):
             **kwargs: not used.
 
         """
-        table = analyze.trend(item.data, by, date = date, freq = freq, top = top)
+        table = analyze.trend(
+            item.data, 
+            by, 
+            date = date, 
+            freq = freq, 
+            top = top)
         axes = figure.add_subplot()
         for column in table.columns:
             axes.plot(table.index, table[column], label = column)
@@ -240,7 +247,7 @@ class AgePyramid(amos.Plot):
         axes.legend(fontsize = 'small')
 
 
-def trend(data: pd.DataFrame, **kwargs: Any) -> Any:
+def trend(data: amos.Dataset | pd.DataFrame, **kwargs: Any) -> Any:
     """Draws counts over time (see `TrendPlot`) and returns the figure.
 
     Args:
@@ -254,7 +261,10 @@ def trend(data: pd.DataFrame, **kwargs: Any) -> Any:
     return _draw(TrendPlot(), data, **kwargs)
 
 
-def top_values(data: pd.DataFrame, column: str, **kwargs: Any) -> Any:
+def top_values(
+    data: amos.Dataset | pd.DataFrame,
+    column: str,
+    **kwargs: Any) -> Any:
     """Draws the most common values of `column` and returns the figure.
 
     Args:
@@ -269,7 +279,7 @@ def top_values(data: pd.DataFrame, column: str, **kwargs: Any) -> Any:
     return _draw(TopValues(), data, column = column, **kwargs)
 
 
-def time_heatmap(data: pd.DataFrame, **kwargs: Any) -> Any:
+def time_heatmap(data: amos.Dataset | pd.DataFrame, **kwargs: Any) -> Any:
     """Draws events by hour and day of the week and returns the figure.
 
     Args:
@@ -283,7 +293,10 @@ def time_heatmap(data: pd.DataFrame, **kwargs: Any) -> Any:
     return _draw(TimeHeatmap(), data, **kwargs)
 
 
-def age_pyramid(data: pd.DataFrame, person: str = 'victim', **kwargs: Any) -> Any:
+def age_pyramid(
+    data: amos.Dataset | pd.DataFrame,
+    person: str = 'victim',
+    **kwargs: Any) -> Any:
     """Draws the ages of people by sex and returns the figure.
 
     Args:
@@ -298,19 +311,23 @@ def age_pyramid(data: pd.DataFrame, person: str = 'victim', **kwargs: Any) -> An
     return _draw(AgePyramid(), data, person = person, **kwargs)
 
 
-def _draw(plot: amos.Plot, data: pd.DataFrame, **kwargs: Any) -> Any:
+def _draw(
+    plot: amos.Plot,
+    data: amos.Dataset | pd.DataFrame,
+    **kwargs: Any) -> Any:
     """Draws `plot` of `data` and returns the figure.
 
     Args:
         plot: the plot.
-        data: the data to draw.
+        data: the data to draw. A dataset keeps the figure in its
+            `figures`, under the plot's name.
         **kwargs: parameters for the plot.
 
     Returns:
         The `matplotlib` figure.
 
     """
-    dataset = plot.apply(amos.Dataset(data), **kwargs)
+    dataset = plot.apply(utilities.to_dataset(data), **kwargs)
     return dataset.figures[plot.name]
 
 

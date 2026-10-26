@@ -20,7 +20,6 @@ Contents:
 
 from __future__ import annotations
 
-import contextlib
 import functools
 import logging
 import pathlib
@@ -47,6 +46,12 @@ _HELP_KEY: str = 'master_files/nibrs/nibrs-help.zip'
 _FIRST_YEAR: int = 1991
 # Bytes read from the server at a time.
 _BLOCK: int = 1 << 20
+# Tries in a row that download nothing before a download gives up.
+_ATTEMPTS: int = 5
+# Errors of a connection that broke, after which a download resumes.
+_BROKEN: tuple[type[Exception], ...] = (
+    requests.ConnectionError, requests.exceptions.ChunkedEncodingError,
+    requests.Timeout)
 
 
 def available_years(*, timeout: float | None = None) -> list[int]:
@@ -177,7 +182,10 @@ def _fetch(
 
     The file is downloaded to a temporary file that replaces `path` only when
     the download is complete, so an interrupted download leaves nothing that
-    looks finished.
+    looks finished. The CDE's links work for about 15 minutes, which is less
+    than a slow connection needs for a recent master file, so when the
+    connection breaks, the download asks for a new link and resumes where it
+    stopped. It gives up after `_ATTEMPTS` tries in a row that add nothing.
 
     Args:
         key: the key of the file in the CDE's bucket.
@@ -187,29 +195,83 @@ def _fetch(
 
     Raises:
         requests.HTTPError: if a server refuses a request.
+        requests.ConnectionError: if the connection breaks `_ATTEMPTS` times
+            in a row without downloading anything.
 
     """
-    url = _signed_url(key, timeout)
     path.parent.mkdir(parents = True, exist_ok = True)
     partial = path.with_name(f'{path.name}.part')
-    with (
-        requests.get(
-            url, stream = True, timeout = timeout,
-            headers = {'User-Agent': options.USER_AGENT}) as response,
-        contextlib.ExitStack() as stack):
-        response.raise_for_status()
-        size = int(response.headers.get('Content-Length', 0))
-        stream = stack.enter_context(open(partial, 'wb'))
-        done = 0
-        for block in response.iter_content(chunk_size = _BLOCK):
-            stream.write(block)
-            done += len(block)
-            if progress:
-                _show(path.name, done, size)
-        if progress:
-            print(file = sys.stderr)
+    partial.unlink(missing_ok = True)
+    done, size, failures = 0, 0, 0
+    while True:
+        before = done
+        try:
+            done, size = _resume(
+                _signed_url(key, timeout), partial, done, size,
+                path.name if progress else None, timeout)
+        except _BROKEN as error:
+            done = partial.stat().st_size if partial.is_file() else 0
+            failures = 0 if done > before else failures + 1
+            if failures >= _ATTEMPTS:
+                raise
+            logger.info(f'resuming {path.name} at {done:,} bytes after {error}')
+            continue
+        if not size or done >= size:
+            break
+    if progress:
+        print(file = sys.stderr)
     partial.replace(path)
     logger.info(f'downloaded {path}')
+
+
+def _resume(
+    url: str,
+    partial: pathlib.Path,
+    done: int,
+    size: int,
+    name: str | None,
+    timeout: float) -> tuple[int, int]:
+    """Downloads the rest of a file, after the bytes already in `partial`.
+
+    Args:
+        url: a link to the file.
+        partial: the temporary file, with the first `done` bytes.
+        done: the bytes already downloaded.
+        size: the bytes in the whole file, or 0 if not known yet.
+        name: the name of the file to show progress for, or `None` to not
+            show progress.
+        timeout: seconds to wait for a server.
+
+    Raises:
+        requests.HTTPError: if the server refuses the request.
+        requests.ConnectionError: if the connection breaks before the file
+            is complete.
+
+    Returns:
+        The bytes downloaded and the bytes in the whole file.
+
+    """
+    headers = {'User-Agent': options.USER_AGENT}
+    if done:
+        headers['Range'] = f'bytes={done}-'
+    with requests.get(
+        url, stream = True, timeout = timeout, headers = headers) as response:
+        response.raise_for_status()
+        # A server that ignores the range sends the whole file again.
+        if done and response.status_code != 206:
+            done = 0
+        length = int(response.headers.get('Content-Length', 0))
+        size = size or (done + length if length else 0)
+        with open(partial, 'ab' if done else 'wb') as stream:
+            for block in response.iter_content(chunk_size = _BLOCK):
+                stream.write(block)
+                done += len(block)
+                if name is not None:
+                    _show(name, done, size)
+    if size and done < size:
+        message = f'the connection closed after {done:,} of {size:,} bytes'
+        raise requests.ConnectionError(message)
+    return done, size
 
 
 def _show(name: str, done: int, size: int) -> None:

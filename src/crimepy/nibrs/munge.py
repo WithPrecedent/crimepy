@@ -28,8 +28,9 @@ Contents:
 from __future__ import annotations
 
 from collections.abc import Callable, Mapping, Sequence
-from typing import Any, cast
+from typing import Any, TypeVar, cast
 
+import amos
 import numpy as np
 import pandas as pd
 import pyarrow as pa
@@ -41,6 +42,8 @@ CODE_COLUMNS: dict[str, str] = {
     f.name: f.codes
     for layout in layouts.LAYOUTS.values() for f in layout
     if f.kind == 'code' and f.codes is not None}
+# A table, or an `amos.Dataset` of one.
+_Table = TypeVar('_Table', pd.DataFrame, amos.Dataset)
 # Codebooks whose codes are kept, because another column has their meaning
 # (such as the age in years of each age code).
 _KEPT_CODEBOOKS: frozenset[str] = frozenset({'ages'})
@@ -171,13 +174,14 @@ def add_offense_details(data: pd.DataFrame) -> pd.DataFrame:
 
 
 def decode(
-    data: pd.DataFrame,
+    data: _Table,
     columns: Sequence[str] | None = None,
-    codebooks: Mapping[str, Mapping[str, str]] | None = None) -> pd.DataFrame:
+    codebooks: Mapping[str, Mapping[str, str]] | None = None) -> _Table:
     """Replaces codes with their labels.
 
     Args:
-        data: a table with columns of codes.
+        data: a table with columns of codes, or an `amos.Dataset` of one
+            (whose data is decoded in place).
         columns: the columns to decode. Defaults to `None`, which decodes
             every column of codes in `CODE_COLUMNS` (except age codes, which
             `add_ages` turns into years).
@@ -185,10 +189,13 @@ def decode(
             `crimepy.nibrs.codes.CODEBOOKS`, by column. Defaults to `None`.
 
     Returns:
-        The table, with labels (as categories) instead of codes. Codes that
-            are not in a codebook are kept.
+        The table (or dataset), with labels (as categories) instead of codes.
+            Codes that are not in a codebook are kept.
 
     """
+    if isinstance(data, amos.Dataset):
+        data.replace(decode(data.data, columns, codebooks))
+        return data
     codebooks = codebooks or {}
     if columns is None:
         columns = [

@@ -207,6 +207,28 @@ little memory. A whole table of a recent year is large in memory, though: the
 `states` and `columns` to `load` to keep only what you need. They are applied
 while the parquet files are read, so the rest is never loaded.
 
+## Datasets
+
+`crimepy` is built on `amos`, so its tables are `amos.Dataset`s:
+
+* `crimepy.nibrs.load`, `load_tables`, `read`, and `tables.build` return
+  datasets, whose `data` is the table (a `pandas` data frame). They take
+  `label`, `task`, and `groups`, which `amos` models, splitters, and
+  validators use. `crimepy.nibrs.load_frame` returns a plain data frame.
+* Every function of `crimepy.analyze`, `crimepy.combine`, and `crimepy.plot`
+  (and `crimepy.nibrs.decode`) takes a dataset or a data frame.
+* The analyses and figures are `amos` techniques. A describer's table is kept
+  in the dataset's `tables` and a figure in its `figures`, under the
+  technique's name, and every step is recorded in its `history`. `count`
+  makes a new dataset of counts, whose label is the counts.
+* `crimepy.combine.stack` and `merge` return a dataset with the label and
+  groups of the first dataset given, if their columns are still there.
+
+A dataset gathers the data, what was learned from it, and how, so it is the
+record of an analysis. Any `amos` technique (a model, a validator, a metric,
+or a plot such as `shap_beeswarm`) can be applied to it directly, as in the
+[tutorial](tutorial.md#model).
+
 ## The amos techniques
 
 Importing `crimepy` adds these techniques to the `amos` library:
@@ -217,10 +239,16 @@ Importing `crimepy` adds these techniques to the `amos` library:
 | `decode_nibrs` | munger | replaces codes with labels |
 | `count_crimes` | shaper | counts rows by `by` (and periods of `freq`), so counts can be modeled |
 | `crime_trend` | describer | a table of counts over time |
+| `population_rates` | describer | counts per 100,000 people, from a table of counts |
+| `crime_rates` | describer | crimes per 100,000 people, using only agencies that reported all year (loading the agencies of the data's years and states) |
 | `clearance_rates` | describer | a table of clearance rates by group |
+| `percent_change` | describer | the change from one period to the next |
+| `crosstab` | describer | counts or shares of two columns against each other |
+| `coverage` | describer | the agencies that reported and the people they serve, from a table of agencies |
 | `trend_plot`, `top_values`, `time_heatmap`, `age_pyramid` | plots | the figures of `crimepy.plot` |
 
-Name them in any worker of an `amos` settings file, with parameters in a
+The functions of `crimepy.analyze` and `crimepy.plot` apply them. Name them
+in any worker of an `amos` settings file, with parameters in a
 `{technique}_parameters` section. See the
 [`amos` documentation](https://WithPrecedent.github.io/amos) for the rest of
 a project's settings.

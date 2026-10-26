@@ -4,6 +4,27 @@ All notable changes to this project will be documented in this file.
 
 <!-- insertion marker -->
 
+## Unreleased
+
+* **Breaking:** `crimepy` is built on `amos` datasets.
+  `crimepy.nibrs.load`, `load_tables`, `read`, and `tables.build` (and its
+  builders) return `amos.Dataset`s, whose `data` is the table, and take
+  `label`, `task`, and `groups` for modeling. `crimepy.nibrs.load_frame`
+  returns a plain data frame, as `load` did. `crimepy.combine.stack` and
+  `merge` return datasets, and `crimepy.analyze.count` returns a new dataset
+  of counts, whose label is the counts.
+* Every analysis is an `amos` technique: `population_rates`, `crime_rates`,
+  `percent_change`, `crosstab`, and `coverage` join `count_crimes`,
+  `crime_trend`, and `clearance_rates`. The functions of `crimepy.analyze`
+  apply them, take datasets or data frames, and keep their tables in a
+  dataset's `tables`. `crime_rates` loads the agencies of the data's years
+  and states when it is given none.
+* The functions of `crimepy.plot` take datasets, which keep their figures in
+  `figures`, and `crimepy.nibrs.decode` decodes a dataset in place.
+* Downloads of master files that break (as they do when the CDE's 15-minute
+  link expires during a slow download) resume where they stopped, with a new
+  link.
+
 ## 0.0.1
 
 * Initial version, from the `snickerdoodle` template, built on `amos`.

@@ -140,9 +140,9 @@ class LoadNibrs(amos.Loader):
         if table in tables.BUILDERS:
             data = tables.build(
                 table, years, states = states, folder = folder,
-                decode = decode, **kwargs)
+                decode = decode, **kwargs).data
             return data[wanted] if wanted else data
-        return store.load(
+        return store.load_frame(
             table, years, states = states, columns = wanted, decode = decode,
             folder = folder)
 

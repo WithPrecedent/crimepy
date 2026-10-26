@@ -153,9 +153,9 @@ def _export(arguments: argparse.Namespace) -> int:
     if arguments.table in nibrs.tables.BUILDERS:
         data = nibrs.tables.build(
             arguments.table, arguments.years, states = arguments.states,
-            folder = arguments.folder, decode = decode)
+            folder = arguments.folder, decode = decode).data
     else:
-        data = nibrs.load(
+        data = nibrs.load_frame(
             arguments.table, arguments.years, states = arguments.states,
             folder = arguments.folder, decode = decode)
     arguments.output.parent.mkdir(parents = True, exist_ok = True)

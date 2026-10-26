@@ -5,6 +5,10 @@ tables have different categories (as tables of different years usually do),
 and `pandas.merge` does the same to the keys it joins on. These functions
 keep the categories, so combined tables stay small and keep their labels.
 
+They take `amos` datasets or data frames and return an `amos.Dataset`, which
+keeps the label, task, and groups of the first dataset given when its
+columns are still there.
+
 Contents:
     merge: joins two tables, keeping their categories.
     stack: stacks tables on top of each other, keeping their categories.
@@ -16,15 +20,18 @@ from __future__ import annotations
 from collections.abc import Iterable, Sequence
 from typing import Any
 
+import amos
 import pandas as pd
 from pandas.api.types import union_categoricals
 
+from . import utilities
+
 
 def stack(
-    tables: Iterable[pd.DataFrame],
+    tables: Iterable[amos.Dataset | pd.DataFrame],
     *,
     source: str | None = None,
-    labels: Sequence[Any] | None = None) -> pd.DataFrame:
+    labels: Sequence[Any] | None = None) -> amos.Dataset:
     """Stacks tables on top of each other, keeping their categories.
 
     Columns that are in some tables but not others are missing (`NA`) in the
@@ -43,10 +50,11 @@ def stack(
             label for each table.
 
     Returns:
-        The stacked table, with a new index.
+        A dataset of the stacked table, with a new index.
 
     """
-    frames = list(tables)
+    items = list(tables)
+    frames = [utilities.to_frame(t) for t in items]
     if not frames:
         message = 'there are no tables to stack'
         raise ValueError(message)
@@ -75,17 +83,17 @@ def stack(
     for column in categorical:
         if not isinstance(stacked[column].dtype, pd.CategoricalDtype):
             stacked[column] = stacked[column].astype('category')
-    return stacked
+    return _dataset(stacked, items)
 
 
 def merge(
-    left: pd.DataFrame,
-    right: pd.DataFrame,
+    left: amos.Dataset | pd.DataFrame,
+    right: amos.Dataset | pd.DataFrame,
     on: Sequence[str] | str,
     *,
     how: str = 'left',
     suffixes: tuple[str, str] = ('', '_right'),
-    validate: str | None = None) -> pd.DataFrame:
+    validate: str | None = None) -> amos.Dataset:
     """Joins two tables, keeping the categories of their columns.
 
     Args:
@@ -100,12 +108,13 @@ def merge(
             "many_to_one"). Defaults to `None`, which checks nothing.
 
     Returns:
-        The joined table.
+        A dataset of the joined table.
 
     """
     keys = [on] if isinstance(on, str) else list(on)
     restore = {}
-    left, right = left.copy(), right.copy()
+    items = [left, right]
+    left, right = utilities.to_frame(left).copy(), utilities.to_frame(right).copy()
     for key in keys:
         kinds = (left[key].dtype, right[key].dtype)
         if any(isinstance(k, pd.CategoricalDtype) for k in kinds):
@@ -117,4 +126,29 @@ def merge(
         validate = validate)  # type: ignore[arg-type]
     for key in restore:
         joined[key] = joined[key].astype('category')
-    return joined
+    return _dataset(joined, items)
+
+
+def _dataset(
+    data: pd.DataFrame,
+    items: Sequence[amos.Dataset | pd.DataFrame]) -> amos.Dataset:
+    """Returns `data` as a dataset like the first dataset of `items`.
+
+    Args:
+        data: the combined table.
+        items: the datasets and data frames that were combined.
+
+    Returns:
+        A dataset with the label, task, and groups of the first dataset in
+            `items` whose label and groups are columns of `data` (and with
+            none if no dataset was given).
+
+    """
+    first = next((i for i in items if isinstance(i, amos.Dataset)), None)
+    if first is None:
+        return amos.Dataset.create(data)
+    label = first.label if first.label in data.columns else None
+    groups = [g for g in first.groups if g in data.columns]
+    return amos.Dataset.create(
+        data, label = label, task = first.task if label else None,
+        seed = first.seed, groups = groups or None)

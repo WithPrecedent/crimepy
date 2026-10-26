@@ -14,12 +14,16 @@ incident and agency:
 | `offenders` | offender | its incident and agency |
 | `arrestees` | arrestee | its incident and agency |
 
-`build` loads what a builder needs and calls it:
+`build` loads what a builder needs and calls it. Each builder takes the
+segments as `amos` datasets or data frames and returns an `amos.Dataset`,
+whose `data` is the built table (and which can be given a `label`, `task`,
+and `groups` for modeling):
 
 ```python
 import crimepy
 
 victims = crimepy.nibrs.tables.build('victims', 2022, states = 'DE')
+victims.data.head()
 ```
 
 The tables of an incident share the columns in `KEYS`. Agencies are joined
@@ -41,13 +45,16 @@ Contents:
 
 from __future__ import annotations
 
+import functools
 import re
 from collections.abc import Callable, Mapping, Sequence
 from typing import Any
 
+import amos
 import numpy as np
 import pandas as pd
 
+from .. import utilities
 from . import codes, store
 
 KEYS: list[str] = ['data_year', 'ori', 'incident_number']
@@ -75,6 +82,40 @@ _INCIDENT_COLUMNS: tuple[str, ...] = (
     'exceptional_clearance_date', 'cargo_theft')
 
 
+def _dataset_builder(builder: Callable[..., pd.DataFrame]) -> Callable[..., amos.Dataset]:
+    """Makes a builder take datasets or data frames and return a dataset.
+
+    The builder is written for data frames. The returned function accepts
+    each segment as an `amos.Dataset` or a data frame, and the keyword
+    arguments "label", "task", and "groups" of `amos.Dataset.create`.
+
+    Args:
+        builder: a function that builds a data frame from data frames.
+
+    Returns:
+        The function, which returns an `amos.Dataset`.
+
+    """
+
+    @functools.wraps(builder)
+    def build_dataset(
+        segments: Mapping[str, Any],
+        *args: Any,
+        label: str | None = None,
+        task: str | None = None,
+        groups: Sequence[str] | str | None = None,
+        **kwargs: Any) -> amos.Dataset:
+        frames = {
+            name: utilities.to_frame(table) for name, table in segments.items()
+            if table is not None}
+        return amos.Dataset.create(
+            builder(frames, *args, **kwargs), label = label, task = task,
+            groups = utilities.to_names(groups) or None)
+
+    return build_dataset
+
+
+@_dataset_builder
 def incidents(
     segments: Mapping[str, pd.DataFrame],
     *,
@@ -82,7 +123,8 @@ def incidents(
     """Returns one row for each incident.
 
     Args:
-        segments: the tables of the incidents, by name. "administrative" is
+        segments: the tables of the incidents (as datasets or data
+            frames), by name. "administrative" is
             needed. "offenses", "victims", "offenders", "arrestees", and
             "agencies" are used if they are there.
         categories: whether to add a column for each category of offense
@@ -143,11 +185,13 @@ def incidents(
     return data
 
 
+@_dataset_builder
 def victims(segments: Mapping[str, pd.DataFrame]) -> pd.DataFrame:
     """Returns one row for each victim.
 
     Args:
-        segments: the tables of the incidents, by name. "victims" is needed.
+        segments: the tables of the incidents (as datasets or data
+            frames), by name. "victims" is needed.
             "administrative", "offenders", and "agencies" are used if they
             are there.
 
@@ -180,11 +224,13 @@ def victims(segments: Mapping[str, pd.DataFrame]) -> pd.DataFrame:
     return data
 
 
+@_dataset_builder
 def offenses(segments: Mapping[str, pd.DataFrame]) -> pd.DataFrame:
     """Returns one row for each offense.
 
     Args:
-        segments: the tables of the incidents, by name. "offenses" is needed.
+        segments: the tables of the incidents (as datasets or data
+            frames), by name. "offenses" is needed.
             "administrative" and "agencies" are used if they are there.
 
     Raises:
@@ -197,11 +243,13 @@ def offenses(segments: Mapping[str, pd.DataFrame]) -> pd.DataFrame:
     return _with_incident(_require(segments, 'offenses'), segments)
 
 
+@_dataset_builder
 def offenders(segments: Mapping[str, pd.DataFrame]) -> pd.DataFrame:
     """Returns one row for each offender.
 
     Args:
-        segments: the tables of the incidents, by name. "offenders" is
+        segments: the tables of the incidents (as datasets or data
+            frames), by name. "offenders" is
             needed. "administrative" and "agencies" are used if they are
             there.
 
@@ -215,11 +263,13 @@ def offenders(segments: Mapping[str, pd.DataFrame]) -> pd.DataFrame:
     return _with_incident(_require(segments, 'offenders'), segments)
 
 
+@_dataset_builder
 def arrestees(segments: Mapping[str, pd.DataFrame]) -> pd.DataFrame:
     """Returns one row for each arrestee of a Group "A" incident.
 
     Args:
-        segments: the tables of the incidents, by name. "arrestees" is
+        segments: the tables of the incidents (as datasets or data
+            frames), by name. "arrestees" is
             needed. "administrative" and "agencies" are used if they are
             there.
 
@@ -238,7 +288,7 @@ def arrestees(segments: Mapping[str, pd.DataFrame]) -> pd.DataFrame:
     return data
 
 
-BUILDERS: dict[str, Callable[..., pd.DataFrame]] = {
+BUILDERS: dict[str, Callable[..., amos.Dataset]] = {
     'arrestees': arrestees,
     'incidents': incidents,
     'offenders': offenders,
@@ -262,7 +312,10 @@ def build(
     states: Sequence[str] | str | None = None,
     folder: Any = None,
     decode: bool = True,
-    **kwargs: Any) -> pd.DataFrame:
+    label: str | None = None,
+    task: str | None = None,
+    groups: Sequence[str] | str | None = None,
+    **kwargs: Any) -> amos.Dataset:
     """Loads the tables that a builder needs and builds its table.
 
     Args:
@@ -276,6 +329,12 @@ def build(
             `crimepy.options.DATA_FOLDER`.
         decode: whether to replace codes with their labels. Defaults to
             `True`.
+        label: the column that models predict (such as "cleared").
+            Defaults to `None`.
+        task: "classify" or "regress". Defaults to `None`, in which case
+            `amos` infers it from the label.
+        groups: columns that identify groups of rows (such as
+            "agency_ori"). Defaults to `None`.
         **kwargs: arguments for the builder (such as `categories` for
             `incidents`).
 
@@ -283,17 +342,18 @@ def build(
         KeyError: if `table` is not a builder.
 
     Returns:
-        The built table.
+        A dataset whose `data` is the built table.
 
     """
     if table not in BUILDERS:
         message = f'{table!r} is not a table to build: use one of {sorted(BUILDERS)}'
         raise KeyError(message)
     segments = {
-        name: store.load(
+        name: store.load_frame(
             name, years, states = states, folder = folder, decode = decode)
         for name in _NEEDS[table]}
-    return BUILDERS[table](segments, **kwargs)
+    return BUILDERS[table](
+        segments, label = label, task = task, groups = groups, **kwargs)
 
 
 def _join_agencies(

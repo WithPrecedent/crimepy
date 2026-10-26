@@ -21,7 +21,7 @@ the same columns in every year.
 Contents:
     open_master: opens the text of a master file for reading.
     parse: parses records of one segment level into a table.
-    read: reads tables from a master file into `pandas` data frames.
+    read: reads tables from a master file into `amos` datasets.
     records: yields the records of a master file.
     tables: yields the tables of a master file in chunks.
     year_of: finds the year of a master file from its name.
@@ -41,8 +41,8 @@ import zipfile
 from collections.abc import Callable, Iterator, Sequence
 from typing import IO, Any
 
+import amos
 import numpy as np
-import pandas as pd
 import pyarrow as pa
 
 from .. import options, utilities
@@ -361,8 +361,8 @@ def read(
     states: Sequence[str] | str | None = None,
     decode: bool = True,
     chunk_size: int | None = None,
-    limit: int | None = None) -> dict[str, pd.DataFrame]:
-    """Reads tables from a master file into `pandas` data frames.
+    limit: int | None = None) -> dict[str, amos.Dataset]:
+    """Reads tables from a master file into `amos` datasets.
 
     Everything is kept in memory, so reading a whole recent year (tens of
     millions of records) needs a lot of it. To work with whole years, convert
@@ -386,7 +386,7 @@ def read(
             `None`, which reads them all.
 
     Returns:
-        A data frame for each table, by name.
+        A dataset for each table, by name, whose `data` is the table.
 
     """
     wanted = _wanted(names)
@@ -396,12 +396,12 @@ def read(
         limit = limit):
         for name, table in chunk.items():
             parts[name].append(table)
-    frames = {}
+    datasets = {}
     for name, pieces in parts.items():
         table = pa.concat_tables(pieces) if pieces else schema(name).empty_table()
-        frames[name] = munge.prepare(
-            munge.to_pandas(table), name, decode = decode)
-    return frames
+        frame = munge.prepare(munge.to_pandas(table), name, decode = decode)
+        datasets[name] = amos.Dataset.create(frame)
+    return datasets
 
 
 def _agencies(headers: dict[str, list[bytes]], year: int | None) -> pa.Table:
