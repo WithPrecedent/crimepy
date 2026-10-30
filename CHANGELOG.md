@@ -4,7 +4,7 @@ All notable changes to this project will be documented in this file.
 
 <!-- insertion marker -->
 
-## Unreleased
+## 0.2.0
 
 * **Breaking:** crimepy keeps its data in amos's workspace (amos 0.6.0), not
   in a "crimepy_data" folder of the home folder. The data folder is now the

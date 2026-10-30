@@ -6,7 +6,7 @@ import crimepy
 
 
 def test_crimepy() -> None:
-    assert crimepy.__version__ == '0.1.0'
+    assert crimepy.__version__ == '0.2.0'
     assert crimepy.Project is not None
     for name in crimepy.__all__:
         assert hasattr(crimepy, name)
