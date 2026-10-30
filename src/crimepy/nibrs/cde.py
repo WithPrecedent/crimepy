@@ -7,8 +7,9 @@ files directly: it asks its own web service for a link that works for 15
 minutes, and so does `crimepy`.
 
 Downloads are saved as "nibrs-{year}.zip" in the "nibrs/raw" folder of the
-data folder (`crimepy.options.DATA_FOLDER`, unless another is given). A file
-that is already there is not downloaded again unless `overwrite` is true.
+data folder (`crimepy.utilities.data_folder()`, unless another is given). A
+file that is already there is not downloaded again unless `overwrite` is
+true.
 
 Contents:
     available_years: returns the years of master files that the CDE has.
@@ -80,7 +81,7 @@ def master_path(
     Args:
         year: the year of the master file.
         folder: the data folder. Defaults to `None`, in which case it is
-            `crimepy.options.DATA_FOLDER`.
+            `crimepy.utilities.data_folder()`.
 
     Returns:
         The path of the zip archive, which may not exist yet.
@@ -104,7 +105,7 @@ def download(
             `crimepy.utilities.to_years`), such as 2022, [2019, 2020], or
             "2015-2023".
         folder: the data folder. Defaults to `None`, in which case it is
-            `crimepy.options.DATA_FOLDER`.
+            `crimepy.utilities.data_folder()`.
         overwrite: whether to download a file that was downloaded before.
             Defaults to `False`.
         progress: whether to show how much of each file has been downloaded.
@@ -157,7 +158,7 @@ def download_documentation(
 
     Args:
         folder: the data folder. Defaults to `None`, in which case it is
-            `crimepy.options.DATA_FOLDER`.
+            `crimepy.utilities.data_folder()`.
         overwrite: whether to download it again if it was downloaded before.
             Defaults to `False`.
         timeout: seconds to wait for the CDE. Defaults to `None`, in which

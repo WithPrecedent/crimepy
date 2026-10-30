@@ -68,7 +68,9 @@ described in a settings file.
 `crimepy` requires Python 3.11 or later and runs on Linux, macOS, and
 Windows. Recent master files are about 600 MB to download, and their
 converted tables are about 500 MB on disk. Downloads and tables are saved in
-a "crimepy_data" folder in your home folder, unless you set the
+the "crime" folder of the data folder of amos's workspace, the folder that
+holds your "code" folder (such as "projects/data/crime" for code in
+"projects/code"), where amos projects look for data too, unless you set the
 `CRIMEPY_DATA` environment variable or `crimepy.options.DATA_FOLDER` (or
 pass `folder` to any function).
 

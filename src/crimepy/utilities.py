@@ -1,7 +1,8 @@
 """Small tools that the rest of crimepy shares.
 
 Contents:
-    data_folder: returns the folder where crimepy saves data.
+    data_folder: returns the folder where crimepy saves data (by default, a
+        folder of the data folder of amos's workspace).
     to_bool: makes a boolean from a boolean or text.
     to_dataset: makes an `amos.Dataset` from a dataset or a data frame.
     to_frame: returns the data frame of a dataset or a data frame.
@@ -33,15 +34,28 @@ _FALSE: frozenset[str] = frozenset({'false', 'no', 'n', '0', 'off', 'none', ''})
 def data_folder(folder: pathlib.Path | str | None = None) -> pathlib.Path:
     """Returns the folder where crimepy saves data, making it if needed.
 
+    By default, it is a folder (`options.DATA_SUBFOLDER`, "crime") of the
+    data folder of amos's workspace, the folder that holds the "code" folder
+    (see `amos.clerks.workspace`), such as "projects/data/crime" for code in
+    "projects/code". So crimepy keeps its data outside every project, where
+    an amos project's `Clerk` looks for data too.
+
     Args:
         folder: the folder to use. Defaults to `None`, in which case it is
-            `options.DATA_FOLDER`.
+            `options.DATA_FOLDER`, if it is set (as it is by the
+            "CRIMEPY_DATA" environment variable), and otherwise the
+            `options.DATA_SUBFOLDER` of the data folder of amos's workspace.
 
     Returns:
         The folder.
 
     """
-    path = pathlib.Path(folder or options.DATA_FOLDER).expanduser()
+    chosen = folder or options.DATA_FOLDER
+    if chosen is None:
+        chosen = (
+            amos.clerks.workspace() / amos.options._DATA_FOLDER
+            / options.DATA_SUBFOLDER)
+    path = pathlib.Path(chosen).expanduser()
     path.mkdir(parents = True, exist_ok = True)
     return path
 

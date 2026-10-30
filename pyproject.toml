@@ -33,7 +33,7 @@ keywords = [
     "nibrs",
     "ucr"]
 dependencies = [
-    "amos[plots]>=0.4.1",
+    "amos[plots]>=0.6.0",
     "inflate64>=1.0",
     "numpy>=1.26",
     "pandas>=3.0",

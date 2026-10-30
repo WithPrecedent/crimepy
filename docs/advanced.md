@@ -176,20 +176,29 @@ offenses (with the prefix "arrest_" for arrests).
 ## Where the data are saved
 
 Everything is saved in the data folder: the `CRIMEPY_DATA` environment
-variable, if it is set, and otherwise a "crimepy_data" folder in your home
-folder. Change it for a session with `crimepy.options.DATA_FOLDER`, or pass
-`folder` to any function.
+variable, if it is set, and otherwise the "crime" folder
+(`crimepy.options.DATA_SUBFOLDER`) of the data folder of amos's workspace.
+The workspace is the folder that holds the "code" folder above the current
+folder (or the folder named by the `AMOS_WORKSPACE` environment variable;
+see amos's `Clerk`), so the data are kept outside every project, and an amos
+project's results are kept beside them, in the workspace's "studies" folder.
+Change the data folder for a session with `crimepy.options.DATA_FOLDER`, or
+pass `folder` to any function.
 
 ```
-crimepy_data/
-    nibrs/
-        raw/
-            nibrs-2023.zip
-        tables/
-            2023/
-                administrative.parquet
-                agencies.parquet
-                ...
+projects/                (amos's workspace)
+    code/                (your projects' code)
+    studies/             (the results of amos projects)
+    data/
+        crime/           (crimepy's data folder)
+            nibrs/
+                raw/
+                    nibrs-2023.zip
+                tables/
+                    2023/
+                        administrative.parquet
+                        agencies.parquet
+                        ...
 ```
 
 The parquet files have the codes (not the labels) and are compressed with

@@ -93,7 +93,8 @@ datasets['victims'].data.head()
 ```
 
 To convert it into the data folder instead, copy it to
-`crimepy_data/nibrs/raw/nibrs-2016.zip` and run `crimepy.nibrs.convert(2016)`.
+"nibrs/raw/nibrs-2016.zip" in the data folder (such as
+"data/crime/nibrs/raw/nibrs-2016.zip") and run `crimepy.nibrs.convert(2016)`.
 
 ## Model counts with amos
 

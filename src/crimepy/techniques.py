@@ -293,7 +293,7 @@ class CrimeRates(amos.Describer):
             per: the number of people that rates are per. Defaults to
                 100,000.
             folder: the data folder to load agencies from. Defaults to
-                `None`, in which case it is `crimepy.options.DATA_FOLDER`.
+                `None`, in which case it is `crimepy.utilities.data_folder()`.
             **kwargs: not used.
 
         Returns:

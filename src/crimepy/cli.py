@@ -25,7 +25,7 @@ import pathlib
 import sys
 from collections.abc import Sequence
 
-from . import nibrs, options
+from . import nibrs
 
 
 def main(arguments: Sequence[str] | None = None) -> int:
@@ -114,7 +114,8 @@ def _add_folder(parser: argparse.ArgumentParser) -> None:
     """Adds the "--folder" argument to `parser`."""
     parser.add_argument(
         '--folder', type = pathlib.Path, default = None,
-        help = f'the data folder (by default, {options.DATA_FOLDER})')
+        help = 'the data folder (by default, the "crime" folder of the data '
+        'folder of amos\'s workspace, beside the "code" folder)')
 
 
 def _add_years(parser: argparse.ArgumentParser) -> None:

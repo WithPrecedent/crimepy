@@ -57,7 +57,7 @@ class LoadNibrs(amos.Loader):
     | `states` | Postal abbreviations of the states to keep, such as "DE, MD". Defaults to every state. |
     | `columns` | The columns to keep. Defaults to all of them. |
     | `decode` | Whether to replace codes with their labels. Defaults to true. |
-    | `folder` | The data folder. Defaults to `crimepy.options.DATA_FOLDER`, which is shared by every project. |
+    | `folder` | The data folder. Defaults to `crimepy.utilities.data_folder()` (the "crime" folder of the data folder of amos's workspace), which is shared by every project. |
     | `label`, `task`, `groups` | As in `amos`: they default to those in the "general" section. |
 
     A label or group that is not a column of the loaded table is left for a
@@ -119,7 +119,7 @@ class LoadNibrs(amos.Loader):
             decode: whether to replace codes with their labels. Defaults to
                 `True`.
             folder: the data folder. Defaults to `None`, in which case it is
-                `crimepy.options.DATA_FOLDER`.
+                `crimepy.utilities.data_folder()`.
             **kwargs: arguments for the builder of a built table.
 
         Raises:

@@ -4,6 +4,19 @@ All notable changes to this project will be documented in this file.
 
 <!-- insertion marker -->
 
+## Unreleased
+
+* **Breaking:** crimepy keeps its data in amos's workspace (amos 0.6.0), not
+  in a "crimepy_data" folder of the home folder. The data folder is now the
+  "crime" folder (`options.DATA_SUBFOLDER`) of the data folder of the
+  workspace that holds the "code" folder (such as "projects/data/crime" for
+  code in "projects/code"; see amos's `Clerk`), so NIBRS is in
+  "data/crime/nibrs", beside the "studies" folder of amos projects' results.
+  `CRIMEPY_DATA`, `options.DATA_FOLDER` (now `None` unless
+  `CRIMEPY_DATA` is set), and a `folder` argument still name another. Move
+  an existing "crimepy_data" folder's "nibrs" folder there (or set
+  `CRIMEPY_DATA`) to keep its downloads and tables. Requires amos 0.6.0.
+
 ## 0.1.0
 
 * **Breaking:** `crimepy` is built on `amos` datasets.

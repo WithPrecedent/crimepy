@@ -53,7 +53,7 @@ def table_path(
         table: the name of the table (such as "victims").
         year: the year.
         folder: the data folder. Defaults to `None`, in which case it is
-            `crimepy.options.DATA_FOLDER`.
+            `crimepy.utilities.data_folder()`.
 
     Returns:
         The path of the parquet file, which may not exist yet.
@@ -81,7 +81,7 @@ def convert(
         years: a year, years, or a range of years (see
             `crimepy.utilities.to_years`).
         folder: the data folder. Defaults to `None`, in which case it is
-            `crimepy.options.DATA_FOLDER`.
+            `crimepy.utilities.data_folder()`.
         tables: the tables to convert. Defaults to `None`, which converts
             them all.
         overwrite: whether to convert tables that were converted before (and
@@ -132,7 +132,7 @@ def load(
         years: a year, years, or a range of years (see
             `crimepy.utilities.to_years`).
         folder: the data folder. Defaults to `None`, in which case it is
-            `crimepy.options.DATA_FOLDER`.
+            `crimepy.utilities.data_folder()`.
         states: postal abbreviations (such as "DE") or numeric state codes
             of the states to keep. Defaults to `None`, which keeps every
             state.
@@ -186,7 +186,7 @@ def load_frame(
         years: a year, years, or a range of years (see
             `crimepy.utilities.to_years`).
         folder: the data folder. Defaults to `None`, in which case it is
-            `crimepy.options.DATA_FOLDER`.
+            `crimepy.utilities.data_folder()`.
         states: postal abbreviations (such as "DE") or numeric state codes
             of the states to keep. Defaults to `None`, which keeps every
             state.

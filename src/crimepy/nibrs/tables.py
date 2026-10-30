@@ -326,7 +326,7 @@ def build(
         states: postal abbreviations or numeric state codes of the states to
             keep. Defaults to `None`, which keeps every state.
         folder: the data folder. Defaults to `None`, in which case it is
-            `crimepy.options.DATA_FOLDER`.
+            `crimepy.utilities.data_folder()`.
         decode: whether to replace codes with their labels. Defaults to
             `True`.
         label: the column that models predict (such as "cleared").

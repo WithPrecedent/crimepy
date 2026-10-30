@@ -20,6 +20,23 @@ import zlib
 import inflate64
 import pytest
 
+from crimepy import options
+
+
+@pytest.fixture(autouse = True)
+def workspace(
+    tmp_path: pathlib.Path,
+    monkeypatch: pytest.MonkeyPatch) -> pathlib.Path:
+    """Keeps each test's data and results in its own temporary folder.
+
+    crimepy's data folder (and an amos project's results) would otherwise be
+    in amos's workspace, the folder that holds the "code" folder of this
+    repository.
+
+    """
+    monkeypatch.setenv('AMOS_WORKSPACE', str(tmp_path))
+    monkeypatch.setattr(options, 'DATA_FOLDER', None)
+    return tmp_path
 
 
 def _record(start: str, fields: dict[int, str]) -> str:
