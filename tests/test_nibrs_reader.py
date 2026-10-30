@@ -1,4 +1,25 @@
-"""Tests of reading and parsing NIBRS master files."""
+"""Tests of reading and parsing NIBRS master files.
+
+Contents:
+    test_field_rejects_bad_kinds: checks the kinds and widths of fields.
+    test_layout_widths_match_the_documentation: checks layouts' widths.
+    test_layouts_have_no_overlapping_fields: checks layouts' positions.
+    test_layouts_have_unique_names_and_known_codebooks: checks layouts' names.
+    test_open_master_reads_plain_text: checks master files outside archives.
+    test_parse_converts_each_kind: checks parsing each kind of field.
+    test_parse_of_no_records_has_the_layouts_columns: checks empty tables.
+    test_read_decodes_fields: checks that reading decodes codes.
+    test_read_joins_split_batch_headers: checks pre-2013 batch headers.
+    test_read_keeps_states: checks keeping only some states.
+    test_read_makes_every_table: checks that reading makes every table.
+    test_read_of_a_recent_year: checks a recent master file.
+    test_read_rejects_unknown_tables: checks reading unknown tables.
+    test_read_stops_at_the_limit: checks the limit of records.
+    test_records_reads_both_compressions: checks Deflate and Deflate64.
+    test_tables_parses_in_chunks: checks parsing in chunks.
+    test_year_of_finds_years_in_names: checks finding years in names.
+
+"""
 
 from __future__ import annotations
 
@@ -13,15 +34,30 @@ import pytest
 
 from crimepy.nibrs import codes, layouts, reader
 
+""" Private Functions """
+
 
 def _read(*args: Any, **kwargs: Any) -> dict[str, pd.DataFrame]:
-    """Reads tables with `reader.read`, checking that they are datasets."""
+    """Reads tables with `reader.read`, checking that they are datasets.
+
+    Args:
+        *args: arguments for `reader.read`.
+        **kwargs: arguments for `reader.read`.
+
+    Returns:
+        The data frame of each dataset, by name.
+
+    """
     datasets = reader.read(*args, **kwargs)
     assert all(isinstance(d, amos.Dataset) for d in datasets.values())
     return {name: dataset.data for name, dataset in datasets.items()}
 
 
+""" Tests """
+
+
 def test_layouts_have_no_overlapping_fields() -> None:
+    """Checks that no two fields of a layout share a position."""
     for layout in layouts.LAYOUTS.values():
         fields = sorted(layout, key = lambda f: f.start)
         for first, second in zip(fields, fields[1:], strict = False):
@@ -29,6 +65,7 @@ def test_layouts_have_no_overlapping_fields() -> None:
 
 
 def test_layouts_have_unique_names_and_known_codebooks() -> None:
+    """Checks that each layout's names are unique and its codebooks exist."""
     for layout in layouts.LAYOUTS.values():
         assert len(set(layout.names)) == len(layout.names)
         for field in layout:
@@ -37,6 +74,7 @@ def test_layouts_have_unique_names_and_known_codebooks() -> None:
 
 
 def test_layout_widths_match_the_documentation() -> None:
+    """Checks the widths of layouts against the record descriptions."""
     assert layouts.LAYOUTS['BH'].width == 292
     assert layouts.LAYOUTS['02'].width == 67
     assert layouts.LAYOUTS['03'].width == 102
@@ -48,6 +86,7 @@ def test_layout_widths_match_the_documentation() -> None:
 
 
 def test_field_rejects_bad_kinds() -> None:
+    """Checks that a field must have a known kind and a width."""
     with pytest.raises(ValueError, match = 'kind'):
         layouts.Field('x', 0, 1, 'number')
     with pytest.raises(ValueError, match = 'width'):
@@ -55,6 +94,12 @@ def test_field_rejects_bad_kinds() -> None:
 
 
 def test_year_of_finds_years_in_names(tmp_path: pathlib.Path) -> None:
+    """Checks that years are found in new and old names of master files.
+
+    Args:
+        tmp_path: the test's temporary folder.
+
+    """
     assert reader.year_of('nibrs-2023.zip') == 2023
     assert reader.year_of(tmp_path / 'NIBRS04.ENC') == 2004
     assert reader.year_of(tmp_path / 'KCNIBR91.DAT') == 1991
@@ -64,6 +109,14 @@ def test_year_of_finds_years_in_names(tmp_path: pathlib.Path) -> None:
 def test_records_reads_both_compressions(
     master_2004: pathlib.Path,
     master_2025: pathlib.Path) -> None:
+    """Checks that records are read from Deflate and Deflate64 archives.
+
+    Args:
+        master_2004: the path of the 2004 master file.
+        master_2025: the path of the 2025 master file, compressed with
+            Deflate64.
+
+    """
     old = list(reader.records(master_2004))
     new = list(reader.records(master_2025))
     assert len(old) == 20
@@ -73,6 +126,12 @@ def test_records_reads_both_compressions(
 
 
 def test_open_master_reads_plain_text(tmp_path: pathlib.Path) -> None:
+    """Checks that a master file that is not in an archive is read.
+
+    Args:
+        tmp_path: the test's temporary folder.
+
+    """
     path = tmp_path / 'nibrs-2025.txt'
     path.write_bytes(b'0550AK0010200C30BRCZ9728N202503010125FIN\n')
     assert list(reader.records(path)) == [
@@ -82,6 +141,7 @@ def test_open_master_reads_plain_text(tmp_path: pathlib.Path) -> None:
 
 
 def test_parse_converts_each_kind() -> None:
+    """Checks that parsing converts each kind of field."""
     table = reader.parse(
         [b'0350AK0010200C30BREBQ728N20250601738000000050',
          b'0311IDIBN01006B-4RHP 728N19950118610000000000            '
@@ -100,12 +160,19 @@ def test_parse_converts_each_kind() -> None:
 
 
 def test_parse_of_no_records_has_the_layouts_columns() -> None:
+    """Checks that a table of no records has the layout's columns."""
     table = reader.parse([], '05', data_year = 2025)
     assert table.num_rows == 0
     assert table.column_names == ['data_year', *layouts.LAYOUTS['05'].names]
 
 
 def test_read_makes_every_table(master_2004: pathlib.Path) -> None:
+    """Checks that reading a master file makes every table.
+
+    Args:
+        master_2004: the path of the 2004 master file.
+
+    """
     frames = _read(master_2004)
     assert set(frames) == set(layouts.SEGMENTS)
     assert len(frames['administrative']) == 2
@@ -119,6 +186,12 @@ def test_read_makes_every_table(master_2004: pathlib.Path) -> None:
 
 
 def test_read_decodes_fields(master_2004: pathlib.Path) -> None:
+    """Checks that reading replaces codes with their labels.
+
+    Args:
+        master_2004: the path of the 2004 master file.
+
+    """
     frames = _read(master_2004)
     offenses = frames['offenses'].set_index('incident_number')
     burglary = offenses.loc['E0DROSC-2 N']
@@ -147,6 +220,12 @@ def test_read_decodes_fields(master_2004: pathlib.Path) -> None:
 
 
 def test_read_joins_split_batch_headers(master_2004: pathlib.Path) -> None:
+    """Checks that the three batch header records of 2004 become one row.
+
+    Args:
+        master_2004: the path of the 2004 master file.
+
+    """
     agencies = _read(master_2004, 'agencies')['agencies']
     assert list(agencies['ori']) == ['ALAST0000', 'AZ0111300']
     tempe = agencies.set_index('ori').loc['AZ0111300']
@@ -165,6 +244,13 @@ def test_read_joins_split_batch_headers(master_2004: pathlib.Path) -> None:
 
 
 def test_read_of_a_recent_year(master_2025: pathlib.Path) -> None:
+    """Checks the fields of a recent master file, without decoding.
+
+    Args:
+        master_2025: the path of the 2025 master file, compressed with
+            Deflate64.
+
+    """
     frames = _read(master_2025, decode = False)
     offender = frames['offenders'].iloc[0]
     assert offender['offender_age'] == 25
@@ -181,6 +267,12 @@ def test_read_of_a_recent_year(master_2025: pathlib.Path) -> None:
 
 
 def test_read_keeps_states(master_2004: pathlib.Path) -> None:
+    """Checks that reading keeps only the states asked for.
+
+    Args:
+        master_2004: the path of the 2004 master file.
+
+    """
     frames = _read(master_2004, ['agencies', 'victims'], states = 'AL')
     assert list(frames['agencies']['ori']) == ['ALAST0000']
     assert frames['victims'].empty
@@ -191,6 +283,12 @@ def test_read_keeps_states(master_2004: pathlib.Path) -> None:
 
 
 def test_tables_parses_in_chunks(master_2004: pathlib.Path) -> None:
+    """Checks that tables are parsed in chunks and report progress.
+
+    Args:
+        master_2004: the path of the 2004 master file.
+
+    """
     seen = []
     chunks = list(reader.tables(
         master_2004, 'offenses', chunk_size = 1, progress = seen.append))
@@ -199,11 +297,23 @@ def test_tables_parses_in_chunks(master_2004: pathlib.Path) -> None:
 
 
 def test_read_stops_at_the_limit(master_2004: pathlib.Path) -> None:
+    """Checks that reading stops after the limit of records.
+
+    Args:
+        master_2004: the path of the 2004 master file.
+
+    """
     frames = _read(master_2004, limit = 8)
     assert len(frames['administrative']) == 1
     assert frames['victims'].empty
 
 
 def test_read_rejects_unknown_tables(master_2004: pathlib.Path) -> None:
+    """Checks that reading a table that does not exist fails.
+
+    Args:
+        master_2004: the path of the 2004 master file.
+
+    """
     with pytest.raises(KeyError):
         reader.read(master_2004, 'suspects')

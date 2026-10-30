@@ -4,6 +4,25 @@ All notable changes to this project will be documented in this file.
 
 <!-- insertion marker -->
 
+## 0.2.1
+
+* **Breaking:** `crimepy.nibrs.codes.STATES` is now the name of each numeric
+  state code (it was `STATE_NAMES`), and `codes.STATE_ABBREVIATIONS` is the
+  postal abbreviation (it was `STATES`).
+* Each codebook of `crimepy.nibrs.codes.CODEBOOKS` is also public by itself
+  (such as `codes.RACES` and `codes.WEAPONS`). The "clearances" codebook is
+  `codes.EXCEPTIONAL_CLEARANCES`, and the "divisions" codebook is
+  `codes.SUBREGIONS`. `codes.OFFENSES` has the name, category, whom or what
+  it is against, and group of each offense code.
+* `crimepy.nibrs.codes.OFFENSE_TYPES` lists the offense codes of each type:
+  whom or what they are against ("Person", "Property", "Society", and "Not
+  a Crime"), and "National Security Offenses", "Rape Offenses", "Sex
+  Offenses", and "Immigration Offenses".
+* The code follows the house style throughout: lines of at most 80
+  characters (the tables in docstrings are now lists), section markers that
+  group the members of each module and class, and a full docstring for every
+  function and method, tests and private ones included.
+
 ## 0.2.0
 
 * **Breaking:** crimepy keeps its data in amos's workspace (amos 0.6.0), not

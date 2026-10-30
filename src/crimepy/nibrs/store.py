@@ -43,6 +43,9 @@ from . import cde, munge, reader
 logger = logging.getLogger(__name__)
 
 
+""" Public Functions """
+
+
 def table_path(
     table: str,
     year: int,
@@ -216,8 +219,7 @@ def load_frame(
             if not fetch:
                 message = (
                     f'the {table} of {year} have not been converted: use '
-                    f'crimepy.nibrs.convert({year}) or fetch = True'
-                )
+                    f'crimepy.nibrs.convert({year}) or fetch = True')
                 raise FileNotFoundError(message)
             convert(year, folder, progress = progress)
         paths.append(path)
@@ -229,7 +231,8 @@ def load_frame(
         if unknown:
             message = f'{table!r} has no columns {unknown}'
             raise KeyError(message)
-    dataset = ds.dataset([str(p) for p in paths], schema = schema, format = 'parquet')
+    dataset = ds.dataset(
+        [str(p) for p in paths], schema = schema, format = 'parquet')
     kept = reader._state_codes(states)
     condition = (
         ds.field('state_code').isin([c.decode() for c in kept])
@@ -261,6 +264,9 @@ def load_tables(
         for name in reader._wanted(tables)}
 
 
+""" Private Functions """
+
+
 def _write(
     master: pathlib.Path,
     year: int,
@@ -287,6 +293,12 @@ def _write(
     writers: dict[str, pq.ParquetWriter] = {}
 
     def show(count: int) -> None:
+        """Shows how many records have been read.
+
+        Args:
+            count: the number of records read so far.
+
+        """
         print(
             f'\rnibrs-{year}: {count:,} records read', end = '',
             file = sys.stderr, flush = True)

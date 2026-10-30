@@ -7,17 +7,23 @@ publishes a master file of every year's reports from 1991 on, which `crimepy`
 downloads, parses, and makes into flat tables, each loaded as an
 `amos.Dataset` (whose `data` is a `pandas` data frame):
 
-| Table | One row for each |
-| --- | --- |
-| `agencies` | agency (its batch header): location, population, and months reported |
-| `administrative` | incident: date, hour, numbers of segments, and exceptional clearance |
-| `offenses` | offense of an incident: offense, location, weapons, and bias motivations |
-| `properties` | property loss of an incident: type of loss, description, value, and drugs |
-| `victims` | victim: offenses, age, sex, race, injuries, and relationships to offenders |
-| `offenders` | offender: age, sex, race, and ethnicity |
-| `arrestees` | arrestee of an incident: date and type of arrest, offense, and person |
-| `group_b_arrests` | arrestee of a Group "B" offense |
-| `window_clearances`, `window_properties`, `window_arrestees` | partial report of an incident that began before its agency reported to NIBRS |
+* `agencies`: one row for each agency (its batch header): location,
+  population, and months reported.
+* `administrative`: one row for each incident: date, hour, numbers of
+  segments, and exceptional clearance.
+* `offenses`: one row for each offense of an incident: offense, location,
+  weapons, and bias motivations.
+* `properties`: one row for each property loss of an incident: type of loss,
+  description, value, and drugs.
+* `victims`: one row for each victim: offenses, age, sex, race, injuries,
+  and relationships to offenders.
+* `offenders`: one row for each offender: age, sex, race, and ethnicity.
+* `arrestees`: one row for each arrestee of an incident: date and type of
+  arrest, offense, and person.
+* `group_b_arrests`: one row for each arrestee of a Group "B" offense.
+* `window_clearances`, `window_properties`, and `window_arrestees`: one row
+  for each partial report of an incident that began before its agency
+  reported to NIBRS.
 
 The tables of an incident share "data_year", "ori", and "incident_number",
 and `crimepy.nibrs.tables` joins them into tables for analysis (such as one

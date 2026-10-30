@@ -6,13 +6,17 @@ together. Each builder here returns one flat table with one row for each
 incident, victim, offense, offender, or arrestee, and the details of its
 incident and agency:
 
-| Builder | One row for each | Adds |
-| --- | --- | --- |
-| `incidents` | incident | its agency; the number of its offenses, victims, offenders, and arrestees; whether it had an offense against a person, property, or society, and an offense of each category; whether a firearm was used; whether and when someone was arrested; and whether it was cleared |
-| `victims` | victim | its incident and agency, and the age, sex, race, and ethnicity of the first offender that the victim is related to, with the relationship |
-| `offenses` | offense | its incident and agency |
-| `offenders` | offender | its incident and agency |
-| `arrestees` | arrestee | its incident and agency |
+* `incidents`: one row for each incident, with its agency; the number of its
+  offenses, victims, offenders, and arrestees; whether it had an offense
+  against a person, property, or society, and an offense of each category;
+  whether a firearm was used; whether and when someone was arrested; and
+  whether it was cleared.
+* `victims`: one row for each victim, with its incident and agency, and the
+  age, sex, race, and ethnicity of the first offender that the victim is
+  related to, with the relationship.
+* `offenses`: one row for each offense, with its incident and agency.
+* `offenders`: one row for each offender, with its incident and agency.
+* `arrestees`: one row for each arrestee, with its incident and agency.
 
 `build` loads what a builder needs and calls it. Each builder takes the
 segments as `amos` datasets or data frames and returns an `amos.Dataset`,
@@ -82,7 +86,11 @@ _INCIDENT_COLUMNS: tuple[str, ...] = (
     'exceptional_clearance_date', 'cargo_theft')
 
 
-def _dataset_builder(builder: Callable[..., pd.DataFrame]) -> Callable[..., amos.Dataset]:
+""" Decorators """
+
+
+def _dataset_builder(
+    builder: Callable[..., pd.DataFrame]) -> Callable[..., amos.Dataset]:
     """Makes a builder take datasets or data frames and return a dataset.
 
     The builder is written for data frames. The returned function accepts
@@ -105,6 +113,21 @@ def _dataset_builder(builder: Callable[..., pd.DataFrame]) -> Callable[..., amos
         task: str | None = None,
         groups: Sequence[str] | str | None = None,
         **kwargs: Any) -> amos.Dataset:
+        """Builds the table and returns it as a dataset.
+
+        Args:
+            segments: the tables of the incidents (as datasets or data
+                frames), by name. Tables that are `None` are left out.
+            *args: arguments for the builder.
+            label: the label of the dataset. Defaults to `None`.
+            task: "classify" or "regress". Defaults to `None`.
+            groups: the groups of the dataset. Defaults to `None`.
+            **kwargs: arguments for the builder.
+
+        Returns:
+            A dataset whose `data` is the built table.
+
+        """
         frames = {
             name: utilities.to_frame(table) for name, table in segments.items()
             if table is not None}
@@ -113,6 +136,9 @@ def _dataset_builder(builder: Callable[..., pd.DataFrame]) -> Callable[..., amos
             groups = utilities.to_names(groups) or None)
 
     return build_dataset
+
+
+""" Builders """
 
 
 @_dataset_builder
@@ -160,7 +186,8 @@ def incidents(
     offense_table = segments.get('offenses')
     if offense_table is not None:
         data = _join_offense_summary(data, offense_table, categories)
-    for name, column in (('victims', 'victim_count'), ('offenders', 'offender_count')):
+    counted = (('victims', 'victim_count'), ('offenders', 'offender_count'))
+    for name, column in counted:
         table = segments.get(name)
         if table is not None:
             if name == 'offenders':
@@ -305,6 +332,9 @@ _NEEDS: dict[str, tuple[str, ...]] = {
     'victims': ('victims', 'administrative', 'offenders', 'agencies')}
 
 
+""" Public Functions """
+
+
 def build(
     table: str,
     years: Any,
@@ -346,7 +376,9 @@ def build(
 
     """
     if table not in BUILDERS:
-        message = f'{table!r} is not a table to build: use one of {sorted(BUILDERS)}'
+        message = (
+            f'{table!r} is not a table to build: use one of '
+            f'{sorted(BUILDERS)}')
         raise KeyError(message)
     segments = {
         name: store.load_frame(
@@ -354,6 +386,9 @@ def build(
         for name in _NEEDS[table]}
     return BUILDERS[table](
         segments, label = label, task = task, groups = groups, **kwargs)
+
+
+""" Private Functions """
 
 
 def _join_agencies(
@@ -463,7 +498,16 @@ def _require(segments: Mapping[str, pd.DataFrame], name: str) -> pd.DataFrame:
 
 
 def _snake(text: str) -> str:
-    """Returns `text` in snake case, such as "assault_offenses"."""
+    """Returns `text` in snake case.
+
+    Args:
+        text: a name, such as "Assault Offenses".
+
+    Returns:
+        The name in lower case with underscores between its words, such as
+            "assault_offenses".
+
+    """
     words = re.sub(r'[^0-9a-zA-Z]+', '_', text).strip('_')
     return words.lower()
 

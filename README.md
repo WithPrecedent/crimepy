@@ -270,7 +270,7 @@ repository" button reads the same information from
 @software{yung_crimepy,
   author  = {Yung, Corey Rayburn},
   title   = {crimepy: Accessible tools for downloading, combining, munging, analyzing, and plotting crime data},
-  version = {0.2.0},
+  version = {0.2.1},
   year    = {2026},
   url     = {https://github.com/WithPrecedent/crimepy},
   license = {Apache-2.0}

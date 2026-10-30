@@ -47,6 +47,9 @@ _WEEKDAYS: tuple[str, ...] = (
     'Sunday')
 
 
+""" Plots """
+
+
 @dataclasses.dataclass
 class TrendPlot(amos.Plot):
     """Counts of events over time, as a line for each group.
@@ -63,6 +66,8 @@ class TrendPlot(amos.Plot):
       6.
 
     """
+
+    """ Required Methods """
 
     def draw(
         self,
@@ -120,6 +125,8 @@ class TopValues(amos.Plot):
 
     size: ClassVar[tuple[float, float]] = (6.4, 5.6)
 
+    """ Required Methods """
+
     def draw(
         self,
         item: amos.Dataset,
@@ -167,6 +174,8 @@ class TimeHeatmap(amos.Plot):
 
     size: ClassVar[tuple[float, float]] = (7.2, 3.6)
 
+    """ Required Methods """
+
     def draw(
         self,
         item: amos.Dataset,
@@ -211,6 +220,8 @@ class AgePyramid(amos.Plot):
 
     """
 
+    """ Required Methods """
+
     def draw(
         self,
         item: amos.Dataset,
@@ -245,6 +256,9 @@ class AgePyramid(amos.Plot):
         axes.set_xlabel('Count')
         axes.set_ylabel(f'Age of {person}')
         axes.legend(fontsize = 'small')
+
+
+""" Public Functions """
 
 
 def trend(data: amos.Dataset | pd.DataFrame, **kwargs: Any) -> Any:
@@ -311,6 +325,9 @@ def age_pyramid(
     return _draw(AgePyramid(), data, person = person, **kwargs)
 
 
+""" Private Functions """
+
+
 def _draw(
     plot: amos.Plot,
     data: amos.Dataset | pd.DataFrame,
@@ -332,5 +349,14 @@ def _draw(
 
 
 def _readable(column: str) -> str:
-    """Returns the name of a column as words ("offense_code" to "Offense code")."""
+    """Returns the name of a column as words.
+
+    Args:
+        column: the name of a column, such as "offense_code".
+
+    Returns:
+        The name with spaces for underscores and a capital first letter,
+            such as "Offense code".
+
+    """
     return column.replace('_', ' ').capitalize()

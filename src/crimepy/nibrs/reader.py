@@ -39,7 +39,7 @@ import re
 import struct
 import zipfile
 from collections.abc import Callable, Iterator, Sequence
-from typing import IO, Any
+from typing import IO, Any, TypeAlias
 
 import amos
 import numpy as np
@@ -60,7 +60,8 @@ _BLOCK: int = 1 << 22
 _YEAR: re.Pattern[str] = re.compile(r'(?<!\d)(19[89]\d|20\d\d)(?!\d)')
 # A two-digit year in the name of an older master file, such as
 # "NIBRS04.ENC" or "KCNIBR91.DAT".
-_SHORT_YEAR: re.Pattern[str] = re.compile(r'NIBRS?_?(?:YR)?(\d\d)(?!\d)', re.IGNORECASE)
+_SHORT_YEAR: re.Pattern[str] = re.compile(
+    r'NIBRS?_?(?:YR)?(\d\d)(?!\d)', re.IGNORECASE)
 # The `pyarrow` type of each kind of field.
 _TYPES: dict[str, pa.DataType] = {
     'bool': pa.bool_(),
@@ -74,6 +75,11 @@ _TYPES: dict[str, pa.DataType] = {
 _HEADERS: frozenset[bytes] = frozenset({b'BH', b'B1'})
 # The segment levels of the three batch header records of pre-2013 files.
 _SPLIT_HEADERS: tuple[str, ...] = ('B1', 'B2', 'B3')
+# A chunk of the tables of a master file, by name.
+_Chunk: TypeAlias = dict[str, pa.Table]
+
+
+""" Private Classes """
 
 
 class _Deflate64(io.RawIOBase):
@@ -85,7 +91,16 @@ class _Deflate64(io.RawIOBase):
 
     """
 
+    """ Initialization Methods """
+
     def __init__(self, path: pathlib.Path, info: zipfile.ZipInfo) -> None:
+        """Opens the archive at the start of the member's compressed data.
+
+        Args:
+            path: path of the zip archive.
+            info: the member's entry in the archive.
+
+        """
         import inflate64  # noqa: PLC0415
 
         super().__init__()
@@ -98,13 +113,15 @@ class _Deflate64(io.RawIOBase):
         self._inflater = inflate64.Inflater()
         self._buffer = b''
 
-    def close(self) -> None:
-        """Closes the archive."""
-        self._file.close()
-        super().close()
+    """ Required Methods """
 
     def readable(self) -> bool:
-        """Returns `True`, since the member can be read."""
+        """Returns whether the member can be read.
+
+        Returns:
+            `True`, since the member can be read.
+
+        """
         return True
 
     def readinto(self, buffer: Any) -> int:
@@ -127,6 +144,16 @@ class _Deflate64(io.RawIOBase):
         buffer[:size] = self._buffer[:size]
         self._buffer = self._buffer[size:]
         return size
+
+    """ Public Methods """
+
+    def close(self) -> None:
+        """Closes the archive."""
+        self._file.close()
+        super().close()
+
+
+""" Public Functions """
 
 
 @contextlib.contextmanager
@@ -266,7 +293,9 @@ def schema(table: str) -> pa.Schema:
 
     """
     if table not in layouts.SEGMENTS:
-        message = f'{table!r} is not a table: use one of {sorted(layouts.SEGMENTS)}'
+        message = (
+            f'{table!r} is not a table: use one of '
+            f'{sorted(layouts.SEGMENTS)}')
         raise KeyError(message)
     if table == 'agencies':
         fields = list(layouts.LAYOUTS['BH'])
@@ -285,7 +314,7 @@ def tables(
     states: Sequence[str] | str | None = None,
     chunk_size: int | None = None,
     limit: int | None = None,
-    progress: Callable[[int], None] | None = None) -> Iterator[dict[str, pa.Table]]:
+    progress: Callable[[int], None] | None = None) -> Iterator[_Chunk]:
     """Yields the tables of a master file, a chunk of records at a time.
 
     Args:
@@ -398,10 +427,15 @@ def read(
             parts[name].append(table)
     datasets = {}
     for name, pieces in parts.items():
-        table = pa.concat_tables(pieces) if pieces else schema(name).empty_table()
+        table = (
+            pa.concat_tables(pieces) if pieces
+            else schema(name).empty_table())
         frame = munge.prepare(munge.to_pandas(table), name, decode = decode)
         datasets[name] = amos.Dataset.create(frame)
     return datasets
+
+
+""" Private Functions """
 
 
 def _agencies(headers: dict[str, list[bytes]], year: int | None) -> pa.Table:
@@ -427,7 +461,8 @@ def _agencies(headers: dict[str, list[bytes]], year: int | None) -> pa.Table:
             other = other.rename_columns(
                 [c.removesuffix('_first') for c in other.column_names])
             table = table.join(other, 'ori', join_type = 'left outer')
-        table = table.sort_by([('state_code', 'ascending'), ('ori', 'ascending')])
+        table = table.sort_by(
+            [('state_code', 'ascending'), ('ori', 'ascending')])
     else:
         return target.empty_table()
     columns = [
@@ -521,7 +556,7 @@ def _state_codes(states: Sequence[str] | str | None) -> set[bytes]:
         The numeric codes (such as b"07"), or an empty set for every state.
 
     """
-    numbers = {v: k for k, v in codes.STATES.items()}
+    numbers = {v: k for k, v in codes.STATE_ABBREVIATIONS.items()}
     numbers.update({'NB': '26', 'GM': '55'})
     found = set()
     for state in utilities.to_names(states):
@@ -561,13 +596,33 @@ def _wanted(names: Sequence[str] | str | None) -> list[str]:
 
 
 def _to_bool(cell: bytes, field: layouts.Field) -> bool | None:  # noqa: ARG001
-    """Returns true for "Y", false for "N", and `None` otherwise."""
+    """Returns the value of a "bool" field.
+
+    Args:
+        cell: the characters of the field.
+        field: the field, which is not used.
+
+    Returns:
+        `True` for "Y", `False` for "N", and `None` otherwise.
+
+    """
     text = cell.strip()
     return True if text == b'Y' else False if text == b'N' else None
 
 
-def _to_date(cell: bytes, field: layouts.Field) -> dt.date | None:  # noqa: ARG001
-    """Returns the date written as YYYYMMDD, or `None` if it is not one."""
+def _to_date(
+    cell: bytes,
+    field: layouts.Field) -> dt.date | None:  # noqa: ARG001
+    """Returns the value of a "date" field.
+
+    Args:
+        cell: the characters of the field.
+        field: the field, which is not used.
+
+    Returns:
+        The date written as YYYYMMDD, or `None` if it is not one.
+
+    """
     text = cell.strip()
     if len(text) != 8 or not text.isdigit():
         return None
@@ -578,13 +633,34 @@ def _to_date(cell: bytes, field: layouts.Field) -> dt.date | None:  # noqa: ARG0
 
 
 def _to_int(cell: bytes, field: layouts.Field) -> int | None:  # noqa: ARG001
-    """Returns the whole number, or `None` if it is not one."""
+    """Returns the value of an "int" field.
+
+    Args:
+        cell: the characters of the field.
+        field: the field, which is not used.
+
+    Returns:
+        The whole number, or `None` if it is not one.
+
+    """
     text = cell.strip()
     return int(text) if text.isdigit() else None
 
 
-def _to_quantity(cell: bytes, field: layouts.Field) -> float | None:  # noqa: ARG001
-    """Returns an amount of 9 digits and 3 digits of thousandths."""
+def _to_quantity(
+    cell: bytes,
+    field: layouts.Field) -> float | None:  # noqa: ARG001
+    """Returns the value of a "quantity" field.
+
+    Args:
+        cell: the characters of the field.
+        field: the field, which is not used.
+
+    Returns:
+        The amount written as 9 digits and 3 digits of thousandths, or
+            `None` if it is blank or not a number.
+
+    """
     whole, fraction = cell[:9].strip(), cell[9:12].strip()
     if not whole and not fraction:
         return None
@@ -594,13 +670,31 @@ def _to_quantity(cell: bytes, field: layouts.Field) -> float | None:  # noqa: AR
 
 
 def _to_text(cell: bytes, field: layouts.Field) -> str | None:  # noqa: ARG001
-    """Returns the text without blanks around it, or `None` if it is blank."""
+    """Returns the value of a "text" or "code" field.
+
+    Args:
+        cell: the characters of the field.
+        field: the field, which is not used.
+
+    Returns:
+        The text without blanks around it, or `None` if it is blank.
+
+    """
     text = cell.decode('latin-1').strip()
     return text or None
 
 
 def _to_yes(cell: bytes, field: layouts.Field) -> bool:
-    """Returns whether the field is the character that means true."""
+    """Returns the value of a "yes" field.
+
+    Args:
+        cell: the characters of the field.
+        field: the field, whose `true` is the character that means true.
+
+    Returns:
+        Whether the field is the character that means true.
+
+    """
     return cell.strip() == field.true.encode()
 
 

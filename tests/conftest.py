@@ -8,6 +8,16 @@ agencies have populations and monthly activity and an incident has a known
 offender and an arrest. The 2004 file is a zip archive compressed with
 Deflate, and the 2025 file is compressed with Deflate64, as the CDE
 compressed some years.
+
+Contents:
+    RECORDS_2004: the records of the 2004 master file.
+    RECORDS_2025: the records of the 2025 master file.
+    data_folder: a data folder with the master files of 2004 and 2025.
+    master_2004: the path of the 2004 master file.
+    master_2025: the path of the 2025 master file.
+    workspace: keeps each test's data and results in a temporary folder.
+    write_deflate64_zip: writes a zip archive compressed with Deflate64.
+
 """
 
 from __future__ import annotations
@@ -22,21 +32,7 @@ import pytest
 
 from crimepy import options
 
-
-@pytest.fixture(autouse = True)
-def workspace(
-    tmp_path: pathlib.Path,
-    monkeypatch: pytest.MonkeyPatch) -> pathlib.Path:
-    """Keeps each test's data and results in its own temporary folder.
-
-    crimepy's data folder (and an amos project's results) would otherwise be
-    in amos's workspace, the folder that holds the "code" folder of this
-    repository.
-
-    """
-    monkeypatch.setenv('AMOS_WORKSPACE', str(tmp_path))
-    monkeypatch.setattr(options, 'DATA_FOLDER', None)
-    return tmp_path
+""" Records """
 
 
 def _record(start: str, fields: dict[int, str]) -> str:
@@ -60,8 +56,12 @@ def _record(start: str, fields: dict[int, str]) -> str:
 
 
 RECORDS_2004: list[str] = [
-    'B101ALAST0000            20050822        ALABAMA HIGHWAY PATROL        AL8D634N         3490005M',
-    'B201ALAST0000            000000000      000000000000000000      000000000000000000      000000000000000000      000000000',
+    (
+        'B101ALAST0000            20050822        ALABAMA HIGHWAY '
+        'PATROL        AL8D634N         3490005M'),
+    (
+        'B201ALAST0000            000000000      000000000000000000      '
+        '000000000000000000      000000000000000000      000000000'),
     'B301ALAST0000            000000000      000000000  002004',
     _record('B102AZ0111300', {
         26: '20060302', 34: '19960101', 42: 'TEMPE', 72: 'AZ', 74: '2',
@@ -88,8 +88,13 @@ RECORDS_2004: list[str] = [
         58: '13B', 61: '01', 67: '31', 69: 'F', 70: 'W', 71: 'N', 72: 'R'}),
     '0702AZ01113001T1M1VF3TX I2004072601    S90D01    18MWNN',
     'W102AZ0111300 T0IRESC12 N20020902 16000000000    B2004120811A',
-    'W302AZ0111300 60DROSL62 N        51300000013520040923                                                 220',
-    'W602AZ0111300 604AVSC-2 N        01 604AVSC-2 N20041228ON13B01    32MANR N13B']
+    (
+        'W302AZ0111300 60DROSL62 N        '
+        '51300000013520040923                                                 '
+        '220'),
+    (
+        'W602AZ0111300 604AVSC-2 N        01 604AVSC-2 N20041228ON13B01    '
+        '32MANR N13B')]
 
 RECORDS_2025: list[str] = [
     _record('BH50AK0010200000000000000', {
@@ -97,21 +102,32 @@ RECORDS_2025: list[str] = [
         78: '1', 79: 'Y', 89: '3030', 93: '020A', 97: 'A', 106: '000031961',
         115: '00', 118: '258', 121: '000000000', 226: '12', 228: '12',
         230: '2025', 234: ' Y ' * 12, 270: '090'}),
-    '0150AK0010200C30BRCZ9728N20250301 16010010100    N                                      N',
+    (
+        '0150AK0010200C30BRCZ9728N20250301 16010010100    '
+        'N                                      N'),
     '0250AK0010200C30BRCZ9728N2025030113CCN  08   N           88',
-    '0450AK0010200C30BRCZ9728N2025030100113C                           I25FWNR          01OK',
+    (
+        '0450AK0010200C30BRCZ9728N2025030100113C                           '
+        'I25FWNR          01OK'),
     '0550AK0010200C30BRCZ9728N202503010125FIN',
     '0750AK00102000L1G0BRVSCTD2025020301    O90C01    30MINN']
 
 
-def _pad(records: list[str], width: int | None) -> bytes:
-    """Returns records as the text of a master file."""
-    lines = [r.ljust(width) if width else r for r in records]
-    return ('\r\n'.join(lines) + '\r\n').encode('latin-1')
+""" Public Functions """
 
 
 def write_deflate64_zip(path: pathlib.Path, name: str, data: bytes) -> None:
-    """Writes a zip archive with one member compressed with Deflate64."""
+    """Writes a zip archive with one member compressed with Deflate64.
+
+    `zipfile` cannot write Deflate64, so the archive's headers are written
+    here.
+
+    Args:
+        path: where to write the archive.
+        name: the name of the member.
+        data: the member's contents.
+
+    """
     deflater = inflate64.Deflater()
     compressed = deflater.deflate(data) + deflater.flush()
     crc = zlib.crc32(data)
@@ -128,12 +144,47 @@ def write_deflate64_zip(path: pathlib.Path, name: str, data: bytes) -> None:
     path.write_bytes(local + compressed + central + end)
 
 
+""" Fixtures """
+
+
+@pytest.fixture(autouse = True)
+def workspace(
+    tmp_path: pathlib.Path,
+    monkeypatch: pytest.MonkeyPatch) -> pathlib.Path:
+    """Keeps each test's data and results in its own temporary folder.
+
+    crimepy's data folder (and an amos project's results) would otherwise be
+    in amos's workspace, the folder that holds the "code" folder of this
+    repository.
+
+    Args:
+        tmp_path: the test's temporary folder.
+        monkeypatch: sets the workspace and options for the test.
+
+    Returns:
+        The temporary folder, which is amos's workspace in the test.
+
+    """
+    monkeypatch.setenv('AMOS_WORKSPACE', str(tmp_path))
+    monkeypatch.setattr(options, 'DATA_FOLDER', None)
+    return tmp_path
+
+
 @pytest.fixture
 def data_folder(tmp_path: pathlib.Path) -> pathlib.Path:
-    """Returns a data folder with the master files of 2004 and 2025."""
+    """Returns a data folder with the master files of 2004 and 2025.
+
+    Args:
+        tmp_path: the test's temporary folder, which becomes the data folder.
+
+    Returns:
+        The data folder.
+
+    """
     raw = tmp_path / 'nibrs' / 'raw'
     raw.mkdir(parents = True)
-    with zipfile.ZipFile(raw / 'nibrs-2004.zip', 'w', zipfile.ZIP_DEFLATED) as archive:
+    with zipfile.ZipFile(
+            raw / 'nibrs-2004.zip', 'w', zipfile.ZIP_DEFLATED) as archive:
         archive.writestr('NIBRS04.ENC', _pad(RECORDS_2004, 132))
     write_deflate64_zip(
         raw / 'nibrs-2025.zip', 'nibrs-2025.txt', _pad(RECORDS_2025, None))
@@ -142,11 +193,47 @@ def data_folder(tmp_path: pathlib.Path) -> pathlib.Path:
 
 @pytest.fixture
 def master_2004(data_folder: pathlib.Path) -> pathlib.Path:
-    """Returns the path of the 2004 master file."""
+    """Returns the path of the 2004 master file.
+
+    Args:
+        data_folder: the data folder with the master files.
+
+    Returns:
+        The path of the zip archive.
+
+    """
     return data_folder / 'nibrs' / 'raw' / 'nibrs-2004.zip'
 
 
 @pytest.fixture
 def master_2025(data_folder: pathlib.Path) -> pathlib.Path:
-    """Returns the path of the 2025 master file (compressed with Deflate64)."""
+    """Returns the path of the 2025 master file.
+
+    Args:
+        data_folder: the data folder with the master files.
+
+    Returns:
+        The path of the zip archive, which is compressed with Deflate64.
+
+    """
     return data_folder / 'nibrs' / 'raw' / 'nibrs-2025.zip'
+
+
+""" Private Functions """
+
+
+def _pad(records: list[str], width: int | None) -> bytes:
+    """Returns records as the text of a master file.
+
+    Args:
+        records: the records.
+        width: the number of characters that every record is padded to (as
+            in fixed-length files), or `None` to leave them as they are.
+
+    Returns:
+        The records, each followed by a carriage return and a new line, as
+            Latin-1 bytes.
+
+    """
+    lines = [r.ljust(width) if width else r for r in records]
+    return ('\r\n'.join(lines) + '\r\n').encode('latin-1')

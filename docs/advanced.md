@@ -172,6 +172,14 @@ offense (`offense_category`, such as "Assault Offenses"), whom or what it is
 against (`crime_against`: "Person", "Property", "Society", or "Not a
 Crime"), and its group (`offense_group`: "A" or "B"), from the CDE's table of
 offenses (with the prefix "arrest_" for arrests).
+`crimepy.nibrs.codes.OFFENSE_TYPES` lists the offense codes that are against
+each of them, and those of a few types that cut across the categories
+("National Security Offenses", "Rape Offenses", "Sex Offenses", and
+"Immigration Offenses"), such as for picking the crimes against property:
+
+```python
+property_crimes = crimepy.nibrs.codes.OFFENSE_TYPES['Property']
+```
 
 ## Where the data are saved
 

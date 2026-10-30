@@ -55,6 +55,9 @@ _BROKEN: tuple[type[Exception], ...] = (
     requests.Timeout)
 
 
+""" Public Functions """
+
+
 def available_years(*, timeout: float | None = None) -> list[int]:
     """Returns the years of NIBRS master files that the CDE has.
 
@@ -131,8 +134,7 @@ def download(
     if missing:
         message = (
             f'the CDE has NIBRS master files for {first} to {last}, so there '
-            f'are none for {missing}'
-        )
+            f'are none for {missing}')
         raise ValueError(message)
     paths = []
     for year in wanted:
@@ -172,6 +174,9 @@ def download_documentation(
     if overwrite or not path.is_file():
         _fetch(_HELP_KEY, path, False, timeout or options.TIMEOUT)
     return path
+
+
+""" Private Functions """
 
 
 def _fetch(
@@ -327,6 +332,7 @@ def _year_range(timeout: float) -> tuple[int, int]:
 
     Raises:
         requests.HTTPError: if the CDE refuses the request.
+        ValueError: if the CDE does not list a NIBRS master file.
 
     Returns:
         The first and last years.

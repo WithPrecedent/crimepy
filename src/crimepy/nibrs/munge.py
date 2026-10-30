@@ -3,12 +3,17 @@
 `prepare` is applied to every table that `crimepy.nibrs.read` and
 `crimepy.nibrs.load` return. It keeps every column and adds:
 
-| Table | Added columns |
-| --- | --- |
-| Every table | `state`: the postal abbreviation of the state. |
-| Victims, offenders, and arrestees | `victim_age`, `offender_age`, and `arrestee_age`: the age in years (0 for a baby under a year old, 99 for 99 or older, and missing if unknown). The age codes are kept as `victim_age_code`, and so on. |
-| Offenses, arrestees, and Group "B" arrests | `offense_category`, `crime_against`, and `offense_group` of the offense (with the prefix "arrest_" for arrests). |
-| Agencies | `population`: the population of all of the agency's counties. `months_active`: the number of months in which the agency submitted a report (of incidents or of no incidents). |
+* Every table: `state`, the postal abbreviation of the state.
+* Victims, offenders, and arrestees: `victim_age`, `offender_age`, and
+  `arrestee_age`, the age in years (0 for a baby under a year old, 99 for 99
+  or older, and missing if unknown). The age codes are kept as
+  `victim_age_code`, and so on.
+* Offenses, arrestees, and Group "B" arrests: `offense_category`,
+  `crime_against`, and `offense_group` of the offense (with the prefix
+  "arrest_" for arrests).
+* Agencies: `population`, the population of all of the agency's counties,
+  and `months_active`, the number of months in which the agency submitted a
+  report (of incidents or of no incidents).
 
 With `decode = True` (the default), codes are replaced with their labels
 (such as "Residence/Home" for location "20"), as categories. Codes that are
@@ -61,6 +66,9 @@ _PANDAS_TYPES: dict[pa.DataType, Any] = {
     pa.bool_(): pd.BooleanDtype()}
 
 
+""" Public Functions """
+
+
 def to_pandas(table: pa.Table) -> pd.DataFrame:
     """Returns a `pyarrow` table of NIBRS data as a `pandas` data frame.
 
@@ -78,7 +86,8 @@ def to_pandas(table: pa.Table) -> pd.DataFrame:
     columns = []
     for name in table.column_names:
         column = table.column(name)
-        if (name in CODE_COLUMNS or name in _CATEGORY_TEXT) and pa.types.is_string(column.type):
+        if ((name in CODE_COLUMNS or name in _CATEGORY_TEXT)
+                and pa.types.is_string(column.type)):
             column = column.dictionary_encode()
         columns.append(column)
     encoded = pa.table(columns, names = table.column_names)
@@ -105,7 +114,7 @@ def prepare(
 
     """
     if 'state_code' in data.columns and 'state' not in data.columns:
-        state = _lookup(data['state_code'], codes.STATES.get)
+        state = _lookup(data['state_code'], codes.STATE_ABBREVIATIONS.get)
         data.insert(
             _after(data, 'state_code'), 'state',
             state.astype('category'))
@@ -158,7 +167,8 @@ def add_offense_details(data: pd.DataFrame) -> pd.DataFrame:
 
     """
     for column, prefix in (('offense_code', ''), ('arrest_offense', 'arrest_')):
-        if column not in data.columns or f'{prefix}offense_category' in data.columns:
+        if (column not in data.columns
+                or f'{prefix}offense_category' in data.columns):
             continue
         offense = data[column]
         position = _after(data, column)
@@ -207,6 +217,9 @@ def decode(
     return data
 
 
+""" Private Functions """
+
+
 # `prepare` has a `decode` argument, so it calls `decode` by this name.
 _decode = decode
 
@@ -222,7 +235,8 @@ def _add_agency_totals(data: pd.DataFrame) -> pd.DataFrame:
 
     """
     counties = [f'population_{n}' for n in range(1, 6)]
-    if all(c in data.columns for c in counties) and 'population' not in data.columns:
+    if (all(c in data.columns for c in counties)
+            and 'population' not in data.columns):
         position = _after(data, 'population_1') - 1
         data.insert(
             position, 'population',
@@ -239,7 +253,16 @@ def _add_agency_totals(data: pd.DataFrame) -> pd.DataFrame:
 
 
 def _after(data: pd.DataFrame, column: str) -> int:
-    """Returns the position just after `column` in `data`."""
+    """Returns the position just after `column` in `data`.
+
+    Args:
+        data: a table.
+        column: a column of `data`.
+
+    Returns:
+        The position at which a column inserted after `column` goes.
+
+    """
     return list(data.columns).index(column) + 1
 
 
@@ -294,11 +317,13 @@ def _relabel(values: pd.Series, book: Mapping[str, str]) -> pd.Series:
             codes that are not in it.
 
     """
-    values = values if isinstance(values.dtype, pd.CategoricalDtype) else values.astype('category')
+    if not isinstance(values.dtype, pd.CategoricalDtype):
+        values = values.astype('category')
     present = [str(c) for c in values.cat.categories]
     labels = [book.get(c, c) for c in present]
     if len(set(labels)) != len(labels):
-        return values.astype('object').map(lambda c: book.get(c, c)).astype('category')
+        mapped = values.astype('object').map(lambda c: book.get(c, c))
+        return mapped.astype('category')
     relabeled = values.cat.rename_categories(labels)
     ordered = [v for v in book.values() if v in set(labels)]
     ordered += [v for v in labels if v not in set(ordered)]

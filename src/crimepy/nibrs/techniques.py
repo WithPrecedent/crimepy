@@ -43,6 +43,8 @@ import pandas as pd
 from .. import utilities
 from . import munge, store, tables
 
+""" Techniques """
+
 
 @dataclasses.dataclass
 class LoadNibrs(amos.Loader):
@@ -50,15 +52,22 @@ class LoadNibrs(amos.Loader):
 
     Parameters (set in the "load_nibrs_parameters" section of the settings):
 
-    | Parameter | Meaning |
-    | --- | --- |
-    | `years` | The years to load, such as "2022", "2019, 2021", or "2015-2023". Required. |
-    | `table` | A table to build (see `crimepy.nibrs.tables`: "incidents", "victims", "offenses", "offenders", or "arrestees") or a table of the master files (such as "agencies" or "group_b_arrests"). Defaults to "incidents". |
-    | `states` | Postal abbreviations of the states to keep, such as "DE, MD". Defaults to every state. |
-    | `columns` | The columns to keep. Defaults to all of them. |
-    | `decode` | Whether to replace codes with their labels. Defaults to true. |
-    | `folder` | The data folder. Defaults to `crimepy.utilities.data_folder()` (the "crime" folder of the data folder of amos's workspace), which is shared by every project. |
-    | `label`, `task`, `groups` | As in `amos`: they default to those in the "general" section. |
+    * `years`: the years to load, such as "2022", "2019, 2021", or
+      "2015-2023". Required.
+    * `table`: a table to build (see `crimepy.nibrs.tables`: "incidents",
+      "victims", "offenses", "offenders", or "arrestees") or a table of the
+      master files (such as "agencies" or "group_b_arrests"). Defaults to
+      "incidents".
+    * `states`: postal abbreviations of the states to keep, such as "DE,
+      MD". Defaults to every state.
+    * `columns`: the columns to keep. Defaults to all of them.
+    * `decode`: whether to replace codes with their labels. Defaults to
+      true.
+    * `folder`: the data folder. Defaults to
+      `crimepy.utilities.data_folder()` (the "crime" folder of the data
+      folder of amos's workspace), which is shared by every project.
+    * `label`, `task`, and `groups`: as in `amos`, they default to those in
+      the "general" section.
 
     A label or group that is not a column of the loaded table is left for a
     later technique to make (such as the "count" column of `count_crimes`),
@@ -66,35 +75,7 @@ class LoadNibrs(amos.Loader):
 
     """
 
-    """ Public Methods """
-
-    def apply(self, item: amos.Dataset, **kwargs: Any) -> amos.Dataset:
-        """Loads the table, as a dataset that continues `item`.
-
-        Args:
-            item: the dataset so far, whose seed and history are kept.
-            **kwargs: the parameters (see the class's documentation).
-
-        Returns:
-            The dataset of the table.
-
-        """
-        kwargs.pop('source', None)
-        label = kwargs.pop('label', None) or item.label
-        task = kwargs.pop('task', None)
-        groups = utilities.to_names(kwargs.pop('groups', None) or item.groups)
-        data = self.load('nibrs', **kwargs)
-        if label not in data.columns:
-            label, task = None, None
-        groups = [g for g in groups if g in data.columns]
-        loaded = amos.Dataset.create(
-            data, label = label, task = task, seed = item.seed,
-            groups = groups or None, use_gpu = item.use_gpu)
-        loaded.history = item.history
-        loaded.record(
-            self.name, source = 'nibrs', rows = len(data),
-            columns = len(data.columns))
-        return loaded
+    """ Required Methods """
 
     def load(
         self,
@@ -132,8 +113,7 @@ class LoadNibrs(amos.Loader):
         if not utilities.to_years(years):
             message = (
                 f'set the "years" of {self.name!r} in the '
-                f'"{self.name}_parameters" section of the settings'
-            )
+                f'"{self.name}_parameters" section of the settings')
             raise ValueError(message)
         wanted = utilities.to_names(columns) or None
         decode = utilities.to_bool(decode)
@@ -145,6 +125,36 @@ class LoadNibrs(amos.Loader):
         return store.load_frame(
             table, years, states = states, columns = wanted, decode = decode,
             folder = folder)
+
+    """ Public Methods """
+
+    def apply(self, item: amos.Dataset, **kwargs: Any) -> amos.Dataset:
+        """Loads the table, as a dataset that continues `item`.
+
+        Args:
+            item: the dataset so far, whose seed and history are kept.
+            **kwargs: the parameters (see the class's documentation).
+
+        Returns:
+            The dataset of the table.
+
+        """
+        kwargs.pop('source', None)
+        label = kwargs.pop('label', None) or item.label
+        task = kwargs.pop('task', None)
+        groups = utilities.to_names(kwargs.pop('groups', None) or item.groups)
+        data = self.load('nibrs', **kwargs)
+        if label not in data.columns:
+            label, task = None, None
+        groups = [g for g in groups if g in data.columns]
+        loaded = amos.Dataset.create(
+            data, label = label, task = task, seed = item.seed,
+            groups = groups or None, use_gpu = item.use_gpu)
+        loaded.history = item.history
+        loaded.record(
+            self.name, source = 'nibrs', rows = len(data),
+            columns = len(data.columns))
+        return loaded
 
 
 @dataclasses.dataclass
@@ -158,6 +168,8 @@ class DecodeNibrs(amos.Munger):
       (see `crimepy.nibrs.munge.CODE_COLUMNS`).
 
     """
+
+    """ Required Methods """
 
     def munge(
         self,

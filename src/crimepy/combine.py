@@ -26,6 +26,8 @@ from pandas.api.types import union_categoricals
 
 from . import utilities
 
+""" Public Functions """
+
 
 def stack(
     tables: Iterable[amos.Dataset | pd.DataFrame],
@@ -64,7 +66,8 @@ def stack(
     if source is not None:
         names = list(labels) if labels is not None else list(range(len(frames)))
         frames = [
-            f.assign(**{source: name}) for f, name in zip(frames, names, strict = True)]
+            f.assign(**{source: name})
+            for f, name in zip(frames, names, strict = True)]
     columns = list(dict.fromkeys(c for f in frames for c in f.columns))
     categorical = [
         c for c in columns
@@ -114,7 +117,8 @@ def merge(
     keys = [on] if isinstance(on, str) else list(on)
     restore = {}
     items = [left, right]
-    left, right = utilities.to_frame(left).copy(), utilities.to_frame(right).copy()
+    left = utilities.to_frame(left).copy()
+    right = utilities.to_frame(right).copy()
     for key in keys:
         kinds = (left[key].dtype, right[key].dtype)
         if any(isinstance(k, pd.CategoricalDtype) for k in kinds):
@@ -122,11 +126,15 @@ def merge(
             left[key] = left[key].astype('object')
             right[key] = right[key].astype('object')
     joined = left.merge(
-        right, on = keys, how = how, suffixes = suffixes,  # type: ignore[arg-type]
+        right, on = keys,
+        how = how, suffixes = suffixes,  # type: ignore[arg-type]
         validate = validate)  # type: ignore[arg-type]
     for key in restore:
         joined[key] = joined[key].astype('category')
     return _dataset(joined, items)
+
+
+""" Private Functions """
 
 
 def _dataset(

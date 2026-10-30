@@ -8,13 +8,17 @@ documentation that the Crime Data Explorer gives with the files, and of the
 fields that the FBI added later and that are in the files but not in that
 document:
 
-| Segment | Positions | Field | In the files |
-| --- | --- | --- | --- |
-| Administrative (01) | 89 | Cargo theft (Y or N) | 2013 and later |
-| Offense (02) | 60-67 | Bias motivations #2 to #5 | 2013 to 2016 |
-| Victim (04) | 124-135 | Officer's activity and assignment, and the ORI of another jurisdiction (handwritten in the document) | Every year |
-| Offender (05) | 40 | Ethnicity of the offender | 2013 and later |
-| Batch header (BH) | 285-292 | A date that is the same for every agency in a state | 2013 to 2016 |
+* Administrative segment (01), position 89: cargo theft (Y or N), in 2013
+  and later.
+* Offense segment (02), positions 60-67: bias motivations #2 to #5, in 2013
+  to 2016.
+* Victim segment (04), positions 124-135: the officer's activity and
+  assignment, and the ORI of another jurisdiction (handwritten in the
+  document), in every year.
+* Offender segment (05), position 40: the ethnicity of the offender, in 2013
+  and later.
+* Batch header (BH), positions 285-292: a date that is the same for every
+  agency in a state, in 2013 to 2016.
 
 Files before 2013 split each agency's batch header into three records ("B1",
 "B2", and "B3"), and files from 2013 on have one ("BH"). Their fields have the
@@ -28,6 +32,7 @@ are padded with blanks, so fields past their end are missing.
 Contents:
     Field: a field of a record: its name, position, and kind.
     Layout: the fields of one kind of record.
+    KINDS: the kinds of fields.
     LAYOUTS: the layout of each segment level, by its two-character code.
     TABLES: the name of the table made from each segment level.
     SEGMENTS: the segment levels of each table.
@@ -51,6 +56,9 @@ from collections.abc import Iterator
 #       thousandths.
 KINDS: frozenset[str] = frozenset({
     'bool', 'code', 'date', 'int', 'quantity', 'text', 'yes'})
+
+
+""" Classes """
 
 
 @dataclasses.dataclass(frozen = True)
@@ -77,6 +85,8 @@ class Field:
     codes: str | None = None
     true: str = 'Y'
 
+    """ Initialization Methods """
+
     def __post_init__(self) -> None:
         """Checks the field.
 
@@ -86,15 +96,24 @@ class Field:
 
         """
         if self.kind not in KINDS:
-            message = f'{self.kind!r} is not a kind of field: use one of {sorted(KINDS)}'
+            message = (
+                f'{self.kind!r} is not a kind of field: use one of '
+                f'{sorted(KINDS)}')
             raise ValueError(message)
         if self.end <= self.start:
             message = f'the field {self.name!r} has no width'
             raise ValueError(message)
 
+    """ Properties """
+
     @property
     def width(self) -> int:
-        """Returns the number of characters in the field."""
+        """Returns the number of characters in the field.
+
+        Returns:
+            The number of characters from `start` to `end`.
+
+        """
         return self.end - self.start
 
 
@@ -113,19 +132,41 @@ class Layout:
     name: str
     fields: tuple[Field, ...]
 
-    def __iter__(self) -> Iterator[Field]:
-        """Returns an iterator of the fields."""
-        return iter(self.fields)
+    """ Properties """
 
     @property
     def names(self) -> list[str]:
-        """Returns the names of the fields."""
+        """Returns the names of the fields.
+
+        Returns:
+            The names, in the order of the fields.
+
+        """
         return [f.name for f in self.fields]
 
     @property
     def width(self) -> int:
-        """Returns the number of characters up to the end of the last field."""
+        """Returns the number of characters up to the end of the last field.
+
+        Returns:
+            The position after the last character of the last field.
+
+        """
         return max(f.end for f in self.fields)
+
+    """ Dunder Methods """
+
+    def __iter__(self) -> Iterator[Field]:
+        """Returns an iterator of the fields.
+
+        Returns:
+            An iterator of the fields, in order.
+
+        """
+        return iter(self.fields)
+
+
+""" Private Functions """
 
 
 def _field(
@@ -180,6 +221,122 @@ def _repeated(
             f'{name}_{n + 1}', first + n * width, first + (n + 1) * width - 1,
             kind, codes)
         for n in range(times)]
+
+
+def _arrestee(first: int) -> list[Field]:
+    """Returns the fields that describe an arrestee and the arrest.
+
+    The fields are the same in the arrestee segment and in the Group "B"
+    Arrest Report, but start at different positions.
+
+    Args:
+        first: position of the type of arrest, counted from 1.
+
+    Returns:
+        The fields from the type of arrest to the disposition of an arrestee
+            under 18.
+
+    """
+    offense = first + 1 if first == 40 else first + 2
+    fields = [_field('arrest_type', first, first, 'code', 'arrest_types')]
+    if first != 40:
+        fields.append(_field(
+            'multiple_arrestee', first + 1, first + 1, 'code',
+            'multiple_arrestees'))
+    weapon = offense + 3
+    fields.extend([
+        _field('arrest_offense', offense, offense + 2, 'code', 'offenses'),
+        _field('arrestee_weapon_1', weapon, weapon + 1, 'code', 'weapons'),
+        _field(
+            'arrestee_weapon_1_automatic', weapon + 2, weapon + 2, 'yes',
+            true = 'A'),
+        _field(
+            'arrestee_weapon_2', weapon + 3, weapon + 4, 'code', 'weapons'),
+        _field(
+            'arrestee_weapon_2_automatic', weapon + 5, weapon + 5, 'yes',
+            true = 'A'),
+        _field('arrestee_age_code', weapon + 6, weapon + 7, 'code', 'ages'),
+        _field('arrestee_sex', weapon + 8, weapon + 8, 'code', 'sexes'),
+        _field('arrestee_race', weapon + 9, weapon + 9, 'code', 'races'),
+        _field(
+            'arrestee_ethnicity', weapon + 10, weapon + 10, 'code',
+            'ethnicities'),
+        _field(
+            'arrestee_resident', weapon + 11, weapon + 11, 'code',
+            'residents'),
+        _field(
+            'juvenile_disposition', weapon + 12, weapon + 12, 'code',
+            'dispositions')])
+    return fields
+
+
+def _county(number: int, first: int) -> list[Field]:
+    """Returns the fields of one of an agency's (up to five) counties.
+
+    Args:
+        number: which county (1 to 5).
+        first: position of the county's current population, counted from 1.
+
+    Returns:
+        The county's current population, UCR county code, MSA code, and
+            population in the previous census.
+
+    """
+    return [
+        _field(f'population_{number}', first, first + 8, 'int'),
+        _field(f'ucr_county_{number}', first + 9, first + 11, 'text'),
+        _field(f'msa_{number}', first + 12, first + 14, 'text'),
+        _field(f'last_population_{number}', first + 15, first + 23, 'int')]
+
+
+def _activity(first: int) -> list[Field]:
+    """Returns the 36 flags of an agency's submissions in each month.
+
+    Args:
+        first: position of January's first flag, counted from 1.
+
+    Returns:
+        For each month (named "jan" to "dec"), whether a zero report, a Group
+            "A" or "B" report, and a window record was submitted.
+
+    """
+    months = (
+        'jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep', 'oct',
+        'nov', 'dec')
+    fields = []
+    for n, month in enumerate(months):
+        position = first + 3 * n
+        fields.extend([
+            _field(f'zero_report_{month}', position, position, 'yes'),
+            _field(
+                f'incident_report_{month}', position + 1, position + 1,
+                'yes'),
+            _field(
+                f'window_report_{month}', position + 2, position + 2,
+                'yes')])
+    return fields
+
+
+def _tail(first: int) -> list[Field]:
+    """Returns the fields of an agency's batch header after its counties.
+
+    Args:
+        first: position of the "01-06-12 indicator", counted from 1.
+
+    Returns:
+        The reporting indicator, number of months reported, master file year,
+            monthly activity flags, and FIPS county codes.
+
+    """
+    return [
+        _field('reporting_indicator', first, first + 1, 'text'),
+        _field('months_reported', first + 2, first + 3, 'int'),
+        _field('master_file_year', first + 4, first + 7, 'int'),
+        *_activity(first + 8),
+        *_repeated('fips_county', first + 44, 3, 5, 'text')]
+
+
+""" Layouts """
 
 
 # Fields at the start of every record of a Group "A" Incident Report. The
@@ -270,53 +427,6 @@ _OFFENDER: list[Field] = [
     _field('offender_ethnicity', 40, 40, 'code', 'ethnicities')]
 
 
-def _arrestee(first: int) -> list[Field]:
-    """Returns the fields that describe an arrestee and the arrest.
-
-    The fields are the same in the arrestee segment and in the Group "B"
-    Arrest Report, but start at different positions.
-
-    Args:
-        first: position of the type of arrest, counted from 1.
-
-    Returns:
-        The fields from the type of arrest to the disposition of an arrestee
-            under 18.
-
-    """
-    offense = first + 1 if first == 40 else first + 2
-    fields = [_field('arrest_type', first, first, 'code', 'arrest_types')]
-    if first != 40:
-        fields.append(_field(
-            'multiple_arrestee', first + 1, first + 1, 'code',
-            'multiple_arrestees'))
-    weapon = offense + 3
-    fields.extend([
-        _field('arrest_offense', offense, offense + 2, 'code', 'offenses'),
-        _field('arrestee_weapon_1', weapon, weapon + 1, 'code', 'weapons'),
-        _field(
-            'arrestee_weapon_1_automatic', weapon + 2, weapon + 2, 'yes',
-            true = 'A'),
-        _field(
-            'arrestee_weapon_2', weapon + 3, weapon + 4, 'code', 'weapons'),
-        _field(
-            'arrestee_weapon_2_automatic', weapon + 5, weapon + 5, 'yes',
-            true = 'A'),
-        _field('arrestee_age_code', weapon + 6, weapon + 7, 'code', 'ages'),
-        _field('arrestee_sex', weapon + 8, weapon + 8, 'code', 'sexes'),
-        _field('arrestee_race', weapon + 9, weapon + 9, 'code', 'races'),
-        _field(
-            'arrestee_ethnicity', weapon + 10, weapon + 10, 'code',
-            'ethnicities'),
-        _field(
-            'arrestee_resident', weapon + 11, weapon + 11, 'code',
-            'residents'),
-        _field(
-            'juvenile_disposition', weapon + 12, weapon + 12, 'code',
-            'dispositions')])
-    return fields
-
-
 _ARRESTEE: list[Field] = [
     _field('arrestee_sequence', 34, 35, 'int'),
     _field('arrest_transaction_number', 36, 47, 'text'),
@@ -350,68 +460,6 @@ _AGENCY: list[Field] = [
     _field('judicial_district', 93, 96, 'text'),
     _field('nibrs_active', 97, 97, 'yes', true = 'A'),
     _field('inactive_date', 98, 105, 'date')]
-
-
-def _county(number: int, first: int) -> list[Field]:
-    """Returns the fields of one of an agency's (up to five) counties.
-
-    Args:
-        number: which county (1 to 5).
-        first: position of the county's current population, counted from 1.
-
-    Returns:
-        The county's current population, UCR county code, MSA code, and
-            population in the previous census.
-
-    """
-    return [
-        _field(f'population_{number}', first, first + 8, 'int'),
-        _field(f'ucr_county_{number}', first + 9, first + 11, 'text'),
-        _field(f'msa_{number}', first + 12, first + 14, 'text'),
-        _field(f'last_population_{number}', first + 15, first + 23, 'int')]
-
-
-def _activity(first: int) -> list[Field]:
-    """Returns the 36 flags of an agency's submissions in each month.
-
-    Args:
-        first: position of January's first flag, counted from 1.
-
-    Returns:
-        For each month (named "jan" to "dec"), whether a zero report, a Group
-            "A" or "B" report, and a window record was submitted.
-
-    """
-    months = (
-        'jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep', 'oct',
-        'nov', 'dec')
-    fields = []
-    for n, month in enumerate(months):
-        position = first + 3 * n
-        fields.extend([
-            _field(f'zero_report_{month}', position, position, 'yes'),
-            _field(f'incident_report_{month}', position + 1, position + 1, 'yes'),
-            _field(f'window_report_{month}', position + 2, position + 2, 'yes')])
-    return fields
-
-
-def _tail(first: int) -> list[Field]:
-    """Returns the fields of an agency's batch header after its counties.
-
-    Args:
-        first: position of the "01-06-12 indicator", counted from 1.
-
-    Returns:
-        The reporting indicator, number of months reported, master file year,
-            monthly activity flags, and FIPS county codes.
-
-    """
-    return [
-        _field('reporting_indicator', first, first + 1, 'text'),
-        _field('months_reported', first + 2, first + 3, 'int'),
-        _field('master_file_year', first + 4, first + 7, 'int'),
-        *_activity(first + 8),
-        *_repeated('fips_county', first + 44, 3, 5, 'text')]
 
 
 _BH: list[Field] = [

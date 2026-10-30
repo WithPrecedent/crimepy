@@ -18,13 +18,62 @@ uses. A few codes meant something else in earlier years:
 Contents:
     CODEBOOKS: every codebook, by the name that `crimepy.nibrs.layouts.Field`
         uses.
+    ACTIVITIES: the labels of criminal activities and gang information
+        ("activities").
+    AGENCY_TYPES: the labels of agency types ("agency_types").
+    AGES: the labels of age codes of victims, offenders, and arrestees
+        ("ages").
+    ARREST_TYPES: the labels of types of arrest ("arrest_types").
+    BIASES: the labels of bias motivations ("biases").
+    CIRCUMSTANCES: the labels of aggravated assault and homicide
+        circumstances ("circumstances").
+    COMPLETIONS: whether an offense was attempted or completed
+        ("completions").
+    DISPOSITIONS: the labels of dispositions of arrestees under 18
+        ("dispositions").
+    DRUGS: the labels of types of suspected drugs ("drugs").
+    ENTRIES: whether force was used to enter ("entries").
+    ETHNICITIES: the labels of ethnicities ("ethnicities").
+    EXCEPTIONAL_CLEARANCES: the labels of exceptional clearances
+        ("clearances").
+    INJURIES: the labels of types of injury ("injuries").
+    JUSTIFICATIONS: the labels of justifiable homicide circumstances
+        ("justifications").
+    LOCATIONS: the labels of types of location ("locations").
+    LOSSES: the labels of types of property loss ("losses").
+    MEASURES: the labels of units of drug quantities ("measures").
+    MULTIPLE_ARRESTEES: the labels of multiple arrestee indicators
+        ("multiple_arrestees").
+    OFFICER_ACTIVITIES: the labels of what officers who were killed or
+        assaulted were doing ("officer_activities").
+    OFFICER_ASSIGNMENTS: the labels of assignments of officers who were
+        killed or assaulted ("officer_assignments").
+    POPULATION_GROUPS: the labels of agencies' population groups
+        ("population_groups").
+    PROPERTIES: the labels of property descriptions ("properties").
+    RACES: the labels of races ("races").
+    REGIONS: the labels of the Census regions of agencies ("regions").
+    RELATIONSHIPS: the labels of victims' relationships to offenders
+        ("relationships").
+    RESIDENTS: whether a victim or arrestee is a resident ("residents").
+    SEXES: the labels of sexes ("sexes").
+    SUBREGIONS: the labels of the Census divisions of agencies
+        ("divisions").
+    USING: what offenders were suspected of using ("using").
+    VICTIM_TYPES: the labels of types of victim ("victim_types").
+    WEAPONS: the labels of types of weapon or force ("weapons").
+    OFFENSES: the name, category, whom or what it is against, and group of
+        each offense code. The names are the "offenses" codebook.
     OFFENSE_CATEGORIES: the category of each offense code (such as "Assault
         Offenses").
     CRIMES_AGAINST: whom or what each offense is against ("Person",
         "Property", "Society", or "Not a Crime").
     OFFENSE_GROUPS: whether each offense is in Group "A" or Group "B".
-    STATES: the postal abbreviation of each numeric state code.
-    STATE_NAMES: the name of each numeric state code.
+    OFFENSE_TYPES: the offense codes of each type: whom or what they are
+        against (as in `CRIMES_AGAINST`), and "National Security Offenses",
+        "Rape Offenses", "Sex Offenses", and "Immigration Offenses".
+    STATE_ABBREVIATIONS: the postal abbreviation of each numeric state code.
+    STATES: the name of each numeric state code (the "states" codebook).
     AGE_YEARS: the age in years of each special age code.
 
 """
@@ -33,9 +82,15 @@ from __future__ import annotations
 
 from collections.abc import Mapping
 
-# Offense codes, with their name, category, and whom or what they are against.
-_OFFENSES: dict[str, tuple[str, str, str, str]] = {
-    '09A': ('Murder and Nonnegligent Manslaughter', 'Homicide Offenses', 'Person', 'A'),
+""" Offenses """
+
+
+# Offense codes, with their name, category, whom or what they are against, and
+# group.
+OFFENSES: dict[str, tuple[str, str, str, str]] = {
+    '09A': (
+        'Murder and Nonnegligent Manslaughter', 'Homicide Offenses', 'Person',
+        'A'),
     '09B': ('Negligent Manslaughter', 'Homicide Offenses', 'Person', 'A'),
     '09C': ('Justifiable Homicide', 'Homicide Offenses', 'Person', 'A'),
     '100': ('Kidnapping/Abduction', 'Kidnapping/Abduction', 'Person', 'A'),
@@ -51,19 +106,31 @@ _OFFENSES: dict[str, tuple[str, str, str, str]] = {
     '13C': ('Intimidation', 'Assault Offenses', 'Person', 'A'),
     '200': ('Arson', 'Arson', 'Property', 'A'),
     '210': ('Extortion/Blackmail', 'Extortion/Blackmail', 'Property', 'A'),
-    '220': ('Burglary/Breaking & Entering', 'Burglary/Breaking & Entering', 'Property', 'A'),
+    '220': (
+        'Burglary/Breaking & Entering', 'Burglary/Breaking & Entering',
+        'Property', 'A'),
     '23A': ('Pocket-picking', 'Larceny/Theft Offenses', 'Property', 'A'),
     '23B': ('Purse-snatching', 'Larceny/Theft Offenses', 'Property', 'A'),
     '23C': ('Shoplifting', 'Larceny/Theft Offenses', 'Property', 'A'),
     '23D': ('Theft From Building', 'Larceny/Theft Offenses', 'Property', 'A'),
-    '23E': ('Theft From Coin-Operated Machine or Device', 'Larceny/Theft Offenses', 'Property', 'A'),
-    '23F': ('Theft From Motor Vehicle', 'Larceny/Theft Offenses', 'Property', 'A'),
-    '23G': ('Theft of Motor Vehicle Parts or Accessories', 'Larceny/Theft Offenses', 'Property', 'A'),
+    '23E': (
+        'Theft From Coin-Operated Machine or Device', 'Larceny/Theft Offenses',
+        'Property', 'A'),
+    '23F': (
+        'Theft From Motor Vehicle', 'Larceny/Theft Offenses', 'Property', 'A'),
+    '23G': (
+        'Theft of Motor Vehicle Parts or Accessories', 'Larceny/Theft Offenses',
+        'Property', 'A'),
     '23H': ('All Other Larceny', 'Larceny/Theft Offenses', 'Property', 'A'),
     '240': ('Motor Vehicle Theft', 'Motor Vehicle Theft', 'Property', 'A'),
-    '250': ('Counterfeiting/Forgery', 'Counterfeiting/Forgery', 'Property', 'A'),
-    '26A': ('False Pretenses/Swindle/Confidence Game', 'Fraud Offenses', 'Property', 'A'),
-    '26B': ('Credit Card/Automated Teller Machine Fraud', 'Fraud Offenses', 'Property', 'A'),
+    '250': (
+        'Counterfeiting/Forgery', 'Counterfeiting/Forgery', 'Property', 'A'),
+    '26A': (
+        'False Pretenses/Swindle/Confidence Game', 'Fraud Offenses', 'Property',
+        'A'),
+    '26B': (
+        'Credit Card/Automated Teller Machine Fraud', 'Fraud Offenses',
+        'Property', 'A'),
     '26C': ('Impersonation', 'Fraud Offenses', 'Property', 'A'),
     '26D': ('Welfare Fraud', 'Fraud Offenses', 'Property', 'A'),
     '26E': ('Wire Fraud', 'Fraud Offenses', 'Property', 'A'),
@@ -71,31 +138,52 @@ _OFFENSES: dict[str, tuple[str, str, str, str]] = {
     '26G': ('Hacking/Computer Invasion', 'Fraud Offenses', 'Property', 'A'),
     '26H': ('Money Laundering', 'Other Offenses', 'Society', 'A'),
     '270': ('Embezzlement', 'Embezzlement', 'Property', 'A'),
-    '280': ('Stolen Property Offenses', 'Stolen Property Offenses', 'Property', 'A'),
-    '290': ('Destruction/Damage/Vandalism of Property', 'Destruction/Damage/Vandalism of Property', 'Property', 'A'),
-    '30A': ('Illegal Entry into the United States', 'Other Offenses', 'Society', 'A'),
+    '280': (
+        'Stolen Property Offenses', 'Stolen Property Offenses', 'Property',
+        'A'),
+    '290': (
+        'Destruction/Damage/Vandalism of Property',
+        'Destruction/Damage/Vandalism of Property', 'Property', 'A'),
+    '30A': (
+        'Illegal Entry into the United States', 'Other Offenses', 'Society',
+        'A'),
     '30B': ('False Citizenship', 'Other Offenses', 'Society', 'A'),
     '30C': ('Smuggling Aliens', 'Other Offenses', 'Society', 'A'),
     '30D': ('Re-entry after Deportation', 'Other Offenses', 'Society', 'A'),
-    '35A': ('Drug/Narcotic Violations', 'Drug/Narcotic Offenses', 'Society', 'A'),
-    '35B': ('Drug Equipment Violations', 'Drug/Narcotic Offenses', 'Society', 'A'),
-    '360': ('Failure to Register as a Sex Offender', 'Other Offenses', 'Society', 'A'),
+    '35A': (
+        'Drug/Narcotic Violations', 'Drug/Narcotic Offenses', 'Society', 'A'),
+    '35B': (
+        'Drug Equipment Violations', 'Drug/Narcotic Offenses', 'Society', 'A'),
+    '360': (
+        'Failure to Register as a Sex Offender', 'Other Offenses', 'Society',
+        'A'),
     '36A': ('Incest', 'Sex Offenses, Non-forcible', 'Person', 'A'),
     '36B': ('Statutory Rape', 'Sex Offenses, Non-forcible', 'Person', 'A'),
-    '370': ('Pornography/Obscene Material', 'Pornography/Obscene Material', 'Society', 'A'),
+    '370': (
+        'Pornography/Obscene Material', 'Pornography/Obscene Material',
+        'Society', 'A'),
     '39A': ('Betting/Wagering', 'Gambling Offenses', 'Society', 'A'),
-    '39B': ('Operating/Promoting/Assisting Gambling', 'Gambling Offenses', 'Society', 'A'),
-    '39C': ('Gambling Equipment Violation', 'Gambling Offenses', 'Society', 'A'),
+    '39B': (
+        'Operating/Promoting/Assisting Gambling', 'Gambling Offenses',
+        'Society', 'A'),
+    '39C': (
+        'Gambling Equipment Violation', 'Gambling Offenses', 'Society', 'A'),
     '39D': ('Sports Tampering', 'Gambling Offenses', 'Society', 'A'),
     '40A': ('Prostitution', 'Prostitution Offenses', 'Society', 'A'),
-    '40B': ('Assisting or Promoting Prostitution', 'Prostitution Offenses', 'Society', 'A'),
+    '40B': (
+        'Assisting or Promoting Prostitution', 'Prostitution Offenses',
+        'Society', 'A'),
     '40C': ('Purchasing Prostitution', 'Prostitution Offenses', 'Society', 'A'),
-    '49A': ('Harboring Escapee/Concealing from Arrest', 'Other Offenses', 'Society', 'A'),
+    '49A': (
+        'Harboring Escapee/Concealing from Arrest', 'Other Offenses', 'Society',
+        'A'),
     '49B': ('Flight to Avoid Prosecution', 'Other Offenses', 'Society', 'A'),
     '49C': ('Flight to Avoid Deportation', 'Other Offenses', 'Society', 'A'),
     '510': ('Bribery', 'Bribery', 'Property', 'A'),
     '520': ('Weapon Law Violations', 'Weapon Law Violations', 'Society', 'A'),
-    '521': ('Violation of National Firearm Act of 1934', 'Other Offenses', 'Society', 'A'),
+    '521': (
+        'Violation of National Firearm Act of 1934', 'Other Offenses',
+        'Society', 'A'),
     '522': ('Weapons of Mass Destruction', 'Other Offenses', 'Society', 'A'),
     '526': ('Explosives Violation', 'Other Offenses', 'Society', 'A'),
     '58A': ('Import Violations', 'Other Offenses', 'Society', 'A'),
@@ -103,28 +191,56 @@ _OFFENSES: dict[str, tuple[str, str, str, str]] = {
     '61A': ('Federal Liquor Offenses', 'Other Offenses', 'Society', 'A'),
     '61B': ('Federal Tobacco Offenses', 'Other Offenses', 'Society', 'A'),
     '620': ('Wildlife Trafficking', 'Other Offenses', 'Society', 'A'),
-    '64A': ('Human Trafficking, Commercial Sex Acts', 'Human Trafficking', 'Person', 'A'),
-    '64B': ('Human Trafficking, Involuntary Servitude', 'Human Trafficking', 'Person', 'A'),
+    '64A': (
+        'Human Trafficking, Commercial Sex Acts', 'Human Trafficking', 'Person',
+        'A'),
+    '64B': (
+        'Human Trafficking, Involuntary Servitude', 'Human Trafficking',
+        'Person', 'A'),
     '720': ('Animal Cruelty', 'Animal Cruelty', 'Society', 'A'),
     '90A': ('Bad Checks', 'Bad Checks', 'Property', 'B'),
-    '90B': ('Curfew/Loitering/Vagrancy Violations', 'Curfew/Loitering/Vagrancy Violations', 'Society', 'B'),
+    '90B': (
+        'Curfew/Loitering/Vagrancy Violations',
+        'Curfew/Loitering/Vagrancy Violations', 'Society', 'B'),
     '90C': ('Disorderly Conduct', 'Disorderly Conduct', 'Society', 'B'),
-    '90D': ('Driving Under the Influence', 'Driving Under the Influence', 'Society', 'B'),
+    '90D': (
+        'Driving Under the Influence', 'Driving Under the Influence', 'Society',
+        'B'),
     '90E': ('Drunkenness', 'Drunkenness', 'Society', 'B'),
-    '90F': ('Family Offenses, Nonviolent', 'Family Offenses, Nonviolent', 'Person', 'B'),
+    '90F': (
+        'Family Offenses, Nonviolent', 'Family Offenses, Nonviolent', 'Person',
+        'B'),
     '90G': ('Liquor Law Violations', 'Liquor Law Violations', 'Society', 'B'),
     '90H': ('Peeping Tom', 'Peeping Tom', 'Person', 'B'),
     '90I': ('Runaway', 'Other Offenses', 'Not a Crime', 'B'),
-    '90J': ('Trespass of Real Property', 'Trespass of Real Property', 'Society', 'B'),
+    '90J': (
+        'Trespass of Real Property', 'Trespass of Real Property', 'Society',
+        'B'),
     '90K': ('Failure to Appear', 'Other Offenses', 'Society', 'B'),
     '90L': ('Federal Resource Violations', 'Other Offenses', 'Society', 'B'),
     '90M': ('Perjury', 'Other Offenses', 'Society', 'B'),
     '90Z': ('All Other Offenses', 'All Other Offenses', 'Society', 'B')}
 
 OFFENSE_CATEGORIES: dict[str, str] = {
-    k: v[1] for k, v in _OFFENSES.items()}
-CRIMES_AGAINST: dict[str, str] = {k: v[2] for k, v in _OFFENSES.items()}
-OFFENSE_GROUPS: dict[str, str] = {k: v[3] for k, v in _OFFENSES.items()}
+    k: v[1] for k, v in OFFENSES.items()}
+CRIMES_AGAINST: dict[str, str] = {k: v[2] for k, v in OFFENSES.items()}
+OFFENSE_GROUPS: dict[str, str] = {k: v[3] for k, v in OFFENSES.items()}
+
+# Offense codes by whom or what they are against, and by a few other types
+# that cut across the categories.
+OFFENSE_TYPES: dict[str, list[str]] = {
+    **{t: [k for k, v in CRIMES_AGAINST.items() if v == t]
+       for t in dict.fromkeys(CRIMES_AGAINST.values())},
+    'National Security Offenses': ['101', '103', '522'],
+    'Rape Offenses': ['11A', '11B', '11C'],
+    'Sex Offenses': [
+        '11A', '11B', '11C', '11D', '36A', '36B', '370', '40A', '40B', '40C',
+        '64A'],
+    'Immigration Offenses': ['30A', '30B', '30C', '30D']}
+
+
+""" States """
+
 
 # Numeric state codes, with their postal abbreviation and name. The ORIs of
 # Nebraska begin with "NB" and those of Guam with "GM", but their postal
@@ -190,15 +306,19 @@ _STATES: dict[str, tuple[str, str]] = {
     '98': ('FS', 'Federal'),
     '99': ('OT', 'Other')}
 
-STATES: dict[str, str] = {k: v[0] for k, v in _STATES.items()}
-STATE_NAMES: dict[str, str] = {k: v[1] for k, v in _STATES.items()}
+STATE_ABBREVIATIONS: dict[str, str] = {k: v[0] for k, v in _STATES.items()}
+STATES: dict[str, str] = {k: v[1] for k, v in _STATES.items()}
+
+
+""" Ages """
+
 
 # Ages in years of the age codes that are not a number of years. "00" is an
 # unknown age, and "99" is 99 years old or older.
 AGE_YEARS: dict[str, float | None] = {
     'NN': 0.0, 'NB': 0.0, 'BB': 0.0, '00': None}
 
-_AGES: dict[str, str] = {
+AGES: dict[str, str] = {
     'NN': 'Under 24 Hours',
     'NB': '1-6 Days Old',
     'BB': '7-364 Days Old',
@@ -206,7 +326,11 @@ _AGES: dict[str, str] = {
     **{f'{n:02d}': f'{n} Years Old' for n in range(1, 99)},
     '99': 'Over 98 Years Old'}
 
-_ACTIVITIES: dict[str, str] = {
+
+""" Codebooks """
+
+
+ACTIVITIES: dict[str, str] = {
     'A': 'Simple/Gross Neglect',
     'B': 'Buying/Receiving',
     'C': 'Cultivating/Manufacturing/Publishing',
@@ -224,7 +348,7 @@ _ACTIVITIES: dict[str, str] = {
     'U': 'Using/Consuming',
     'W': 'Conspiracy'}
 
-_AGENCY_TYPES: dict[str, str] = {
+AGENCY_TYPES: dict[str, str] = {
     '0': 'Covered by Another Agency',
     '1': 'City',
     '2': 'County',
@@ -234,12 +358,12 @@ _AGENCY_TYPES: dict[str, str] = {
     '7': 'Tribal',
     '8': 'Federal'}
 
-_ARREST_TYPES: dict[str, str] = {
+ARREST_TYPES: dict[str, str] = {
     'O': 'On View',
     'S': 'Summoned/Cited',
     'T': 'Taken into Custody'}
 
-_BIASES: dict[str, str] = {
+BIASES: dict[str, str] = {
     '11': 'Anti-White',
     '12': 'Anti-Black or African American',
     '13': 'Anti-American Indian or Alaska Native',
@@ -277,7 +401,7 @@ _BIASES: dict[str, str] = {
     '88': 'None (No Bias)',
     '99': 'Unknown'}
 
-_CIRCUMSTANCES: dict[str, str] = {
+CIRCUMSTANCES: dict[str, str] = {
     '01': 'Argument',
     '02': 'Assault on Law Enforcement Officer',
     '03': 'Drug Dealing',
@@ -296,7 +420,7 @@ _CIRCUMSTANCES: dict[str, str] = {
     '33': 'Other Negligent Weapon Handling',
     '34': 'Other Negligent Killings'}
 
-_CLEARANCES: dict[str, str] = {
+EXCEPTIONAL_CLEARANCES: dict[str, str] = {
     'A': 'Death of Offender',
     'B': 'Prosecution Declined',
     'C': 'In Custody of Other Jurisdiction',
@@ -304,25 +428,13 @@ _CLEARANCES: dict[str, str] = {
     'E': 'Juvenile/No Custody',
     'N': 'Not Applicable'}
 
-_COMPLETIONS: dict[str, str] = {'A': 'Attempted', 'C': 'Completed'}
+COMPLETIONS: dict[str, str] = {'A': 'Attempted', 'C': 'Completed'}
 
-_DISPOSITIONS: dict[str, str] = {
+DISPOSITIONS: dict[str, str] = {
     'H': 'Handled Within Department',
     'R': 'Referred to Other Authorities'}
 
-_DIVISIONS: dict[str, str] = {
-    '0': 'Possessions',
-    '1': 'New England',
-    '2': 'Middle Atlantic',
-    '3': 'East North Central',
-    '4': 'West North Central',
-    '5': 'South Atlantic',
-    '6': 'East South Central',
-    '7': 'West South Central',
-    '8': 'Mountain',
-    '9': 'Pacific'}
-
-_DRUGS: dict[str, str] = {
+DRUGS: dict[str, str] = {
     'A': 'Crack Cocaine',
     'B': 'Cocaine',
     'C': 'Hashish',
@@ -342,15 +454,15 @@ _DRUGS: dict[str, str] = {
     'U': 'Unknown',
     'X': 'More Than 3 Types'}
 
-_ENTRIES: dict[str, str] = {'F': 'Force', 'N': 'No Force'}
+ENTRIES: dict[str, str] = {'F': 'Force', 'N': 'No Force'}
 
-_ETHNICITIES: dict[str, str] = {
+ETHNICITIES: dict[str, str] = {
     'H': 'Hispanic or Latino',
     'N': 'Not Hispanic or Latino',
     'M': 'Multiple',
     'U': 'Unknown'}
 
-_INJURIES: dict[str, str] = {
+INJURIES: dict[str, str] = {
     'B': 'Apparent Broken Bones',
     'I': 'Possible Internal Injury',
     'L': 'Severe Laceration',
@@ -360,16 +472,18 @@ _INJURIES: dict[str, str] = {
     'T': 'Loss of Teeth',
     'U': 'Unconsciousness'}
 
-_JUSTIFICATIONS: dict[str, str] = {
+JUSTIFICATIONS: dict[str, str] = {
     'A': 'Criminal Attacked Police Officer and That Officer Killed Criminal',
-    'B': 'Criminal Attacked Police Officer and Criminal Killed by Another Police Officer',
+    'B': (
+        'Criminal Attacked Police Officer and Criminal Killed by Another '
+        'Police Officer'),
     'C': 'Criminal Attacked a Civilian',
     'D': 'Criminal Attempted Flight From a Crime',
     'E': 'Criminal Killed in Commission of a Crime',
     'F': 'Criminal Resisted Arrest',
     'G': 'Unable to Determine/Not Enough Information'}
 
-_LOCATIONS: dict[str, str] = {
+LOCATIONS: dict[str, str] = {
     '01': 'Air/Bus/Train Terminal',
     '02': 'Bank/Savings and Loan',
     '03': 'Bar/Nightclub',
@@ -417,7 +531,7 @@ _LOCATIONS: dict[str, str] = {
     '57': 'Community Center',
     '58': 'Cyberspace'}
 
-_LOSSES: dict[str, str] = {
+LOSSES: dict[str, str] = {
     '1': 'None',
     '2': 'Burned',
     '3': 'Counterfeited/Forged',
@@ -427,7 +541,7 @@ _LOSSES: dict[str, str] = {
     '7': 'Stolen/Etc.',
     '8': 'Unknown'}
 
-_MEASURES: dict[str, str] = {
+MEASURES: dict[str, str] = {
     'GM': 'Gram',
     'KG': 'Kilogram',
     'OZ': 'Ounce',
@@ -440,12 +554,12 @@ _MEASURES: dict[str, str] = {
     'NP': 'Number of Plants',
     'XX': 'Not Reported'}
 
-_MULTIPLE_ARRESTEES: dict[str, str] = {
+MULTIPLE_ARRESTEES: dict[str, str] = {
     'C': 'Count Arrestee',
     'M': 'Multiple',
     'N': 'Not Applicable'}
 
-_OFFICER_ACTIVITIES: dict[str, str] = {
+OFFICER_ACTIVITIES: dict[str, str] = {
     '01': 'Responding to Disturbance Call',
     '02': 'Burglaries in Progress or Pursuing Burglary Suspects',
     '03': 'Robberies in Progress or Pursuing Robbery Suspects',
@@ -458,7 +572,7 @@ _OFFICER_ACTIVITIES: dict[str, str] = {
     '10': 'Traffic Pursuits and Stops',
     '11': 'All Other'}
 
-_OFFICER_ASSIGNMENTS: dict[str, str] = {
+OFFICER_ASSIGNMENTS: dict[str, str] = {
     'F': 'Two-Officer Vehicle',
     'G': 'One-Officer Vehicle (Alone)',
     'H': 'One-Officer Vehicle (Assisted)',
@@ -467,7 +581,7 @@ _OFFICER_ASSIGNMENTS: dict[str, str] = {
     'K': 'Other (Alone)',
     'L': 'Other (Assisted)'}
 
-_POPULATION_GROUPS: dict[str, str] = {
+POPULATION_GROUPS: dict[str, str] = {
     '0': 'Possessions',
     '1': 'Cities 250,000 or Over',
     '1A': 'Cities 1,000,000 or Over',
@@ -492,7 +606,7 @@ _POPULATION_GROUPS: dict[str, str] = {
     '9D': 'MSA Counties Under 10,000',
     '9E': 'MSA State Police'}
 
-_PROPERTIES: dict[str, str] = {
+PROPERTIES: dict[str, str] = {
     '01': 'Aircraft',
     '02': 'Alcohol',
     '03': 'Automobiles',
@@ -562,7 +676,7 @@ _PROPERTIES: dict[str, str] = {
     '88': 'Pending Inventory',
     '99': 'Special Category'}
 
-_RACES: dict[str, str] = {
+RACES: dict[str, str] = {
     'W': 'White',
     'B': 'Black or African American',
     'I': 'American Indian or Alaska Native',
@@ -571,14 +685,14 @@ _RACES: dict[str, str] = {
     'M': 'Multiple',
     'U': 'Unknown'}
 
-_REGIONS: dict[str, str] = {
+REGIONS: dict[str, str] = {
     '0': 'Possessions',
     '1': 'Northeast',
     '2': 'North Central',
     '3': 'South',
     '4': 'West'}
 
-_RELATIONSHIPS: dict[str, str] = {
+RELATIONSHIPS: dict[str, str] = {
     'AQ': 'Acquaintance',
     'BE': 'Babysittee',
     'BG': 'Boyfriend/Girlfriend',
@@ -610,21 +724,33 @@ _RELATIONSHIPS: dict[str, str] = {
     'XR': 'Ex-Relationship (Ex-Boyfriend/Girlfriend)',
     'XS': 'Ex-Spouse'}
 
-_RESIDENTS: dict[str, str] = {
+RESIDENTS: dict[str, str] = {
     'R': 'Resident',
     'N': 'Nonresident',
     'U': 'Unknown'}
 
-_SEXES: dict[str, str] = {'F': 'Female', 'M': 'Male', 'U': 'Unknown'}
+SEXES: dict[str, str] = {'F': 'Female', 'M': 'Male', 'U': 'Unknown'}
 
-_USING: dict[str, str] = {
+SUBREGIONS: dict[str, str] = {
+    '0': 'Possessions',
+    '1': 'New England',
+    '2': 'Middle Atlantic',
+    '3': 'East North Central',
+    '4': 'West North Central',
+    '5': 'South Atlantic',
+    '6': 'East South Central',
+    '7': 'West South Central',
+    '8': 'Mountain',
+    '9': 'Pacific'}
+
+USING: dict[str, str] = {
     'A': 'Alcohol',
     'C': 'Computer Equipment',
     'D': 'Drugs/Narcotics',
     'N': 'Not Applicable',
     'R': 'Drone/Unmanned Aircraft System'}
 
-_VICTIM_TYPES: dict[str, str] = {
+VICTIM_TYPES: dict[str, str] = {
     'B': 'Business',
     'F': 'Financial Institution',
     'G': 'Government',
@@ -635,7 +761,7 @@ _VICTIM_TYPES: dict[str, str] = {
     'S': 'Society/Public',
     'U': 'Unknown'}
 
-_WEAPONS: dict[str, str] = {
+WEAPONS: dict[str, str] = {
     '01': 'Unarmed',
     '11': 'Firearm',
     '12': 'Handgun',
@@ -658,36 +784,36 @@ _WEAPONS: dict[str, str] = {
     '99': 'None'}
 
 CODEBOOKS: dict[str, Mapping[str, str]] = {
-    'activities': _ACTIVITIES,
-    'agency_types': _AGENCY_TYPES,
-    'ages': _AGES,
-    'arrest_types': _ARREST_TYPES,
-    'biases': _BIASES,
-    'circumstances': _CIRCUMSTANCES,
-    'clearances': _CLEARANCES,
-    'completions': _COMPLETIONS,
-    'dispositions': _DISPOSITIONS,
-    'divisions': _DIVISIONS,
-    'drugs': _DRUGS,
-    'entries': _ENTRIES,
-    'ethnicities': _ETHNICITIES,
-    'injuries': _INJURIES,
-    'justifications': _JUSTIFICATIONS,
-    'locations': _LOCATIONS,
-    'losses': _LOSSES,
-    'measures': _MEASURES,
-    'multiple_arrestees': _MULTIPLE_ARRESTEES,
-    'offenses': {k: v[0] for k, v in _OFFENSES.items()},
-    'officer_activities': _OFFICER_ACTIVITIES,
-    'officer_assignments': _OFFICER_ASSIGNMENTS,
-    'population_groups': _POPULATION_GROUPS,
-    'properties': _PROPERTIES,
-    'races': _RACES,
-    'regions': _REGIONS,
-    'relationships': _RELATIONSHIPS,
-    'residents': _RESIDENTS,
-    'sexes': _SEXES,
-    'states': STATE_NAMES,
-    'using': _USING,
-    'victim_types': _VICTIM_TYPES,
-    'weapons': _WEAPONS}
+    'activities': ACTIVITIES,
+    'agency_types': AGENCY_TYPES,
+    'ages': AGES,
+    'arrest_types': ARREST_TYPES,
+    'biases': BIASES,
+    'circumstances': CIRCUMSTANCES,
+    'clearances': EXCEPTIONAL_CLEARANCES,
+    'completions': COMPLETIONS,
+    'dispositions': DISPOSITIONS,
+    'divisions': SUBREGIONS,
+    'drugs': DRUGS,
+    'entries': ENTRIES,
+    'ethnicities': ETHNICITIES,
+    'injuries': INJURIES,
+    'justifications': JUSTIFICATIONS,
+    'locations': LOCATIONS,
+    'losses': LOSSES,
+    'measures': MEASURES,
+    'multiple_arrestees': MULTIPLE_ARRESTEES,
+    'offenses': {k: v[0] for k, v in OFFENSES.items()},
+    'officer_activities': OFFICER_ACTIVITIES,
+    'officer_assignments': OFFICER_ASSIGNMENTS,
+    'population_groups': POPULATION_GROUPS,
+    'properties': PROPERTIES,
+    'races': RACES,
+    'regions': REGIONS,
+    'relationships': RELATIONSHIPS,
+    'residents': RESIDENTS,
+    'sexes': SEXES,
+    'states': STATES,
+    'using': USING,
+    'victim_types': VICTIM_TYPES,
+    'weapons': WEAPONS}

@@ -27,6 +27,8 @@ from collections.abc import Sequence
 
 from . import nibrs
 
+""" Public Functions """
+
 
 def main(arguments: Sequence[str] | None = None) -> int:
     """Runs the command line interface.
@@ -48,8 +50,17 @@ def main(arguments: Sequence[str] | None = None) -> int:
     return int(parsed.run(parsed) or 0)
 
 
+""" Private Functions """
+
+
 def _parser() -> argparse.ArgumentParser:
-    """Returns the parser of the command line arguments."""
+    """Returns the parser of the command line arguments.
+
+    Returns:
+        The parser, with a subcommand for each command, each of which sets
+            "run" to the function that runs it.
+
+    """
     parser = argparse.ArgumentParser(
         prog = 'crimepy',
         description = (
@@ -111,7 +122,12 @@ def _parser() -> argparse.ArgumentParser:
 
 
 def _add_folder(parser: argparse.ArgumentParser) -> None:
-    """Adds the "--folder" argument to `parser`."""
+    """Adds the "--folder" argument to `parser`.
+
+    Args:
+        parser: the parser of a command that uses the data folder.
+
+    """
     parser.add_argument(
         '--folder', type = pathlib.Path, default = None,
         help = 'the data folder (by default, the "crime" folder of the data '
@@ -119,14 +135,27 @@ def _add_folder(parser: argparse.ArgumentParser) -> None:
 
 
 def _add_years(parser: argparse.ArgumentParser) -> None:
-    """Adds the "years" argument to `parser`."""
+    """Adds the "years" argument to `parser`.
+
+    Args:
+        parser: the parser of a command that takes years.
+
+    """
     parser.add_argument(
         'years', nargs = '+',
         help = 'years or ranges of years, such as 2022 or 2015-2023')
 
 
 def _convert(arguments: argparse.Namespace) -> int:
-    """Converts master files to parquet files."""
+    """Converts master files to parquet files.
+
+    Args:
+        arguments: the parsed arguments of the "convert" command.
+
+    Returns:
+        The exit status, 0.
+
+    """
     converted = nibrs.convert(
         arguments.years, arguments.folder, tables = arguments.tables,
         overwrite = arguments.overwrite)
@@ -137,7 +166,15 @@ def _convert(arguments: argparse.Namespace) -> int:
 
 
 def _download(arguments: argparse.Namespace) -> int:
-    """Downloads master files."""
+    """Downloads master files.
+
+    Args:
+        arguments: the parsed arguments of the "download" command.
+
+    Returns:
+        The exit status, 0.
+
+    """
     for path in nibrs.download(
         arguments.years, arguments.folder, overwrite = arguments.overwrite):
         print(path)
@@ -145,7 +182,16 @@ def _download(arguments: argparse.Namespace) -> int:
 
 
 def _export(arguments: argparse.Namespace) -> int:
-    """Writes a table to a csv or parquet file."""
+    """Writes a table to a csv or parquet file.
+
+    Args:
+        arguments: the parsed arguments of the "export" command.
+
+    Returns:
+        The exit status: 0 if the table was written, or 2 if the output is
+            not a csv or parquet file.
+
+    """
     suffix = arguments.output.suffix.lower()
     if suffix not in ('.csv', '.parquet'):
         print('the output must be a .csv or .parquet file', file = sys.stderr)
@@ -169,7 +215,15 @@ def _export(arguments: argparse.Namespace) -> int:
 
 
 def _project(arguments: argparse.Namespace) -> int:
-    """Runs an amos project from a settings file."""
+    """Runs an amos project from a settings file.
+
+    Args:
+        arguments: the parsed arguments of the "project" command.
+
+    Returns:
+        The exit status, 0.
+
+    """
     import amos  # noqa: PLC0415
 
     project = amos.Project.create(arguments.settings)
@@ -180,7 +234,16 @@ def _project(arguments: argparse.Namespace) -> int:
 
 
 def _years(arguments: argparse.Namespace) -> int:  # noqa: ARG001
-    """Lists the years of NIBRS master files that the FBI has."""
+    """Lists the years of NIBRS master files that the FBI has.
+
+    Args:
+        arguments: the parsed arguments of the "years" command, which are
+            not used.
+
+    Returns:
+        The exit status, 0.
+
+    """
     found = nibrs.available_years()
     print(f'{found[0]}-{found[-1]}')
     return 0

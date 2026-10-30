@@ -42,6 +42,8 @@ import pandas as pd
 
 from . import techniques, utilities
 
+""" Public Functions """
+
 
 def count(
     data: amos.Dataset | pd.DataFrame,
@@ -273,6 +275,9 @@ def coverage(
 
     """
     return _describe(techniques.Coverage(), agencies, by = by, months = months)
+
+
+""" Private Functions """
 
 
 def _describe(

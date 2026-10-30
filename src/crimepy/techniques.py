@@ -49,6 +49,8 @@ import pandas as pd
 
 from . import utilities
 
+""" Techniques """
+
 
 @dataclasses.dataclass
 class CountCrimes(amos.Shaper):
@@ -70,34 +72,7 @@ class CountCrimes(amos.Shaper):
 
     """
 
-    def apply(
-        self,
-        item: amos.Dataset,
-        *,
-        label: str | None = None,
-        task: str | None = None,
-        groups: Any = None,
-        **kwargs: Any) -> amos.Dataset:
-        """Counts the events of `item`.
-
-        Args:
-            item: the dataset, with one row for each event.
-            label: the label of the counted data. Defaults to `None`, which
-                keeps the label of `item` or, if it has none, makes the
-                column of counts the label.
-            task: "classify" or "regress". Defaults to `None`.
-            groups: the groups of the counted data. Defaults to `None`, which
-                keeps the groups of `item`.
-            **kwargs: the parameters of `shape`.
-
-        Returns:
-            The counted dataset.
-
-        """
-        if label is None and item.label is None:
-            label = kwargs.get('name', 'count')
-        return super().apply(
-            item, label = label, task = task, groups = groups, **kwargs)
+    """ Required Methods """
 
     def shape(
         self,
@@ -146,6 +121,37 @@ class CountCrimes(amos.Shaper):
             table = table.rename(columns = {date: 'period'})
         return table[table[name] > 0].reset_index(drop = True)
 
+    """ Public Methods """
+
+    def apply(
+        self,
+        item: amos.Dataset,
+        *,
+        label: str | None = None,
+        task: str | None = None,
+        groups: Any = None,
+        **kwargs: Any) -> amos.Dataset:
+        """Counts the events of `item`.
+
+        Args:
+            item: the dataset, with one row for each event.
+            label: the label of the counted data. Defaults to `None`, which
+                keeps the label of `item` or, if it has none, makes the
+                column of counts the label.
+            task: "classify" or "regress". Defaults to `None`.
+            groups: the groups of the counted data. Defaults to `None`, which
+                keeps the groups of `item`.
+            **kwargs: the parameters of `shape`.
+
+        Returns:
+            The counted dataset.
+
+        """
+        if label is None and item.label is None:
+            label = kwargs.get('name', 'count')
+        return super().apply(
+            item, label = label, task = task, groups = groups, **kwargs)
+
 
 @dataclasses.dataclass
 class CrimeTrend(amos.Describer):
@@ -155,6 +161,8 @@ class CrimeTrend(amos.Describer):
     settings): `by`, `date`, `freq`, and `top` (see `describe`).
 
     """
+
+    """ Required Methods """
 
     def describe(
         self,
@@ -205,6 +213,8 @@ class PopulationRates(amos.Describer):
 
     """
 
+    """ Required Methods """
+
     def describe(
         self,
         item: amos.Dataset,
@@ -246,7 +256,8 @@ class PopulationRates(amos.Describer):
                 c for c in people.columns
                 if c in table.columns and c != 'population']
             table = table.merge(people, on = keys, how = 'left')
-        values = pd.to_numeric(table[column], errors = 'coerce').astype('Float64')
+        values = pd.to_numeric(
+            table[column], errors = 'coerce').astype('Float64')
         values = values.where(values > 0)
         table[name] = table[count] / values * float(per)
         return table
@@ -266,6 +277,8 @@ class CrimeRates(amos.Describer):
     agencies are loaded for the years and states of the data.
 
     """
+
+    """ Required Methods """
 
     def describe(
         self,
@@ -310,8 +323,9 @@ class CrimeRates(amos.Describer):
         active = active.drop_duplicates(['data_year', 'ori'])
         key = 'agency_ori' if 'agency_ori' in events.columns else 'ori'
         columns = [k for k in keys if k not in ('data_year',)]
+        joined = [c for c in columns if c in active.columns]
         kept = events[['data_year', key]].merge(
-            active[['data_year', 'ori', *[c for c in columns if c in active.columns]]],
+            active[['data_year', 'ori', *joined]],
             left_on = ['data_year', key], right_on = ['data_year', 'ori'],
             how = 'inner', suffixes = ('_event', ''))
         counts = kept.groupby(keys, observed = True).size().rename('count')
@@ -333,6 +347,8 @@ class ClearanceRates(amos.Describer):
     saying whether each incident was cleared, "cleared" by default).
 
     """
+
+    """ Required Methods """
 
     def describe(
         self,
@@ -384,6 +400,8 @@ class PercentChange(amos.Describer):
 
     """
 
+    """ Required Methods """
+
     def describe(
         self,
         item: amos.Dataset,
@@ -427,6 +445,8 @@ class Crosstab(amos.Describer):
 
     """
 
+    """ Required Methods """
+
     def describe(
         self,
         item: amos.Dataset,
@@ -457,7 +477,8 @@ class Crosstab(amos.Describer):
         if rows is None or columns is None:
             message = f'set the "rows" and "columns" of {self.name!r}'
             raise ValueError(message)
-        if isinstance(normalize, str) and normalize not in ('all', 'index', 'columns'):
+        if (isinstance(normalize, str)
+                and normalize not in ('all', 'index', 'columns')):
             normalize = utilities.to_bool(normalize)
         data = item.data
         return pd.crosstab(
@@ -476,6 +497,8 @@ class Coverage(amos.Describer):
     `by` and `months` (see `describe`).
 
     """
+
+    """ Required Methods """
 
     def describe(
         self,
@@ -508,16 +531,21 @@ class Coverage(amos.Describer):
         reporting = table['months_active'].fillna(0) >= int(months)
         table['_reporting'] = reporting.astype(int)
         table['_population'] = table['population'].fillna(0)
-        table['_population_reporting'] = table['_population'].where(reporting, 0)
+        table['_population_reporting'] = table['_population'].where(
+            reporting, 0)
         summary = table.groupby(keys, observed = True).agg(
             agencies = ('ori', 'nunique'),
             reporting = ('_reporting', 'sum'),
             population = ('_population', 'sum'),
-            population_reporting = ('_population_reporting', 'sum')).reset_index()
+            population_reporting = (
+                '_population_reporting', 'sum')).reset_index()
         share = summary['population_reporting'] / summary['population'].where(
             summary['population'] > 0)
         summary['share_reporting'] = share
         return summary
+
+
+""" Private Functions """
 
 
 def _agencies_of(events: pd.DataFrame, folder: Any) -> pd.DataFrame:

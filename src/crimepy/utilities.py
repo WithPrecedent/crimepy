@@ -31,6 +31,9 @@ _TRUE: frozenset[str] = frozenset({'true', 'yes', 'y', '1', 'on'})
 _FALSE: frozenset[str] = frozenset({'false', 'no', 'n', '0', 'off', 'none', ''})
 
 
+""" Public Functions """
+
+
 def data_folder(folder: pathlib.Path | str | None = None) -> pathlib.Path:
     """Returns the folder where crimepy saves data, making it if needed.
 
@@ -183,6 +186,9 @@ def to_years(years: Any) -> list[int]:
         else:
             found.add(_to_year(item))
     return sorted(found)
+
+
+""" Private Functions """
 
 
 def _to_year(item: Any) -> int:
