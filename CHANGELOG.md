@@ -4,6 +4,14 @@ All notable changes to this project will be documented in this file.
 
 <!-- insertion marker -->
 
+## Unreleased
+
+* Fixed the `pydoclint` check of CI: the Deflate64 reader of
+  `crimepy.nibrs.reader` and the fake responses of the download tests are
+  dataclasses, so their arguments are documented only by the class, and the
+  "Yields" sections of `reader.tables` and the tests name the types that
+  they yield.
+
 ## 0.2.2
 
 * Requires amos 0.6.2, and the lock file uses the latest bobbie (0.3.3),

@@ -21,7 +21,9 @@ Contents:
 
 from __future__ import annotations
 
+import dataclasses
 import pathlib
+from collections.abc import Iterator
 from typing import Any
 
 import amos
@@ -251,25 +253,18 @@ def test_download_saves_files(
 
     """
 
+    @dataclasses.dataclass
     class Response:
-        """A response of the CDE, without a connection.
+        """A response of the CDE, without a connection, of a 6-byte file.
 
         Args:
             payload: what `json` returns. Defaults to `None`.
 
         """
 
-        """ Initialization Methods """
-
-        def __init__(self, payload: Any = None) -> None:
-            """Keeps the payload and says the file is 6 bytes long.
-
-            Args:
-                payload: what `json` returns. Defaults to `None`.
-
-            """
-            self.payload = payload
-            self.headers = {'Content-Length': '6'}
+        payload: Any = None
+        headers: dict[str, str] = dataclasses.field(
+            init = False, default_factory = lambda: {'Content-Length': '6'})
 
         """ Public Methods """
 
@@ -462,6 +457,7 @@ def test_download_gives_up_without_progress(
 """ Private Classes """
 
 
+@dataclasses.dataclass
 class _Broken:
     """A response whose connection breaks after some blocks.
 
@@ -474,28 +470,17 @@ class _Broken:
 
     """
 
+    blocks: list[bytes]
+    length: int
+    status: int = 200
+    breaks: bool = True
+
     """ Initialization Methods """
 
-    def __init__(
-        self,
-        blocks: list[bytes],
-        length: int,
-        status: int = 200,
-        breaks: bool = True) -> None:
-        """Keeps the blocks, length, status, and whether the response breaks.
-
-        Args:
-            blocks: the blocks sent before the connection breaks.
-            length: the "Content-Length" of the response.
-            status: the status code. Defaults to 200.
-            breaks: whether the connection breaks after the blocks. Defaults
-                to `True`.
-
-        """
-        self.blocks = blocks
-        self.headers = {'Content-Length': str(length)}
-        self.status_code = status
-        self.breaks = breaks
+    def __post_init__(self) -> None:
+        """Gives the response the headers and status code of `requests`."""
+        self.headers = {'Content-Length': str(self.length)}
+        self.status_code = self.status
 
     """ Public Methods """
 
@@ -503,14 +488,14 @@ class _Broken:
         """Does nothing, since the request succeeded."""
         return None
 
-    def iter_content(self, chunk_size: int) -> Any:
+    def iter_content(self, chunk_size: int) -> Iterator[bytes]:
         """Yields the blocks, then breaks the connection if it breaks.
 
         Args:
             chunk_size: the size of each block, which is not used.
 
         Yields:
-            The blocks.
+            bytes: each block.
 
         Raises:
             requests.exceptions.ChunkedEncodingError: after the blocks, if

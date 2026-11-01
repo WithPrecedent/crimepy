@@ -32,6 +32,7 @@ from __future__ import annotations
 
 import collections
 import contextlib
+import dataclasses
 import datetime as dt
 import io
 import pathlib
@@ -82,8 +83,12 @@ _Chunk: TypeAlias = dict[str, pa.Table]
 """ Private Classes """
 
 
+# Readers are compared by identity, as files are, so `eq` is off.
+@dataclasses.dataclass(eq = False)
 class _Deflate64(io.RawIOBase):
     """Reads a member of a zip archive that is compressed with Deflate64.
+
+    The archive is opened at the start of the member's compressed data.
 
     Args:
         path: path of the zip archive.
@@ -91,25 +96,22 @@ class _Deflate64(io.RawIOBase):
 
     """
 
+    path: pathlib.Path
+    info: zipfile.ZipInfo
+
     """ Initialization Methods """
 
-    def __init__(self, path: pathlib.Path, info: zipfile.ZipInfo) -> None:
-        """Opens the archive at the start of the member's compressed data.
-
-        Args:
-            path: path of the zip archive.
-            info: the member's entry in the archive.
-
-        """
+    def __post_init__(self) -> None:
+        """Opens the archive at the start of the member's compressed data."""
         import inflate64  # noqa: PLC0415
 
         super().__init__()
-        self._file = open(path, 'rb')  # noqa: SIM115
-        self._file.seek(info.header_offset)
+        self._file = open(self.path, 'rb')  # noqa: SIM115
+        self._file.seek(self.info.header_offset)
         header = self._file.read(_LOCAL_HEADER)
         name, extra = struct.unpack('<HH', header[26:30])
         self._file.seek(name + extra, io.SEEK_CUR)
-        self._left = info.compress_size
+        self._left = self.info.compress_size
         self._inflater = inflate64.Inflater()
         self._buffer = b''
 
@@ -334,9 +336,8 @@ def tables(
             chunk. Defaults to `None`.
 
     Yields:
-        dict[str, pa.Table]: for each chunk, the tables that have records in
-            it, by name. The "agencies" table, which is small, comes in the
-            last chunk.
+        _Chunk: for each chunk, the tables that have records in it, by name.
+            The "agencies" table, which is small, comes in the last chunk.
 
     """
     wanted = _wanted(names)
