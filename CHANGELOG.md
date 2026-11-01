@@ -4,7 +4,7 @@ All notable changes to this project will be documented in this file.
 
 <!-- insertion marker -->
 
-## Unreleased
+## 0.2.2
 
 * Requires amos 0.6.2, and the lock file uses the latest bobbie (0.3.3),
   bunches (0.3.0), camina (0.2.4), chrisjen (0.4.2), holden (0.2.6), miller
