@@ -33,7 +33,7 @@ keywords = [
     "nibrs",
     "ucr"]
 dependencies = [
-    "amos[plots]>=0.6.0",
+    "amos[plots]>=0.6.2",
     "inflate64>=1.0",
     "numpy>=1.26",
     "pandas>=3.0",
@@ -126,10 +126,7 @@ show_error_codes = true
 # These packages are annotated but do not ship a py.typed marker.
 module = [
     "amos.*",
-    "camina.*",
-    "chrisjen.*",
     "inflate64.*",
-    "nagata.*",
     "pyarrow.*"]
 follow_untyped_imports = true
 ignore_missing_imports = true

@@ -6,8 +6,9 @@ and `pandas.merge` does the same to the keys it joins on. These functions
 keep the categories, so combined tables stay small and keep their labels.
 
 They take `amos` datasets or data frames and return an `amos.Dataset`, which
-keeps the label, task, and groups of the first dataset given when its
-columns are still there.
+keeps the label, task, groups, and kinds (see `amos`'s `set_kinds`) of the
+first dataset given when its columns are still there. A label that is still
+pending (not yet a column) stays pending.
 
 Contents:
     merge: joins two tables, keeping their categories.
@@ -147,16 +148,21 @@ def _dataset(
         items: the datasets and data frames that were combined.
 
     Returns:
-        A dataset with the label, task, and groups of the first dataset in
-            `items` whose label and groups are columns of `data` (and with
-            none if no dataset was given).
+        A dataset with the label, task, groups, and kinds of the first
+            dataset in `items` whose label, groups, and columns with kinds
+            are columns of `data` (and with none if no dataset was given). A
+            pending label (one that is not yet a column) stays pending.
 
     """
     first = next((i for i in items if isinstance(i, amos.Dataset)), None)
     if first is None:
         return amos.Dataset.create(data)
-    label = first.label if first.label in data.columns else None
+    kept = first.label in data.columns or not first.has_label
+    label = first.label if kept else None
     groups = [g for g in first.groups if g in data.columns]
-    return amos.Dataset.create(
+    dataset = amos.Dataset.create(
         data, label = label, task = first.task if label else None,
         seed = first.seed, groups = groups or None)
+    dataset.kinds = {
+        c: k for c, k in first.kinds.items() if c in data.columns}
+    return dataset

@@ -36,9 +36,10 @@ wheels = [
 
 [[package]]
 name = "amos"
-version = "0.6.0"
+version = "0.6.2"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
+    { name = "bobbie" },
     { name = "camina" },
     { name = "chrisjen" },
     { name = "nagata" },
@@ -49,9 +50,9 @@ dependencies = [
     { name = "scipy", version = "1.17.1", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.12'" },
     { name = "scipy", version = "1.18.1", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.12'" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/3d/e8/87082f2ecd379c3f74bc9c3ba2337b624b939020228e0e07e6773fcce202/amos-0.6.0.tar.gz", hash = "sha256:77cd38759f6b4e6b7e14e1c488405c596e40e128f31af678ed71748a135be172", size = 1822206, upload-time = "2026-10-30T16:41:03.649Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/0a/00/b0a5b99d71420bc21dd9dc128f002aec236386e6fbbd5c0b968a9443017f/amos-0.6.2.tar.gz", hash = "sha256:cc786a45ed9dc622a4eb2fa33433ad5696fd4c2b50721962d3f439c96b6872a5", size = 1848679, upload-time = "2026-11-01T19:03:46.534Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/3d/43/9234eaeccf444d4bcfd2e7e9357262eb6ce146b605e505a5578248c7125f/amos-0.6.0-py3-none-any.whl", hash = "sha256:62d1d88507e7f3b0df3f22323679aa2105b72f0f764aab313c734d09a76409d6", size = 253687, upload-time = "2026-10-30T16:41:02.069Z" },
+    { url = "https://files.pythonhosted.org/packages/48/50/476325c16615b67bf47bdb20cae477577abb25f4506d2c305f42452f8013/amos-0.6.2-py3-none-any.whl", hash = "sha256:98ae37072fe8275fb3b0a9dc2d4087ba03a76bff63c5edd96044f0ce9463f444", size = 271300, upload-time = "2026-11-01T19:03:44.803Z" },
 ]
 
 [package.optional-dependencies]
@@ -241,33 +242,33 @@ wheels = [
 
 [[package]]
 name = "bobbie"
-version = "0.2.1"
+version = "0.3.3"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "bunches" },
     { name = "wonka" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/85/9f/1601f3757bdfa8b8e7429e9c947cb003a17a46a655db811f50476be5f279/bobbie-0.2.1.tar.gz", hash = "sha256:259d9151c859ce72e426e99fcb79e0a99dc930b5b782b3769f11429a65132d69", size = 118313, upload-time = "2026-09-29T20:22:52.832Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/5e/67/93129f32e4df4af75363ca51c151e8f6628fbe61131c4d01becbe120e03c/bobbie-0.3.3.tar.gz", hash = "sha256:57a0cb461141a78a4816eb11d80ada511b0aed90ecff1406bb44f47aec801110", size = 113690, upload-time = "2026-11-01T18:16:53.016Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/e3/31/c8f9bd82e4fc93e3954696b1454b5a8d2ac32afc6912652ed7a197c8818b/bobbie-0.2.1-py3-none-any.whl", hash = "sha256:296e6073c464cd6c5bda66dfb06c4574ce8e41725a579c30b71e7bb27b53d874", size = 13310, upload-time = "2026-09-29T20:22:51.781Z" },
+    { url = "https://files.pythonhosted.org/packages/04/a6/c0ca27b82ba87d6f746b5dfd4cd19df986bd958612c56469609332c4954f/bobbie-0.3.3-py3-none-any.whl", hash = "sha256:6b0a88a33e3e3bbf0cf287d81bbebf0b8a28384ea84bcf80a989f102bb90c977", size = 15733, upload-time = "2026-11-01T18:16:51.739Z" },
 ]
 
 [[package]]
 name = "bunches"
-version = "0.2.2"
+version = "0.3.0"
 source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/03/59/d0746e81f72b5cd744854ea4d24c06435f8e05141a7d7b9a8d68089f23f1/bunches-0.2.2.tar.gz", hash = "sha256:3eedece5461c7ee49a5766af59cdf9cdcfec424a8044072177bf379e4f09c017", size = 126234, upload-time = "2026-10-17T16:57:38.214Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/80/07/3f8a796b662edd6b5f7810a78d250b9d43524ae64f09223558efcf59941b/bunches-0.3.0.tar.gz", hash = "sha256:2f2ebcc240d3bdb1688d4a3e52e12fe035811adb7c7747124a750e2de27f15d3", size = 131997, upload-time = "2026-10-30T22:56:26.732Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/aa/c0/3fffce3ec82bb9492c92fdb15b57842ffb98f20337950153f6dbe5f52284/bunches-0.2.2-py3-none-any.whl", hash = "sha256:d09f9e7ef531750605bf53586778ad12395a3b01d3588f9049704dbe9ba10339", size = 22421, upload-time = "2026-10-17T16:57:37.185Z" },
+    { url = "https://files.pythonhosted.org/packages/81/84/b52e0ec8c684ec95d02dce3a9a1f080e688abbd41846b8475d49258d0e21/bunches-0.3.0-py3-none-any.whl", hash = "sha256:d051f7ff6c8c39cd1b002cd1fa78dc349465699b700f09ac3a956828363d6c45", size = 22734, upload-time = "2026-10-30T22:56:25.372Z" },
 ]
 
 [[package]]
 name = "camina"
-version = "0.2.3"
+version = "0.2.4"
 source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/8a/d2/43ec153b55dfb96ff809370284212fe4632992fa3e40521ae22a16c8f3a7/camina-0.2.3.tar.gz", hash = "sha256:a38595403417af11ca2bd97eec28902879c804d00b114a6bc2cb04f4725a2675", size = 124748, upload-time = "2026-10-17T17:18:49.307Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/3f/93/26e7b6a9069b95e41d22d44ba55d16686107e43b08022b57696d91f78ec9/camina-0.2.4.tar.gz", hash = "sha256:221d63dffa63a1dd8c8e6f90fa8ffe56fb5a7d9b6ac7879cd62230fda69c5ad8", size = 124814, upload-time = "2026-10-31T19:55:08.309Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/8e/51/8712d40222898957828cb6b20dc87ad6a9942cc50f49c53858525c22d060/camina-0.2.3-py3-none-any.whl", hash = "sha256:d88734909f582949e57d014d82e041bc5807589d1f9dc4b0fa77cc5b2d083f90", size = 20495, upload-time = "2026-10-17T17:18:48.249Z" },
+    { url = "https://files.pythonhosted.org/packages/53/98/289751b8c231fbb78cccbdc85721f08503139f9150b95c193cd5695154a5/camina-0.2.4-py3-none-any.whl", hash = "sha256:94771e4c4529af9e50ce544530b2b77448e5366d7989f03bfb3ace4612afcc13", size = 20647, upload-time = "2026-10-31T19:55:07.242Z" },
 ]
 
 [[package]]
@@ -649,7 +650,7 @@ wheels = [
 
 [[package]]
 name = "chrisjen"
-version = "0.4.0"
+version = "0.4.2"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "bobbie" },
@@ -659,9 +660,9 @@ dependencies = [
     { name = "nagata" },
     { name = "wonka" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/07/11/cf59cf64c74ce3fe9462dce4f3353fc187dec043032b2fe2736cf9819be8/chrisjen-0.4.0.tar.gz", hash = "sha256:5173c7217dc34bcaa1be95a0d153f58c8d8e29daacf6b7f6b7d6ce3c3720ef8f", size = 154289, upload-time = "2026-10-29T17:38:12.822Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/af/83/6627b3108ac1eb3d3a1ac21452c7677bb7cb1d069c0279f32021b2b32f63/chrisjen-0.4.2.tar.gz", hash = "sha256:82bceb0a8eb5e614682b188e04fdd3517c22a01ea324e1f66bb785367a4f61f6", size = 159596, upload-time = "2026-10-31T20:29:09.267Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/f8/6d/eb3eb5c292a688d9c80f6568083f633c3e636cb002e2df55e1f61ec21659/chrisjen-0.4.0-py3-none-any.whl", hash = "sha256:4848c2adf9f28fe4da177348385448c2482ddf932a32bcee7f0d724a8a77997d", size = 32813, upload-time = "2026-10-29T17:38:11.28Z" },
+    { url = "https://files.pythonhosted.org/packages/63/56/d47439766daa21101011c49c2b53e701692a211657d6d9ceddacd31d282c/chrisjen-0.4.2-py3-none-any.whl", hash = "sha256:7aefa6a495ad67df8c8ef465b7888b6cbc3520474675d87b92d6853210d74df2", size = 33634, upload-time = "2026-10-31T20:29:08.311Z" },
 ]
 
 [[package]]
@@ -1092,7 +1093,7 @@ tests = [
 [package.metadata]
 requires-dist = [
     { name = "amos", extras = ["all"], marker = "extra == 'analysis'" },
-    { name = "amos", extras = ["plots"], specifier = ">=0.6.0" },
+    { name = "amos", extras = ["plots"], specifier = ">=0.6.2" },
     { name = "inflate64", specifier = ">=1.0" },
     { name = "numpy", specifier = ">=1.26" },
     { name = "pandas", specifier = ">=3.0" },
@@ -1617,15 +1618,15 @@ wheels = [
 
 [[package]]
 name = "holden"
-version = "0.2.4"
+version = "0.2.6"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "bunches" },
     { name = "wonka" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/9b/93/f846a890e29053102af022621cb12807b96603339df96b801a84c1ce6f02/holden-0.2.4.tar.gz", hash = "sha256:85e58f04386bffebc03242f2afc45eb697d8c1d546cdbd568f76db562b4946a5", size = 178259, upload-time = "2026-10-17T16:53:52.716Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/6f/9d/dfa99f2b3b21fb4aa6066f428f2b916a0b8ca0531029f591219cfd4605d1/holden-0.2.6.tar.gz", hash = "sha256:a95f4563aa807666d8e04e26dab9461b30ec9224adec20fb724edce40d750080", size = 178747, upload-time = "2026-10-31T20:18:19.032Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/5b/62/da96ba6ec977ba8c4ed3b3edd0f2bbd2d2dead9309939d45f394fbf712d9/holden-0.2.4-py3-none-any.whl", hash = "sha256:45c9a93277469106f9881412ce7accafcc2729be3adda96f55a609e75e3e3ebf", size = 40756, upload-time = "2026-10-17T16:53:51.564Z" },
+    { url = "https://files.pythonhosted.org/packages/98/e5/1aa3b62e00d7301eb3f63fc808b1196c6f3db540031d91f02d280e5922a3/holden-0.2.6-py3-none-any.whl", hash = "sha256:cb6610ff2d31529a7f72bfc3514a4b915bcd8806bc1439c06d5006d42e7080ee", size = 41416, upload-time = "2026-10-31T20:18:17.793Z" },
 ]
 
 [[package]]
@@ -2639,11 +2640,11 @@ wheels = [
 
 [[package]]
 name = "miller"
-version = "0.2.2"
+version = "0.2.3"
 source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/ea/39/ff31263f605d415fb48adaf867db829c7ac69ba3041fc4fe1448970c6a47/miller-0.2.2.tar.gz", hash = "sha256:1c4f53862924df5e143d70bdc64c64da165834738d6ea4b3d238db5e9f85c136", size = 125074, upload-time = "2026-10-17T16:52:34.542Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/be/73/7afc7cfebb2fca6e90bb91591bb3f20d6bb029e5816afb3c400cf8989a8d/miller-0.2.3.tar.gz", hash = "sha256:424866154eea6f858c8bfd308fd8b59a1534ca944b3ebb54aa529a2abe85067a", size = 125145, upload-time = "2026-10-31T19:55:21.42Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/e9/97/b3a20b32e21d11efa160ff43170a5a61bcd1936894f6b0717ef433f58b72/miller-0.2.2-py3-none-any.whl", hash = "sha256:8493944313ac11e5bb1f439958df10637ff6fb64f23d77ea681233d66883829a", size = 26529, upload-time = "2026-10-17T16:52:33.353Z" },
+    { url = "https://files.pythonhosted.org/packages/a2/15/56e9c1054461954f9a4cca68e89b9e4375b7f9719781666a6a213269411c/miller-0.2.3-py3-none-any.whl", hash = "sha256:3cb1789d4c8d7c9f8bc98db3e5b8a5ec8f1208d8e4f3a985b7e59e28f0739d64", size = 26646, upload-time = "2026-10-31T19:55:20.501Z" },
 ]
 
 [[package]]
@@ -3001,14 +3002,14 @@ wheels = [
 
 [[package]]
 name = "nagata"
-version = "0.2.0"
+version = "0.2.1"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "wonka" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/0b/da/fcb87f83133a3f26a0644ee13c49dea63853af46d65145495def7ecc8a18/nagata-0.2.0.tar.gz", hash = "sha256:417ba7420d3dff8154bc468af2c0182f433d13d05a99f382d73245f133912dd5", size = 243573, upload-time = "2026-09-29T19:30:16.309Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/65/64/a49f3b0828f85606a4f76d9ffa0c65b8e8a7e04af6425495194c72557d67/nagata-0.2.1.tar.gz", hash = "sha256:37f5553bd63b0e5aa9bf64127d6b0dc3e8cecd937b021aad18b03a991c011fd5", size = 243863, upload-time = "2026-10-31T19:55:20.792Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/35/3f/9c434e1fbfe2c4ce4e05a947347d2e159fe9c7d37fed85a101a53267ac42/nagata-0.2.0-py3-none-any.whl", hash = "sha256:6ae225a7c6edae112af41c9bdbeda1f8a665f626a0164cc014aaba69cc133d15", size = 22246, upload-time = "2026-09-29T19:30:15.285Z" },
+    { url = "https://files.pythonhosted.org/packages/b8/c8/3b621833c99ca729e34092f782a779684edcb6cb4a2b8c54bae3824a643a/nagata-0.2.1-py3-none-any.whl", hash = "sha256:a975934ec9bd002a817d45df3a599066a25f891e0d12c03affd271a5926ca193", size = 22216, upload-time = "2026-10-31T19:55:19.799Z" },
 ]
 
 [[package]]
@@ -5504,11 +5505,11 @@ wheels = [
 
 [[package]]
 name = "wonka"
-version = "0.2.2"
+version = "0.3.0"
 source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/38/65/129152c9952695835e213741a671160faa31c2670c24f0f9969c9de1b810/wonka-0.2.2.tar.gz", hash = "sha256:e263062dbfd9d94285820233662222ffe9c71912a721011e59e2eb0c88abfc3e", size = 783214, upload-time = "2026-10-17T16:53:17.779Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/93/fa/f159afc09fe0a6bb90afe6e370110edf637b62c4d676c40389dab0707b26/wonka-0.3.0.tar.gz", hash = "sha256:269e0008fab68fe74213424c304e3ae8b986abdcfa53d62be1ac634547747449", size = 783244, upload-time = "2026-10-30T22:59:59.901Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/67/a8/8aaf53a074073c355049e079f91f32a1de42a3b1df4f132b2be9f114a13d/wonka-0.2.2-py3-none-any.whl", hash = "sha256:4eeb5f804d3dcf8cea076bfb86ac7546c5bcab2c80c4adef0e4f842a7107a1fd", size = 27163, upload-time = "2026-10-17T16:53:16.705Z" },
+    { url = "https://files.pythonhosted.org/packages/50/e3/1bfca22e4c02d158ecf46230b581482e93d894e951e2a436d6b2b25489a6/wonka-0.3.0-py3-none-any.whl", hash = "sha256:a9273e514bc6325ce05f552b53d00399264a5772bd11e5a40cfa9be54fb92246", size = 23371, upload-time = "2026-10-30T22:59:58.942Z" },
 ]
 
 [[package]]

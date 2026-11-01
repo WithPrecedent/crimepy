@@ -294,6 +294,16 @@ def test_combining_keeps_label_and_groups() -> None:
     assert combine.stack([second]).label is None
 
 
+def test_combining_keeps_pending_labels_and_kinds() -> None:
+    """Checks that combined datasets keep pending labels and kinds."""
+    first = amos.Dataset.create(
+        pd.DataFrame({'k': ['a', 'b'], 'd': [0, 1]}), label = 'later')
+    first.kinds = {'d': 'booleans', 'gone': 'booleans'}
+    stacked = combine.stack([first, pd.DataFrame({'k': ['c'], 'd': [1]})])
+    assert (stacked.label, stacked.has_label) == ('later', False)
+    assert stacked.kinds == {'d': 'booleans'}
+
+
 @pytest.mark.parametrize(
     ('draw', 'kwargs'),
     [
@@ -381,6 +391,15 @@ def test_load_nibrs_in_a_project(data_folder: pathlib.Path) -> None:
     assert project.result.label == 'count'
 
 
+def test_load_nibrs_keeps_a_pending_label(
+    data_folder: pathlib.Path) -> None:
+    """Checks that loading keeps a label that a later step makes."""
+    item = amos.Dataset.create(pd.DataFrame(), label = 'count')
+    loaded = crimepy.nibrs.techniques.LoadNibrs().apply(
+        item, table = 'incidents', years = '2004', folder = str(data_folder))
+    assert (loaded.label, loaded.has_label) == ('count', False)
+
+
 def test_load_nibrs_needs_years() -> None:
     """Checks that loading NIBRS data without years fails."""
     with pytest.raises(ValueError, match = 'years'):
@@ -392,6 +411,17 @@ def test_decode_nibrs() -> None:
     data = pd.DataFrame({'location': pd.Categorical(['20']), 'x': [1]})
     decoded = crimepy.nibrs.techniques.DecodeNibrs().apply(data)
     assert decoded.data['location'].tolist() == ['Residence/Home']
+
+
+def test_map_values_uses_the_codebooks() -> None:
+    """Checks that `map_values` decodes columns by their codebooks."""
+    data = pd.DataFrame({
+        'location': pd.Categorical(['20', '99']), 'offender_race': ['W', 'B']})
+    mapped = amos.mungers.MapValues().apply(
+        data, columns = ['location', 'offender_race'])
+    assert mapped.data['location'].tolist() == ['Residence/Home', '99']
+    assert mapped.data['offender_race'].tolist() == [
+        'White', 'Black or African American']
 
 
 def test_utilities() -> None:

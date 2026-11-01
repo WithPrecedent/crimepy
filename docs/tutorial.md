@@ -130,9 +130,11 @@ features = incidents.data[columns].dropna().astype(int)
 model_data = amos.Dataset.create(features, label = 'cleared', seed = 43)
 splitters.Stratified().apply(model_data)
 models.GradientBoosting().apply(model_data)
-metrics.RocAuc().apply(model_data)
-model_data.metrics['roc_auc']
+metrics.RocAuc().measure(model_data)
 ```
+
+A metric is not a step: `measure` returns its score. In a settings file,
+name it as a worker's `criterion` or in the `metrics` of a `scorecard`.
 
 (`arrestee_count` all but decides `cleared`, so the score is high: a real
 model of clearance would leave it out.)

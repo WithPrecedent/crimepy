@@ -4,6 +4,27 @@ All notable changes to this project will be documented in this file.
 
 <!-- insertion marker -->
 
+## Unreleased
+
+* Requires amos 0.6.2, and the lock file uses the latest bobbie (0.3.3),
+  bunches (0.3.0), camina (0.2.4), chrisjen (0.4.2), holden (0.2.6), miller
+  (0.2.3), nagata (0.2.1), and wonka (0.3.0). camina, chrisjen, and nagata
+  ship the `py.typed` marker, so they are gone from the `mypy` override for
+  untyped imports.
+* Importing `crimepy` registers the codebook of every column of codes with
+  `amos.register_value_map`, so `amos`'s `map_values` replaces the codes of
+  the columns it names with their labels, with no map in the settings
+  (`columns = victim_race, offender_race`).
+* `load_nibrs` keeps a label that is not a column of the loaded table as a
+  pending label (as amos 0.6.2 does), instead of dropping it, so a later
+  step such as `count_crimes` or `derive_columns` can make it.
+* `crimepy.combine.stack` and `merge` keep a pending label, and the kinds
+  (`Dataset.kinds`, from amos's `set_kinds`) of the columns that are still
+  there, so dummies stay dummies.
+* The tutorial scores its model with `measure`, since amos 0.6.2's metrics
+  are no longer techniques with an `apply`, and the advanced user guide shows
+  `map_values` with the codebooks.
+
 ## 0.2.1
 
 * **Breaking:** `crimepy.nibrs.codes.STATES` is now the name of each numeric

@@ -167,6 +167,26 @@ offenses = crimepy.nibrs.decode(
     offenses, ['location'], {'location': {'20': 'Home', '13': 'Street'}})
 ```
 
+Importing `crimepy` also registers every codebook with
+`amos.register_value_map`, so `amos`'s `map_values` replaces the codes of
+the columns it names with their labels, with no map in the settings:
+
+```ini
+[wrangler]
+techniques = load_nibrs, map_values
+
+[load_nibrs_parameters]
+table = victims
+years = 2023
+decode = false
+
+[map_values_parameters]
+columns = victim_sex, victim_race, offender_race
+```
+
+Unlike `decode_nibrs`, `map_values` sorts the categories rather than putting
+them in the order of the codebook.
+
 `offenses`, `arrestees`, and `group_b_arrests` also get the category of the
 offense (`offense_category`, such as "Assault Offenses"), whom or what it is
 against (`crime_against`: "Person", "Property", "Society", or "Not a
@@ -238,13 +258,17 @@ while the parquet files are read, so the rest is never loaded.
   in the dataset's `tables` and a figure in its `figures`, under the
   technique's name, and every step is recorded in its `history`. `count`
   makes a new dataset of counts, whose label is the counts.
-* `crimepy.combine.stack` and `merge` return a dataset with the label and
-  groups of the first dataset given, if their columns are still there.
+* `crimepy.combine.stack` and `merge` return a dataset with the label,
+  groups, and kinds (from `amos`'s `set_kinds`) of the first dataset given,
+  if their columns are still there.
+* A label that is not yet a column (such as the "count" of `count_crimes`,
+  or a column that `derive_columns` makes) is pending, as `amos` keeps it:
+  `load_nibrs`, `stack`, and `merge` keep it until a later step makes it.
 
 A dataset gathers the data, what was learned from it, and how, so it is the
-record of an analysis. Any `amos` technique (a model, a validator, a metric,
-or a plot such as `shap_beeswarm`) can be applied to it directly, as in the
-[tutorial](tutorial.md#model).
+record of an analysis. Any `amos` technique (a model, a validator, or a plot
+such as `shap_beeswarm`) can be applied to it directly, and a metric's
+`measure` scores its predictions, as in the [tutorial](tutorial.md#model).
 
 ## The amos techniques
 

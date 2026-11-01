@@ -9,6 +9,11 @@ it can be named in the settings of any `amos` worker:
 * `decode_nibrs` (an `amos.Munger`) replaces codes with their labels, for a
   table that was loaded with `decode = false`.
 
+The codebook of every column of codes is also registered with
+`amos.register_value_map`, so `amos`'s `map_values` replaces the codes of
+the columns it names with their labels, without a map of its own
+(`columns = offender_race, victim_race`).
+
 ```ini
 [general]
 seed = 43
@@ -41,7 +46,7 @@ import amos
 import pandas as pd
 
 from .. import utilities
-from . import munge, store, tables
+from . import codes, munge, store, tables
 
 """ Techniques """
 
@@ -69,9 +74,11 @@ class LoadNibrs(amos.Loader):
     * `label`, `task`, and `groups`: as in `amos`, they default to those in
       the "general" section.
 
-    A label or group that is not a column of the loaded table is left for a
-    later technique to make (such as the "count" column of `count_crimes`),
-    so the "general" section can name the label of the finished data.
+    A label that is not a column of the loaded table is pending (as `amos`
+    keeps it) until a later technique makes it (such as the "count" column of
+    `count_crimes` or a column of `derive_columns`), so the "general" section
+    can name the label of the finished data. A group that is not a column is
+    left out.
 
     """
 
@@ -144,8 +151,6 @@ class LoadNibrs(amos.Loader):
         task = kwargs.pop('task', None)
         groups = utilities.to_names(kwargs.pop('groups', None) or item.groups)
         data = self.load('nibrs', **kwargs)
-        if label not in data.columns:
-            label, task = None, None
         groups = [g for g in groups if g in data.columns]
         loaded = amos.Dataset.create(
             data, label = label, task = task, seed = item.seed,
@@ -190,3 +195,21 @@ class DecodeNibrs(amos.Munger):
         """
         names = utilities.to_names(columns) or None
         return munge.decode(data, names)
+
+
+""" Private Functions """
+
+
+def _register_codebooks() -> None:
+    """Registers the codebook of each column of codes with `amos`.
+
+    `amos`'s `map_values` then replaces the codes of a column of NIBRS data
+    with their labels when its settings only name the column (such as
+    `columns = offender_race`).
+
+    """
+    for column, book in munge.CODE_COLUMNS.items():
+        amos.register_value_map(column, codes.CODEBOOKS[book])
+
+
+_register_codebooks()
