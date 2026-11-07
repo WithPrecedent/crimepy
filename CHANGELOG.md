@@ -8,12 +8,14 @@ All notable changes to this project will be documented in this file.
 
 * The documentation's User Guide has a NIBRS section after the tutorial,
   with the explanation of the master files and of how `crimepy` converts
-  them (moved from the advanced user guide) and a codebook of every column
-  of the NIBRS tables: its description, type, positions in the records, and
-  codes with their labels. The codebook is generated from
-  `crimepy.nibrs.layouts` and `crimepy.nibrs.codes` when the documentation
-  is built (`docs/scripts/gen_nibrs_codebook.py`), and the build fails if a
-  column has no description.
+  them (moved from the advanced user guide) and a codebook: one table, in
+  alphabetical order, of every column of the tables that
+  `crimepy.nibrs.tables.build` makes, once each, with its description, the
+  built tables that have it, its type, its segment and positions in the
+  records, and its codes with their labels. The codebook is generated from
+  the builders, `crimepy.nibrs.layouts`, and `crimepy.nibrs.codes` when the
+  documentation is built (`docs/scripts/gen_nibrs_codebook.py`), and the
+  build fails if a column has no description.
 
 ## 0.3.0
 

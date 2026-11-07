@@ -4,8 +4,8 @@ This guide explains the NIBRS master files and every choice that `crimepy`
 makes in reading them, so that you can describe your data accurately and
 check `crimepy`'s work. This page describes the files,
 [how `crimepy` converts the data](conversion.md) describes what `crimepy`
-makes of them, and the [codebook](codebook.md) lists every column of its
-tables.
+makes of them, and the [codebook](codebook.md) lists every column of the
+tables that it builds.
 
 ## The files
 

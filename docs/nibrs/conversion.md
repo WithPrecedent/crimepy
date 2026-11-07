@@ -2,8 +2,9 @@
 
 This page explains how `crimepy` turns the fields of the
 [master files](master_files.md) into the columns of its tables. The
-[codebook](codebook.md) lists every column, with its type, its positions,
-and its codes.
+[codebook](codebook.md) lists every column of the tables that
+`crimepy.nibrs.tables.build` makes, once each, with its type, its
+positions, and its codes.
 
 ## Kinds of fields
 

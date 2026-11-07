@@ -236,7 +236,7 @@ crimepy project crime.ini --export
 See the [tutorial](https://WithPrecedent.github.io/crimepy/tutorial/), the
 [NIBRS guide](https://WithPrecedent.github.io/crimepy/nibrs/master_files/)
 (which explains the master files and every choice `crimepy` makes in reading
-them, with a codebook of every column), the
+them, with a codebook of the columns of the tables it builds), the
 [advanced user guide](https://WithPrecedent.github.io/crimepy/advanced/),
 and the [recipes](https://WithPrecedent.github.io/crimepy/recipes/).
 

@@ -2,7 +2,8 @@
 
 This guide explains where `crimepy` saves its data, how its tables work with
 `amos`, and the techniques it adds to `amos`. The NIBRS master files, how
-`crimepy` reads them, and every column of its tables are explained in the
+`crimepy` reads them, and every column of the tables it builds are
+explained in the
 NIBRS guide: [the master files](nibrs/master_files.md),
 [how `crimepy` converts the data](nibrs/conversion.md), and the
 [codebook](nibrs/codebook.md).
