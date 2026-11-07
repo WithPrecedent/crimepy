@@ -62,26 +62,33 @@ columns, and the columns that `crimepy` adds (see
 than one table has one row, and numbered columns that repeat a field (such
 as `offense_1` to `offense_10`) share a row.
 
-Each row gives:
+The description of each column also gives:
 
 * **In**: the built tables that have the column.
-* **Type**: what the column holds. A *code* column is replaced with its
-  labels (as categories) when a table is built, unless `decode = False` is
-  passed. Age codes are kept as codes, since `crimepy` adds the age in years.
-  A code that is not in the codebook is kept as it is.
 * **From**: the segment of the master files that the column is read from,
   and where the field is in its records, counted from 1, as in the FBI's
   record descriptions. Columns that `crimepy` adds have none.
 * **Codes**: the codes of the field (as `crimepy.nibrs.codes` has them) and
   their labels.
 
+The type is the column's `pandas` type:
+
+* **categorical** (`category`): the codes of the master files, which are
+  replaced with their labels when a table is built, unless `decode = False`
+  is passed. Age codes are kept as codes, since `crimepy` adds the age in
+  years. A code that is not in the codebook is kept as it is.
+* **integer** (`Int64`): a whole number, with `pd.NA` when it is missing.
+* **boolean** (`boolean`): true or false, with `pd.NA` when it is missing.
+* **datetime** (`datetime64`): a date.
+* **string** (`str`): text, without the blanks around it.
+
 The tables that `crimepy.nibrs.load` returns have the same columns as the
 segments here. Its other tables (Group "B" arrests, window segments, and
 the agencies' columns that are not joined to incidents) are described by
 `crimepy.nibrs.layouts`.
 
-| Column | Description |
-| --- | --- |
+| Column | Description | Type |
+| --- | --- | --- |
 '''
 
 _DESCRIPTIONS: dict[str, str] = {
@@ -517,35 +524,52 @@ def _origin(names: list[str]) -> str:
 
 
 def _type(field: layouts.Field | None, dtype: object) -> str:
-    """Returns what a column holds.
+    """Returns the type of a column, and how its field is converted.
 
     Args:
         field: the field that the column is read from, or `None` if
             `crimepy` adds the column.
         dtype: the `pandas` type of the column.
 
+    Raises:
+        TypeError: if the `pandas` type has no name here.
+
     Returns:
-        A short description of the column's type.
+        The name of the type (such as "categorical" for `category`), and,
+            for a field, a note of how its values are converted.
 
     """
+    if isinstance(dtype, pd.CategoricalDtype):
+        name = 'categorical'
+    elif isinstance(dtype, pd.Int64Dtype):
+        name = 'integer'
+    elif isinstance(dtype, pd.BooleanDtype) or dtype == bool:
+        name = 'boolean'
+    elif pd.api.types.is_datetime64_any_dtype(dtype):
+        name = 'datetime'
+    elif pd.api.types.is_float_dtype(dtype):
+        name = 'float'
+    elif pd.api.types.is_string_dtype(dtype):
+        name = 'string'
+    else:
+        message = f'the pandas type {dtype} has no name in the codebook'
+        raise TypeError(message)
     if field is None:
-        if isinstance(dtype, pd.Int64Dtype):
-            return 'whole number'
-        if isinstance(dtype, pd.BooleanDtype) or dtype == bool:
-            return 'true or false'
-        if pd.api.types.is_datetime64_any_dtype(dtype):
-            return 'date'
-        return 'text'
+        return name
     if field.kind == 'code':
-        return 'code'
-    if field.kind == 'yes':
-        return f'true if "{field.true}", and false otherwise'
-    return {
-        'text': 'text',
-        'int': 'whole number (missing if blank)',
-        'date': 'date (missing if blank or impossible)',
-        'bool': 'true for "Y", false for "N", and missing otherwise',
-        'quantity': 'number with thousandths'}[field.kind]
+        note = (
+            'codes' if field.codes in munge._KEPT_CODEBOOKS
+            else 'NIBRS codes if `decode = False`, else full labels')
+    elif field.kind == 'yes':
+        note = f'"{field.true}" is true, and anything else false'
+    else:
+        note = {
+            'text': '',
+            'int': 'missing if blank',
+            'date': 'missing if blank or impossible',
+            'bool': '"Y" is true, "N" false, and anything else missing',
+            'quantity': 'in thousandths'}[field.kind]
+    return f'{name}<br><small>{note}</small>' if note else name
 
 
 def _codes(book: str) -> str:
@@ -607,7 +631,8 @@ def _row(names: list[str], built: dict[str, pd.DataFrame]) -> str:
 
     Returns:
         The row of a Markdown table, with the names in the first column and
-            the description, tables, type, source, and codes in the second.
+            the description, tables, source, and codes in the second, and
+            the type in the third.
 
     """
     if len(names) == 1:
@@ -623,14 +648,17 @@ def _row(names: list[str], built: dict[str, pd.DataFrame]) -> str:
         where = ', '.join(f'`{t}`' for t in present)
     dtype = built[present[0]][names[0]].dtype
     field = _field(names[0])
-    details = [f'**In:** {where}', f'**Type:** {_type(field, dtype)}']
+    details = [f'**In:** {where}']
     origin = _origin(names)
     if origin:
         details.append(f'**From:** {origin}')
     text = f'{_description(_key(names[0]))}<br>{" · ".join(details)}'
     if field is not None and field.codes is not None:
         text += f'<br>{_codes(field.codes)}'
-    return f'| {name} | {text.replace("|", "&#124;")} |'
+    kind = _type(field, dtype)
+    return (
+        f'| {name} | {text.replace("|", "&#124;")} | '
+        f'{kind.replace("|", "&#124;")} |')
 
 
 def _page() -> str:
