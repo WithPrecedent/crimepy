@@ -4,6 +4,17 @@ All notable changes to this project will be documented in this file.
 
 <!-- insertion marker -->
 
+## Unreleased
+
+* The documentation's User Guide has a NIBRS section after the tutorial,
+  with the explanation of the master files and of how `crimepy` converts
+  them (moved from the advanced user guide) and a codebook of every column
+  of the NIBRS tables: its description, type, positions in the records, and
+  codes with their labels. The codebook is generated from
+  `crimepy.nibrs.layouts` and `crimepy.nibrs.codes` when the documentation
+  is built (`docs/scripts/gen_nibrs_codebook.py`), and the build fails if a
+  column has no description.
+
 ## 0.3.0
 
 * Requires amos 0.7.0, and the lock file uses bobbie 0.4.0, which amos

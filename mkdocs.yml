@@ -25,6 +25,10 @@ nav:
   - License: license.md
 - User Guide:
   - Tutorial: tutorial.md
+  - NIBRS:
+    - Master Files: nibrs/master_files.md
+    - Conversion: nibrs/conversion.md
+    - Codebook: nibrs/codebook.md
   - Advanced User Guide: advanced.md
   - Recipes: recipes.md
 - API: reference/
@@ -126,6 +130,7 @@ plugins:
 - gen-files:
     scripts:
     - docs/scripts/gen_ref_nav.py
+    - docs/scripts/gen_nibrs_codebook.py
 - literate-nav:
     nav_file: SUMMARY.md
 - markdown-exec:
