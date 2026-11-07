@@ -9,6 +9,7 @@ Contents:
     test_combining_keeps_label_and_groups: checks combined datasets.
     test_count: checks counts.
     test_count_crimes_and_describers: checks the techniques directly.
+    test_crime_trend_draws_its_table: checks the figure of a trend.
     test_coverage_and_percent_change_of_datasets: checks tables of datasets.
     test_crime_rates: checks crime rates.
     test_crime_rates_load_agencies: checks crime rates of loaded agencies.
@@ -369,6 +370,27 @@ def test_count_crimes_and_describers(incidents: pd.DataFrame) -> None:
     assert trend.tables['crime_trend'].shape == (2, 1)
     rates = crimepy.techniques.ClearanceRates().apply(incidents, by = 'state')
     assert len(rates.tables['clearance_rates']) == 2
+
+
+def test_crime_trend_draws_its_table(incidents: pd.DataFrame) -> None:
+    """Checks that `crime_trend` draws its table only when it is asked to.
+
+    Args:
+        incidents: a small table of incidents.
+
+    """
+    trend = crimepy.techniques.CrimeTrend()
+    plain = trend.apply(amos.Dataset.create(incidents), by = 'state')
+    assert 'crime_trend' not in plain.figures
+    drawn = trend.apply(
+        amos.Dataset.create(incidents), by = 'state', freq = 'YS',
+        visualize = True)
+    figure = drawn.figures['crime_trend']
+    lines = figure.axes[0].get_lines()
+    assert len(lines) == drawn.tables['crime_trend'].shape[1]
+    assert drawn.history[-1]['figure'] == 'crime_trend'
+    stage = amos.Dataset.create(incidents, visualize_explorers = True)
+    assert 'crime_trend' in trend.apply(stage).figures
 
 
 def test_load_nibrs_in_a_project(data_folder: pathlib.Path) -> None:

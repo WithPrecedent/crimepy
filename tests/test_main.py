@@ -14,7 +14,7 @@ import crimepy
 
 def test_crimepy() -> None:
     """Checks the package's version and that its public names exist."""
-    assert crimepy.__version__ == '0.2.2'
+    assert crimepy.__version__ == '0.3.0'
     assert crimepy.Project is not None
     for name in crimepy.__all__:
         assert hasattr(crimepy, name)

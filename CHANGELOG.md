@@ -4,6 +4,17 @@ All notable changes to this project will be documented in this file.
 
 <!-- insertion marker -->
 
+## 0.3.0
+
+* Requires amos 0.7.0, and the lock file uses bobbie 0.4.0, which amos
+  0.7.0 requires to write settings files.
+* `crime_trend` draws its table as a `trend_plot` when it is applied with
+  `visualize = True`, or when "visualize_explorers" is set in the "general"
+  section of an amos project's settings (amos 0.7.0). The figure is in the
+  dataset's `figures` under the technique's name, and it draws every group
+  of the table (the plot alone draws the 6 largest). The other describers
+  have no plot, so they draw nothing.
+
 ## 0.2.2
 
 * Fixed the `pydoclint` check of CI: the Deflate64 reader of

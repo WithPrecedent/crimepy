@@ -10,7 +10,9 @@ dataset's rows:
   row for each group (and period), with the number of events, so that
   counts can be modeled (for example, with `amos`'s `poisson` or
   `negative_binomial` models).
-* `crime_trend` (an `amos.Describer`) makes a table of counts over time.
+* `crime_trend` (an `amos.Describer`) makes a table of counts over time
+  and, with `visualize = True` (or "visualize_explorers" in the "general"
+  section of the settings), draws it as a `trend_plot`.
 * `population_rates` (an `amos.Describer`) makes counts per 100,000 people.
 * `crime_rates` (an `amos.Describer`) makes the rate of crime in each group,
   using only agencies that reported all year.
@@ -42,7 +44,8 @@ Contents:
 from __future__ import annotations
 
 import dataclasses
-from typing import Any, Literal
+from collections.abc import Mapping
+from typing import Any, ClassVar, Literal
 
 import amos
 import pandas as pd
@@ -158,9 +161,13 @@ class CrimeTrend(amos.Describer):
     """A table of counts of events over time, with a column for each group.
 
     Parameters (set in the "crime_trend_parameters" section of the
-    settings): `by`, `date`, `freq`, and `top` (see `describe`).
+    settings): `by`, `date`, `freq`, and `top` (see `describe`), and
+    `visualize`, which draws the table as a `trend_plot` in the dataset's
+    `figures` under the technique's name (see `amos.base.Visualizer`).
 
     """
+
+    visual: ClassVar[str] = 'trend_plot'
 
     """ Required Methods """
 
@@ -201,6 +208,30 @@ class CrimeTrend(amos.Describer):
             wide = wide[largest]
         wide.columns = [str(c) for c in wide.columns]
         return wide
+
+    """ Private Methods """
+
+    def _visual_parameters(
+        self,
+        item: amos.Dataset,  # noqa: ARG002
+        parameters: Mapping[str, Any]) -> dict[str, Any]:
+        """Returns the parameters of the `trend_plot` of the table.
+
+        Args:
+            item: the dataset, with the technique's table.
+            parameters: the parameters that the technique was applied with.
+
+        Returns:
+            The "by", "date", "freq", and "top" that the table was made with,
+                so that the plot draws the same counts. "top" is passed even
+                if it was not set, since the plot otherwise draws only 6
+                groups.
+
+        """
+        names = ('by', 'date', 'freq')
+        drawn = {k: parameters[k] for k in names if k in parameters}
+        drawn['top'] = parameters.get('top')
+        return drawn
 
 
 @dataclasses.dataclass
