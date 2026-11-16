@@ -6,6 +6,15 @@ All notable changes to this project will be documented in this file.
 
 ## Unreleased
 
+* Requires amos 0.9.0, and the lock file uses bobbie 0.5.0 and chrisjen
+  0.5.0, which amos 0.9.0 requires.
+* **Breaking:** amos 0.9.0 removed `amos.register_value_map`, so importing
+  `crimepy` no longer registers the codebooks, and `map_values` no longer
+  decodes NIBRS columns without a map. Name `map_nibrs_codes`
+  (`crimepy.nibrs.techniques.MapNibrsCodes`, a subclass of amos's
+  `MapValues`) in its place: it decodes the columns it names, or every
+  column of codes in the data, and sorts the categories as `map_values`
+  does.
 * The documentation's User Guide has a NIBRS section after the tutorial,
   with the explanation of the master files and of how `crimepy` converts
   them (moved from the advanced user guide) and a codebook: one table, in

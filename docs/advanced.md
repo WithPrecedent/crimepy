@@ -85,6 +85,7 @@ Importing `crimepy` adds these techniques to the `amos` library:
 | --- | --- | --- |
 | `load_nibrs` | loader | loads a table (or builds one) for years, with `years`, `table`, `states`, `columns`, `decode`, and `folder` parameters |
 | `decode_nibrs` | munger | replaces codes with labels |
+| `map_nibrs_codes` | munger | replaces codes with labels as `map_values` does (sorting the categories) |
 | `count_crimes` | shaper | counts rows by `by` (and periods of `freq`), so counts can be modeled |
 | `crime_trend` | describer | a table of counts over time |
 | `population_rates` | describer | counts per 100,000 people, from a table of counts |

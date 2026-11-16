@@ -338,6 +338,7 @@ def test_techniques_are_in_the_amos_library() -> None:
     kinds = {
         'load_nibrs': 'loader',
         'decode_nibrs': 'munger',
+        'map_nibrs_codes': 'munger',
         'count_crimes': 'shaper',
         'crime_trend': 'describer',
         'population_rates': 'describer',
@@ -435,11 +436,11 @@ def test_decode_nibrs() -> None:
     assert decoded.data['location'].tolist() == ['Residence/Home']
 
 
-def test_map_values_uses_the_codebooks() -> None:
-    """Checks that `map_values` decodes columns by their codebooks."""
+def test_map_nibrs_codes() -> None:
+    """Checks that `map_nibrs_codes` decodes columns by their codebooks."""
     data = pd.DataFrame({
         'location': pd.Categorical(['20', '99']), 'offender_race': ['W', 'B']})
-    mapped = amos.mungers.MapValues().apply(
+    mapped = crimepy.nibrs.techniques.MapNibrsCodes().apply(
         data, columns = ['location', 'offender_race'])
     assert mapped.data['location'].tolist() == ['Residence/Home', '99']
     assert mapped.data['offender_race'].tolist() == [

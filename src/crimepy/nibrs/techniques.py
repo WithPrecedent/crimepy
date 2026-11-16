@@ -8,11 +8,10 @@ it can be named in the settings of any `amos` worker:
   starts with it needs no data of its own.
 * `decode_nibrs` (an `amos.Munger`) replaces codes with their labels, for a
   table that was loaded with `decode = false`.
-
-The codebook of every column of codes is also registered with
-`amos.register_value_map`, so `amos`'s `map_values` replaces the codes of
-the columns it names with their labels, without a map of its own
-(`columns = offender_race, victim_race`).
+* `map_nibrs_codes` (an `amos.mungers.MapValues`) also replaces codes with
+  their labels, the way `amos`'s `map_values` does (sorting the
+  categories), by the codebook of every column of codes, or of the columns
+  it names (`columns = offender_race, victim_race`).
 
 ```ini
 [general]
@@ -34,13 +33,14 @@ states = DE
 Contents:
     DecodeNibrs: replaces codes with their labels.
     LoadNibrs: loads a table of NIBRS data for years.
+    MapNibrsCodes: maps codes to their labels as `map_values` does.
 
 """
 
 from __future__ import annotations
 
 import dataclasses
-from typing import Any
+from typing import Any, ClassVar
 
 import amos
 import pandas as pd
@@ -197,19 +197,21 @@ class DecodeNibrs(amos.Munger):
         return munge.decode(data, names)
 
 
-""" Private Functions """
+@dataclasses.dataclass
+class MapNibrsCodes(amos.mungers.MapValues):
+    """Maps the codes of NIBRS data to their labels as `map_values` does.
 
+    Unlike `decode_nibrs`, it sorts the categories rather than putting them
+    in the order of the codebook.
 
-def _register_codebooks() -> None:
-    """Registers the codebook of each column of codes with `amos`.
+    Parameters (set in the "map_nibrs_codes_parameters" section of the
+    settings):
 
-    `amos`'s `map_values` then replaces the codes of a column of NIBRS data
-    with their labels when its settings only name the column (such as
-    `columns = offender_race`).
+    * `columns`: the columns to map. Defaults to every column of codes (see
+      `crimepy.nibrs.munge.CODE_COLUMNS`) that is in the data.
 
     """
-    for column, book in munge.CODE_COLUMNS.items():
-        amos.register_value_map(column, codes.CODEBOOKS[book])
 
-
-_register_codebooks()
+    value_maps: ClassVar[dict[str, Any]] = {
+        column: codes.CODEBOOKS[book]
+        for column, book in munge.CODE_COLUMNS.items()}

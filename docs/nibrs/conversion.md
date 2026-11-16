@@ -65,25 +65,25 @@ offenses = crimepy.nibrs.decode(
     offenses, ['location'], {'location': {'20': 'Home', '13': 'Street'}})
 ```
 
-Importing `crimepy` also registers every codebook with
-`amos.register_value_map`, so `amos`'s `map_values` replaces the codes of
-the columns it names with their labels, with no map in the settings:
+`map_nibrs_codes` (`crimepy.nibrs.techniques.MapNibrsCodes`, a subclass of
+`amos`'s `map_values`) replaces the codes of the columns it names (or of
+every column of codes) with their labels, with no map in the settings:
 
 ```ini
 [wrangler]
-techniques = load_nibrs, map_values
+techniques = load_nibrs, map_nibrs_codes
 
 [load_nibrs_parameters]
 table = victims
 years = 2023
 decode = false
 
-[map_values_parameters]
+[map_nibrs_codes_parameters]
 columns = victim_sex, victim_race, offender_race
 ```
 
-Unlike `decode_nibrs`, `map_values` sorts the categories rather than putting
-them in the order of the codebook.
+Unlike `decode_nibrs`, `map_nibrs_codes` sorts the categories rather than
+putting them in the order of the codebook.
 
 `offenses`, `arrestees`, and `group_b_arrests` also get the category of the
 offense (`offense_category`, such as "Assault Offenses"), whom or what it is
