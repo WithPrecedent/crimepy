@@ -1,0 +1,2604 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Accessible tools for downloading, combining, munging, analyzing, and plotting crime data">
+      
+      
+      
+        <link rel="canonical" href="https://WithPrecedent.github.io/crimepy/nibrs/codebook/">
+      
+      
+        <link rel="prev" href="../conversion/">
+      
+      
+        <link rel="next" href="../../advanced/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.8.0">
+    
+    
+      
+        <title>Codebook - crimepy</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.57a0d79d.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.fb2fffe2.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/_markdown_exec_pyodide.css">
+    
+      <link rel="stylesheet" href="../../assets/_mkdocstrings.css">
+    
+      <link rel="stylesheet" href="../../css/material.css">
+    
+      <link rel="stylesheet" href="../../css/mkdocstrings.css">
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#codebook" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow md-header--lifted" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="crimepy" class="md-header__button md-logo" aria-label="crimepy" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            crimepy
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Codebook
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme)" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m14.3 16-.7-2h-3.2l-.7 2H7.8L11 7h2l3.2 9zM20 8.69V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12zm-9.15 3.96h2.3L12 9z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="teal" data-md-color-accent="purple"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_2" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 7a5 5 0 0 1 5 5 5 5 0 0 1-5 5 5 5 0 0 1-5-5 5 5 0 0 1 5-5m0 2a3 3 0 0 0-3 3 3 3 0 0 0 3 3 3 3 0 0 0 3-3 3 3 0 0 0-3-3m0-7 2.39 3.42C13.65 5.15 12.84 5 12 5s-1.65.15-2.39.42zM3.34 7l4.16-.35A7.2 7.2 0 0 0 5.94 8.5c-.44.74-.69 1.5-.83 2.29zm.02 10 1.76-3.77a7.131 7.131 0 0 0 2.38 4.14zM20.65 7l-1.77 3.79a7.02 7.02 0 0 0-2.38-4.15zm-.01 10-4.14.36c.59-.51 1.12-1.14 1.54-1.86.42-.73.69-1.5.83-2.29zM12 22l-2.41-3.44c.74.27 1.55.44 2.41.44.82 0 1.63-.17 2.37-.44z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="black" data-md-color-accent="lime"  aria-label="Switch to system preference"  type="radio" name="__palette" id="__palette_2">
+    
+      <label class="md-header__button md-icon" title="Switch to system preference" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m17.75 4.09-2.53 1.94.91 3.06-2.63-1.81-2.63 1.81.91-3.06-2.53-1.94L12.44 4l1.06-3 1.06 3zm3.5 6.91-1.64 1.25.59 1.98-1.7-1.17-1.7 1.17.59-1.98L15.75 11l2.06-.05L18.5 9l.69 1.95zm-2.28 4.95c.83-.08 1.72 1.1 1.19 1.85-.32.45-.66.87-1.08 1.27C15.17 23 8.84 23 4.94 19.07c-3.91-3.9-3.91-10.24 0-14.14.4-.4.82-.76 1.27-1.08.75-.53 1.93.36 1.85 1.19-.27 2.86.69 5.83 2.89 8.02a9.96 9.96 0 0 0 8.02 2.89m-1.64 2.02a12.08 12.08 0 0 1-7.8-3.47c-2.17-2.19-3.33-5-3.49-7.82-2.81 3.14-2.7 7.96.31 10.98 3.02 3.01 7.84 3.12 10.98.31"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/WithPrecedent/crimepy" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+  </div>
+  <div class="md-source__repository">
+    WithPrecedent/crimepy
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+    
+      
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../.." class="md-tabs__link">
+          
+  
+  
+    
+  
+  Home
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../../tutorial/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  User Guide
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../reference/crimepy/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  API
+
+        </a>
+      </li>
+    
+  
+
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../contributing/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Development
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+    
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="crimepy" class="md-nav__button md-logo" aria-label="crimepy" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    crimepy
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/WithPrecedent/crimepy" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+  </div>
+  <div class="md-source__repository">
+    WithPrecedent/crimepy
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_1" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../.." class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_1" id="__nav_1_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_1">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Home
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../changelog/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Changelog
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../license/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    License
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    User Guide
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    User Guide
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../tutorial/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Tutorial
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+          
+          
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_2" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_2_2" id="__nav_2_2_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    NIBRS
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_2_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_2_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    NIBRS
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../master_files/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Master Files
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../conversion/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Conversion
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Codebook
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../advanced/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Advanced User Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../recipes/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Recipes
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    API
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    API
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_1" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../reference/crimepy/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    <code class="doc-symbol doc-symbol-nav doc-symbol-module"></code> crimepy
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_3_1" id="__nav_3_1_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_1">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    <code class="doc-symbol doc-symbol-nav doc-symbol-module"></code> crimepy
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/crimepy/analyze/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    <code class="doc-symbol doc-symbol-nav doc-symbol-module"></code> analyze
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/crimepy/cli/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    <code class="doc-symbol doc-symbol-nav doc-symbol-module"></code> cli
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/crimepy/combine/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    <code class="doc-symbol doc-symbol-nav doc-symbol-module"></code> combine
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_1_5" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../reference/crimepy/nibrs/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    <code class="doc-symbol doc-symbol-nav doc-symbol-module"></code> nibrs
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_3_1_5" id="__nav_3_1_5_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_3_1_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_1_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    <code class="doc-symbol doc-symbol-nav doc-symbol-module"></code> nibrs
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/crimepy/nibrs/cde/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    <code class="doc-symbol doc-symbol-nav doc-symbol-module"></code> cde
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/crimepy/nibrs/codes/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    <code class="doc-symbol doc-symbol-nav doc-symbol-module"></code> codes
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/crimepy/nibrs/layouts/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    <code class="doc-symbol doc-symbol-nav doc-symbol-module"></code> layouts
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/crimepy/nibrs/munge/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    <code class="doc-symbol doc-symbol-nav doc-symbol-module"></code> munge
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/crimepy/nibrs/reader/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    <code class="doc-symbol doc-symbol-nav doc-symbol-module"></code> reader
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/crimepy/nibrs/store/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    <code class="doc-symbol doc-symbol-nav doc-symbol-module"></code> store
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/crimepy/nibrs/tables/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    <code class="doc-symbol doc-symbol-nav doc-symbol-module"></code> tables
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/crimepy/nibrs/techniques/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    <code class="doc-symbol doc-symbol-nav doc-symbol-module"></code> techniques
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/crimepy/options/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    <code class="doc-symbol doc-symbol-nav doc-symbol-module"></code> options
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/crimepy/plot/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    <code class="doc-symbol doc-symbol-nav doc-symbol-module"></code> plot
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/crimepy/techniques/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    <code class="doc-symbol doc-symbol-nav doc-symbol-module"></code> techniques
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/crimepy/utilities/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    <code class="doc-symbol doc-symbol-nav doc-symbol-module"></code> utilities
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Development
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Development
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../contributing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Contributing
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../code_of_conduct/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Code of Conduct
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../coverage/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Coverage Report
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+                
+
+
+
+
+  <nav class="md-path" aria-label="Navigation" >
+    <ol class="md-path__list">
+      
+      
+        
+  
+  
+    
+    
+      <li class="md-path__item">
+        <a href="../../tutorial/" class="md-path__link">
+          
+  <span class="md-ellipsis">
+    User Guide
+  </span>
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+    
+    
+      <li class="md-path__item">
+        <a href="../master_files/" class="md-path__link">
+          
+  <span class="md-ellipsis">
+    NIBRS
+  </span>
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ol>
+  </nav>
+
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+    <a href="https://github.com/WithPrecedent/crimepy/edit/master/docs/scripts/gen_nibrs_codebook.py" title="Edit this page" class="md-content__button md-icon" rel="edit">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4zm10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1z"/></svg>
+    </a>
+  
+  
+    
+      
+    
+    <a href="https://github.com/WithPrecedent/crimepy/raw/master/docs/scripts/gen_nibrs_codebook.py" title="View source of this page" class="md-content__button md-icon">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M17 18c.56 0 1 .44 1 1s-.44 1-1 1-1-.44-1-1 .44-1 1-1m0-3c-2.73 0-5.06 1.66-6 4 .94 2.34 3.27 4 6 4s5.06-1.66 6-4c-.94-2.34-3.27-4-6-4m0 6.5a2.5 2.5 0 0 1-2.5-2.5 2.5 2.5 0 0 1 2.5-2.5 2.5 2.5 0 0 1 2.5 2.5 2.5 2.5 0 0 1-2.5 2.5M9.27 20H6V4h7v5h5v4.07c.7.08 1.36.25 2 .49V8l-6-6H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h4.5a8.2 8.2 0 0 1-1.23-2"/></svg>
+    </a>
+  
+
+
+<h1 id="codebook">Codebook<a class="headerlink" href="#codebook" title="Permanent link">&para;</a></h1>
+<p>This codebook lists every column of the tables that
+<code>crimepy.nibrs.tables.build</code> makes, in alphabetical order:</p>
+<ul>
+<li><code>incidents</code>: one row for each Group "A" incident.</li>
+<li><code>offenses</code>: one row for each offense of an incident.</li>
+<li><code>victims</code>: one row for each victim of an incident.</li>
+<li><code>offenders</code>: one row for each offender of an incident.</li>
+<li><code>arrestees</code>: one row for each arrestee of an incident.</li>
+</ul>
+<p>Each table has the columns of its segment, the incident's and agency's
+columns, and the columns that <code>crimepy</code> adds (see
+<a href="../conversion/">how <code>crimepy</code> converts the data</a>). A column that is in more
+than one table has one row, and numbered columns that repeat a field (such
+as <code>offense_1</code> to <code>offense_10</code>) share a row.</p>
+<p>The description of each column also gives:</p>
+<ul>
+<li><strong>In</strong>: the built tables that have the column.</li>
+<li><strong>From</strong>: the segment of the master files that the column is read from,
+  and where the field is in its records, counted from 1, as in the FBI's
+  record descriptions. Columns that <code>crimepy</code> adds have none.</li>
+<li><strong>Codes</strong>: the codes of the field (as <code>crimepy.nibrs.codes</code> has them) and
+  their labels.</li>
+</ul>
+<p>The type is the column's <code>pandas</code> type:</p>
+<ul>
+<li><strong>categorical</strong> (<code>category</code>): the codes of the master files, which are
+  replaced with their labels when a table is built, unless <code>decode = False</code>
+  is passed. Age codes are kept as codes, since <code>crimepy</code> adds the age in
+  years. A code that is not in the codebook is kept as it is.</li>
+<li><strong>integer</strong> (<code>Int64</code>): a whole number, with <code>pd.NA</code> when it is missing.</li>
+<li><strong>boolean</strong> (<code>boolean</code>): true or false, with <code>pd.NA</code> when it is missing.</li>
+<li><strong>datetime</strong> (<code>datetime64</code>): a date.</li>
+<li><strong>string</strong> (<code>str</code>): text, without the blanks around it.</li>
+</ul>
+<p>The tables that <code>crimepy.nibrs.load</code> returns have the same columns as the
+segments here. Its other tables (Group "B" arrests, window segments, and
+the agencies' columns that are not joined to incidents) are described by
+<code>crimepy.nibrs.layouts</code>.</p>
+<table>
+<thead>
+<tr>
+<th>Column</th>
+<th>Description</th>
+<th>Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>against_person</code></td>
+<td>Whether the incident had an offense against a person. Added by <code>crimepy</code>.<br><strong>In:</strong> <code>incidents</code></td>
+<td>boolean</td>
+</tr>
+<tr>
+<td><code>against_property</code></td>
+<td>Whether the incident had an offense against property. Added by <code>crimepy</code>.<br><strong>In:</strong> <code>incidents</code></td>
+<td>boolean</td>
+</tr>
+<tr>
+<td><code>against_society</code></td>
+<td>Whether the incident had an offense against society. Added by <code>crimepy</code>.<br><strong>In:</strong> <code>incidents</code></td>
+<td>boolean</td>
+</tr>
+<tr>
+<td><code>agency_city</code></td>
+<td>The name of the agency's city, as written in its batch header.<br><strong>In:</strong> every table · <strong>From:</strong> batch header (BH), positions 42-71 (before 2013, B1 42-71)</td>
+<td>string</td>
+</tr>
+<tr>
+<td><code>agency_core_city</code></td>
+<td>Whether the agency is the core city of a Metropolitan Statistical Area (MSA).<br><strong>In:</strong> every table · <strong>From:</strong> batch header (BH), position 79 (before 2013, B1 79)</td>
+<td>boolean<br><small>"Y" is true, "N" false, and anything else missing</small></td>
+</tr>
+<tr>
+<td><code>agency_division</code></td>
+<td>The Census division of the agency.<br><strong>In:</strong> every table · <strong>From:</strong> batch header (BH), position 76 (before 2013, B1 76)<br><details><summary>Codes (10)</summary><code>0</code> Possessions<br><code>1</code> New England<br><code>2</code> Middle Atlantic<br><code>3</code> East North Central<br><code>4</code> West North Central<br><code>5</code> South Atlantic<br><code>6</code> East South Central<br><code>7</code> West South Central<br><code>8</code> Mountain<br><code>9</code> Pacific</details></td>
+<td>categorical<br><small>NIBRS codes if <code>decode = False</code>, else full labels</small></td>
+</tr>
+<tr>
+<td><code>agency_fips_county</code></td>
+<td>The FIPS code of the agency's first county.<br><strong>In:</strong> every table · <strong>From:</strong> batch header (BH), positions 270-272 (before 2013, B3 94-96)</td>
+<td>string</td>
+</tr>
+<tr>
+<td><code>agency_months_active</code></td>
+<td>The number of months of the year in which the agency submitted a zero report (a report that it had no incidents) or a report of incidents. Use it to keep agencies that reported all year. Added by <code>crimepy</code>.<br><strong>In:</strong> every table</td>
+<td>integer</td>
+</tr>
+<tr>
+<td><code>agency_msa</code></td>
+<td>The code of the Metropolitan Statistical Area (MSA) of the agency's first county.<br><strong>In:</strong> every table · <strong>From:</strong> batch header (BH), positions 118-120 (before 2013, B2 38-40)</td>
+<td>string</td>
+</tr>
+<tr>
+<td><code>agency_ori</code></td>
+<td>The ORI of the batch header that the record follows, which usually, but not always, matches <code>ori</code>. Agencies are joined to records by it. Added by <code>crimepy</code>.<br><strong>In:</strong> every table</td>
+<td>string</td>
+</tr>
+<tr>
+<td><code>agency_population</code></td>
+<td>The population of all of the agency's (up to five) counties. Added by <code>crimepy</code>.<br><strong>In:</strong> every table</td>
+<td>integer</td>
+</tr>
+<tr>
+<td><code>agency_population_group</code></td>
+<td>The population group of the agency.<br><strong>In:</strong> every table · <strong>From:</strong> batch header (BH), positions 74-75 (before 2013, B1 74-75)<br><details><summary>Codes (23)</summary><code>0</code> Possessions<br><code>1</code> Cities 250,000 or Over<br><code>1A</code> Cities 1,000,000 or Over<br><code>1B</code> Cities 500,000 to 999,999<br><code>1C</code> Cities 250,000 to 499,999<br><code>2</code> Cities 100,000 to 249,999<br><code>3</code> Cities 50,000 to 99,999<br><code>4</code> Cities 25,000 to 49,999<br><code>5</code> Cities 10,000 to 24,999<br><code>6</code> Cities 2,500 to 9,999<br><code>7</code> Cities Under 2,500<br><code>8</code> Non-MSA Counties<br><code>8A</code> Non-MSA Counties 100,000 or Over<br><code>8B</code> Non-MSA Counties 25,000 to 99,999<br><code>8C</code> Non-MSA Counties 10,000 to 24,999<br><code>8D</code> Non-MSA Counties Under 10,000<br><code>8E</code> Non-MSA State Police<br><code>9</code> MSA Counties<br><code>9A</code> MSA Counties 100,000 or Over<br><code>9B</code> MSA Counties 25,000 to 99,999<br><code>9C</code> MSA Counties 10,000 to 24,999<br><code>9D</code> MSA Counties Under 10,000<br><code>9E</code> MSA State Police</details></td>
+<td>categorical<br><small>NIBRS codes if <code>decode = False</code>, else full labels</small></td>
+</tr>
+<tr>
+<td><code>agency_region</code></td>
+<td>The Census region of the agency.<br><strong>In:</strong> every table · <strong>From:</strong> batch header (BH), position 77 (before 2013, B1 77)<br><strong>Codes:</strong> <code>0</code> Possessions, <code>1</code> Northeast, <code>2</code> North Central, <code>3</code> South, <code>4</code> West</td>
+<td>categorical<br><small>NIBRS codes if <code>decode = False</code>, else full labels</small></td>
+</tr>
+<tr>
+<td><code>agency_type</code></td>
+<td>The type of agency.<br><strong>In:</strong> every table · <strong>From:</strong> batch header (BH), position 78 (before 2013, B1 78)<br><details><summary>Codes (8)</summary><code>0</code> Covered by Another Agency<br><code>1</code> City<br><code>2</code> County<br><code>3</code> University or College<br><code>4</code> State Police<br><code>6</code> Other State Agency<br><code>7</code> Tribal<br><code>8</code> Federal</details></td>
+<td>categorical<br><small>NIBRS codes if <code>decode = False</code>, else full labels</small></td>
+</tr>
+<tr>
+<td><code>arrest_crime_against</code></td>
+<td>Whom or what <code>arrest_offense</code> is against. Added by <code>crimepy</code>.<br><strong>In:</strong> <code>arrestees</code></td>
+<td>categorical</td>
+</tr>
+<tr>
+<td><code>arrest_date</code></td>
+<td>The date of the arrest.<br><strong>In:</strong> <code>arrestees</code> · <strong>From:</strong> arrestee segment (06), positions 48-55</td>
+<td>datetime<br><small>missing if blank or impossible</small></td>
+</tr>
+<tr>
+<td><code>arrest_offense</code></td>
+<td>The UCR code of the offense that the arrest was for.<br><strong>In:</strong> <code>arrestees</code> · <strong>From:</strong> arrestee segment (06), positions 58-60<br><details><summary>Codes (85)</summary><code>09A</code> Murder and Nonnegligent Manslaughter<br><code>09B</code> Negligent Manslaughter<br><code>09C</code> Justifiable Homicide<br><code>100</code> Kidnapping/Abduction<br><code>101</code> Treason<br><code>103</code> Espionage<br><code>11A</code> Rape<br><code>11B</code> Sodomy<br><code>11C</code> Sexual Assault With An Object<br><code>11D</code> Criminal Sexual Contact<br><code>120</code> Robbery<br><code>13A</code> Aggravated Assault<br><code>13B</code> Simple Assault<br><code>13C</code> Intimidation<br><code>200</code> Arson<br><code>210</code> Extortion/Blackmail<br><code>220</code> Burglary/Breaking &amp; Entering<br><code>23A</code> Pocket-picking<br><code>23B</code> Purse-snatching<br><code>23C</code> Shoplifting<br><code>23D</code> Theft From Building<br><code>23E</code> Theft From Coin-Operated Machine or Device<br><code>23F</code> Theft From Motor Vehicle<br><code>23G</code> Theft of Motor Vehicle Parts or Accessories<br><code>23H</code> All Other Larceny<br><code>240</code> Motor Vehicle Theft<br><code>250</code> Counterfeiting/Forgery<br><code>26A</code> False Pretenses/Swindle/Confidence Game<br><code>26B</code> Credit Card/Automated Teller Machine Fraud<br><code>26C</code> Impersonation<br><code>26D</code> Welfare Fraud<br><code>26E</code> Wire Fraud<br><code>26F</code> Identity Theft<br><code>26G</code> Hacking/Computer Invasion<br><code>26H</code> Money Laundering<br><code>270</code> Embezzlement<br><code>280</code> Stolen Property Offenses<br><code>290</code> Destruction/Damage/Vandalism of Property<br><code>30A</code> Illegal Entry into the United States<br><code>30B</code> False Citizenship<br><code>30C</code> Smuggling Aliens<br><code>30D</code> Re-entry after Deportation<br><code>35A</code> Drug/Narcotic Violations<br><code>35B</code> Drug Equipment Violations<br><code>360</code> Failure to Register as a Sex Offender<br><code>36A</code> Incest<br><code>36B</code> Statutory Rape<br><code>370</code> Pornography/Obscene Material<br><code>39A</code> Betting/Wagering<br><code>39B</code> Operating/Promoting/Assisting Gambling<br><code>39C</code> Gambling Equipment Violation<br><code>39D</code> Sports Tampering<br><code>40A</code> Prostitution<br><code>40B</code> Assisting or Promoting Prostitution<br><code>40C</code> Purchasing Prostitution<br><code>49A</code> Harboring Escapee/Concealing from Arrest<br><code>49B</code> Flight to Avoid Prosecution<br><code>49C</code> Flight to Avoid Deportation<br><code>510</code> Bribery<br><code>520</code> Weapon Law Violations<br><code>521</code> Violation of National Firearm Act of 1934<br><code>522</code> Weapons of Mass Destruction<br><code>526</code> Explosives Violation<br><code>58A</code> Import Violations<br><code>58B</code> Export Violations<br><code>61A</code> Federal Liquor Offenses<br><code>61B</code> Federal Tobacco Offenses<br><code>620</code> Wildlife Trafficking<br><code>64A</code> Human Trafficking, Commercial Sex Acts<br><code>64B</code> Human Trafficking, Involuntary Servitude<br><code>720</code> Animal Cruelty<br><code>90A</code> Bad Checks<br><code>90B</code> Curfew/Loitering/Vagrancy Violations<br><code>90C</code> Disorderly Conduct<br><code>90D</code> Driving Under the Influence<br><code>90E</code> Drunkenness<br><code>90F</code> Family Offenses, Nonviolent<br><code>90G</code> Liquor Law Violations<br><code>90H</code> Peeping Tom<br><code>90I</code> Runaway<br><code>90J</code> Trespass of Real Property<br><code>90K</code> Failure to Appear<br><code>90L</code> Federal Resource Violations<br><code>90M</code> Perjury<br><code>90Z</code> All Other Offenses</details></td>
+<td>categorical<br><small>NIBRS codes if <code>decode = False</code>, else full labels</small></td>
+</tr>
+<tr>
+<td><code>arrest_offense_category</code></td>
+<td>The category of <code>arrest_offense</code>. Added by <code>crimepy</code>.<br><strong>In:</strong> <code>arrestees</code></td>
+<td>categorical</td>
+</tr>
+<tr>
+<td><code>arrest_offense_group</code></td>
+<td>The group of <code>arrest_offense</code> ("A" or "B"). Added by <code>crimepy</code>.<br><strong>In:</strong> <code>arrestees</code></td>
+<td>categorical</td>
+</tr>
+<tr>
+<td><code>arrest_transaction_number</code></td>
+<td>The agency's number for the arrest.<br><strong>In:</strong> <code>arrestees</code> · <strong>From:</strong> arrestee segment (06), positions 36-47</td>
+<td>string</td>
+</tr>
+<tr>
+<td><code>arrest_type</code></td>
+<td>The type of arrest.<br><strong>In:</strong> <code>arrestees</code> · <strong>From:</strong> arrestee segment (06), position 56<br><strong>Codes:</strong> <code>O</code> On View, <code>S</code> Summoned/Cited, <code>T</code> Taken into Custody</td>
+<td>categorical<br><small>NIBRS codes if <code>decode = False</code>, else full labels</small></td>
+</tr>
+<tr>
+<td><code>arrested</code></td>
+<td>Whether anyone was arrested. Added by <code>crimepy</code>.<br><strong>In:</strong> <code>incidents</code></td>
+<td>boolean</td>
+</tr>
+<tr>
+<td><code>arrestee_age</code></td>
+<td>The age of the arrestee in years, from <code>arrestee_age_code</code>. Added by <code>crimepy</code>.<br><strong>In:</strong> <code>arrestees</code></td>
+<td>integer</td>
+</tr>
+<tr>
+<td><code>arrestee_age_code</code></td>
+<td>The age code of the arrestee.<br><strong>In:</strong> <code>arrestees</code> · <strong>From:</strong> arrestee segment (06), positions 67-68<br><strong>Codes:</strong> <code>NN</code> Under 24 Hours, <code>NB</code> 1-6 Days Old, <code>BB</code> 7-364 Days Old, <code>00</code> Unknown, <code>01</code>–<code>98</code> 1–98 Years Old, <code>99</code> Over 98 Years Old</td>
+<td>categorical<br><small>codes</small></td>
+</tr>
+<tr>
+<td><code>arrestee_count</code></td>
+<td>The number of arrestees of the incident. Added by <code>crimepy</code>.<br><strong>In:</strong> <code>incidents</code></td>
+<td>integer</td>
+</tr>
+<tr>
+<td><code>arrestee_ethnicity</code></td>
+<td>The ethnicity of the arrestee.<br><strong>In:</strong> <code>arrestees</code> · <strong>From:</strong> arrestee segment (06), position 71<br><strong>Codes:</strong> <code>H</code> Hispanic or Latino, <code>N</code> Not Hispanic or Latino, <code>M</code> Multiple, <code>U</code> Unknown</td>
+<td>categorical<br><small>NIBRS codes if <code>decode = False</code>, else full labels</small></td>
+</tr>
+<tr>
+<td><code>arrestee_race</code></td>
+<td>The race of the arrestee.<br><strong>In:</strong> <code>arrestees</code> · <strong>From:</strong> arrestee segment (06), position 70<br><details><summary>Codes (7)</summary><code>W</code> White<br><code>B</code> Black or African American<br><code>I</code> American Indian or Alaska Native<br><code>A</code> Asian<br><code>P</code> Native Hawaiian or Other Pacific Islander<br><code>M</code> Multiple<br><code>U</code> Unknown</details></td>
+<td>categorical<br><small>NIBRS codes if <code>decode = False</code>, else full labels</small></td>
+</tr>
+<tr>
+<td><code>arrestee_resident</code></td>
+<td>Whether the arrestee is a resident of the agency's jurisdiction.<br><strong>In:</strong> <code>arrestees</code> · <strong>From:</strong> arrestee segment (06), position 72<br><strong>Codes:</strong> <code>R</code> Resident, <code>N</code> Nonresident, <code>U</code> Unknown</td>
+<td>categorical<br><small>NIBRS codes if <code>decode = False</code>, else full labels</small></td>
+</tr>
+<tr>
+<td><code>arrestee_sequence</code></td>
+<td>The number of the arrestee within the incident.<br><strong>In:</strong> <code>arrestees</code> · <strong>From:</strong> arrestee segment (06), positions 34-35</td>
+<td>integer<br><small>missing if blank</small></td>
+</tr>
+<tr>
+<td><code>arrestee_sex</code></td>
+<td>The sex of the arrestee.<br><strong>In:</strong> <code>arrestees</code> · <strong>From:</strong> arrestee segment (06), position 69<br><strong>Codes:</strong> <code>F</code> Female, <code>M</code> Male, <code>U</code> Unknown</td>
+<td>categorical<br><small>NIBRS codes if <code>decode = False</code>, else full labels</small></td>
+</tr>
+<tr>
+<td><code>arrestee_weapon_1</code> and <code>arrestee_weapon_2</code></td>
+<td>Up to two weapons that the arrestee was armed with.<br><strong>In:</strong> <code>arrestees</code> · <strong>From:</strong> arrestee segment (06), positions 61-62, 64-65<br><details><summary>Codes (20)</summary><code>01</code> Unarmed<br><code>11</code> Firearm<br><code>12</code> Handgun<br><code>13</code> Rifle<br><code>14</code> Shotgun<br><code>15</code> Other Firearm<br><code>16</code> Lethal Cutting Instrument<br><code>17</code> Club/Blackjack/Brass Knuckles<br><code>20</code> Knife/Cutting Instrument<br><code>30</code> Blunt Object<br><code>35</code> Motor Vehicle/Vessel<br><code>40</code> Personal Weapons<br><code>50</code> Poison<br><code>60</code> Explosives<br><code>65</code> Fire/Incendiary Device<br><code>70</code> Drugs/Narcotics/Sleeping Pills<br><code>85</code> Asphyxiation<br><code>90</code> Other<br><code>95</code> Unknown<br><code>99</code> None</details></td>
+<td>categorical<br><small>NIBRS codes if <code>decode = False</code>, else full labels</small></td>
+</tr>
+<tr>
+<td><code>arrestee_weapon_1_automatic</code> and <code>arrestee_weapon_2_automatic</code></td>
+<td>Whether each weapon of the arrestee was an automatic firearm.<br><strong>In:</strong> <code>arrestees</code> · <strong>From:</strong> arrestee segment (06), positions 63, 66</td>
+<td>boolean<br><small>"A" is true, and anything else false</small></td>
+</tr>
+<tr>
+<td><code>bias_motivation_1</code> to <code>bias_motivation_5</code></td>
+<td>The bias motivations of the offense. <code>bias_motivation_1</code> is in every year, and <code>bias_motivation_2</code> to <code>bias_motivation_5</code> are in the files for 2013 to 2016 only.<br><strong>In:</strong> <code>offenses</code> · <strong>From:</strong> offense segment (02), positions 58-67 (2 characters each)<br><details><summary>Codes (36)</summary><code>11</code> Anti-White<br><code>12</code> Anti-Black or African American<br><code>13</code> Anti-American Indian or Alaska Native<br><code>14</code> Anti-Asian<br><code>15</code> Anti-Multiple Races, Group<br><code>16</code> Anti-Native Hawaiian or Other Pacific Islander<br><code>21</code> Anti-Jewish<br><code>22</code> Anti-Catholic<br><code>23</code> Anti-Protestant<br><code>24</code> Anti-Islamic (Muslim)<br><code>25</code> Anti-Other Religion<br><code>26</code> Anti-Multiple Religions, Group<br><code>27</code> Anti-Atheism/Agnosticism<br><code>28</code> Anti-Church of Jesus Christ<br><code>29</code> Anti-Jehovah&#x27;s Witness<br><code>31</code> Anti-Arab<br><code>32</code> Anti-Hispanic or Latino<br><code>33</code> Anti-Other Race/Ethnicity/Ancestry<br><code>41</code> Anti-Gay (Male)<br><code>42</code> Anti-Lesbian (Female)<br><code>43</code> Anti-Lesbian, Gay, Bisexual, or Transgender (Mixed Group)<br><code>44</code> Anti-Heterosexual<br><code>45</code> Anti-Bisexual<br><code>51</code> Anti-Physical Disability<br><code>52</code> Anti-Mental Disability<br><code>61</code> Anti-Male<br><code>62</code> Anti-Female<br><code>71</code> Anti-Transgender<br><code>72</code> Anti-Gender Non-Conforming<br><code>81</code> Anti-Eastern Orthodox (Russian, Greek, Other)<br><code>82</code> Anti-Other Christian<br><code>83</code> Anti-Buddhist<br><code>84</code> Anti-Hindu<br><code>85</code> Anti-Sikh<br><code>88</code> None (No Bias)<br><code>99</code> Unknown</details></td>
+<td>categorical<br><small>NIBRS codes if <code>decode = False</code>, else full labels</small></td>
+</tr>
+<tr>
+<td><code>cargo_theft</code></td>
+<td>Whether the incident involved cargo theft. In the files for 2013 and later.<br><strong>In:</strong> every table · <strong>From:</strong> administrative segment (01), position 89</td>
+<td>boolean<br><small>"Y" is true, "N" false, and anything else missing</small></td>
+</tr>
+<tr>
+<td><code>circumstance_1</code> and <code>circumstance_2</code></td>
+<td>Up to two circumstances of an aggravated assault or homicide.<br><strong>In:</strong> <code>victims</code> · <strong>From:</strong> victim segment (04), positions 74-77 (2 characters each)<br><details><summary>Codes (17)</summary><code>01</code> Argument<br><code>02</code> Assault on Law Enforcement Officer<br><code>03</code> Drug Dealing<br><code>04</code> Gangland<br><code>05</code> Juvenile Gang<br><code>06</code> Domestic Violence<br><code>07</code> Mercy Killing<br><code>08</code> Other Felony Involved<br><code>09</code> Other Circumstances<br><code>10</code> Unknown Circumstances<br><code>20</code> Criminal Killed by Private Citizen<br><code>21</code> Criminal Killed by Police Officer<br><code>30</code> Child Playing With Weapon<br><code>31</code> Gun-Cleaning Accident<br><code>32</code> Hunting Accident<br><code>33</code> Other Negligent Weapon Handling<br><code>34</code> Other Negligent Killings</details></td>
+<td>categorical<br><small>NIBRS codes if <code>decode = False</code>, else full labels</small></td>
+</tr>
+<tr>
+<td><code>city_submission</code></td>
+<td>The "city submission" field of the FBI's record descriptions, which is blank for most agencies.<br><strong>In:</strong> <code>incidents</code> · <strong>From:</strong> administrative segment (01), positions 46-49</td>
+<td>categorical</td>
+</tr>
+<tr>
+<td><code>cleared</code></td>
+<td>Whether the incident was cleared, by an arrest or exceptionally. Added by <code>crimepy</code>.<br><strong>In:</strong> <code>incidents</code></td>
+<td>boolean</td>
+</tr>
+<tr>
+<td><code>cleared_exceptionally</code></td>
+<td>How the incident was cleared exceptionally ("Not Applicable" if it was not).<br><strong>In:</strong> every table · <strong>From:</strong> administrative segment (01), position 50<br><strong>Codes:</strong> <code>A</code> Death of Offender, <code>B</code> Prosecution Declined, <code>C</code> In Custody of Other Jurisdiction, <code>D</code> Victim Refused to Cooperate, <code>E</code> Juvenile/No Custody, <code>N</code> Not Applicable</td>
+<td>categorical<br><small>NIBRS codes if <code>decode = False</code>, else full labels</small></td>
+</tr>
+<tr>
+<td><code>completion</code></td>
+<td>Whether the offense was attempted or completed.<br><strong>In:</strong> <code>offenses</code> · <strong>From:</strong> offense segment (02), position 37<br><strong>Codes:</strong> <code>A</code> Attempted, <code>C</code> Completed</td>
+<td>categorical<br><small>NIBRS codes if <code>decode = False</code>, else full labels</small></td>
+</tr>
+<tr>
+<td><code>crime_against</code></td>
+<td>Whom or what the offense is against: "Person", "Property", "Society", or "Not a Crime". Added by <code>crimepy</code>.<br><strong>In:</strong> <code>offenses</code></td>
+<td>categorical</td>
+</tr>
+<tr>
+<td><code>criminal_activity_1</code> to <code>criminal_activity_3</code></td>
+<td>Up to three types of criminal activity or gang information.<br><strong>In:</strong> <code>offenses</code> · <strong>From:</strong> offense segment (02), positions 46-48 (1 character each)<br><details><summary>Codes (16)</summary><code>A</code> Simple/Gross Neglect<br><code>B</code> Buying/Receiving<br><code>C</code> Cultivating/Manufacturing/Publishing<br><code>D</code> Distributing/Selling<br><code>E</code> Exploiting Children<br><code>F</code> Organized Abuse<br><code>G</code> Other Gang<br><code>I</code> Intentional Abuse and Torture<br><code>J</code> Juvenile Gang<br><code>N</code> None/Unknown<br><code>O</code> Operating/Promoting/Assisting/Abetting<br><code>P</code> Possessing/Concealing<br><code>S</code> Animal Sexual Abuse<br><code>T</code> Transporting/Transmitting/Importing<br><code>U</code> Using/Consuming<br><code>W</code> Conspiracy</details></td>
+<td>categorical<br><small>NIBRS codes if <code>decode = False</code>, else full labels</small></td>
+</tr>
+<tr>
+<td><code>data_year</code></td>
+<td>The year of the master file. Added by <code>crimepy</code>.<br><strong>In:</strong> every table</td>
+<td>integer</td>
+</tr>
+<tr>
+<td><code>days_to_arrest</code></td>
+<td>The number of days from <code>incident_date</code> to an arrest: in <code>incidents</code>, to the first arrest (missing if no one was arrested), and in <code>arrestees</code>, to the arrestee's arrest. Added by <code>crimepy</code>.<br><strong>In:</strong> <code>arrestees</code>, <code>incidents</code></td>
+<td>integer</td>
+</tr>
+<tr>
+<td><code>entry_method</code></td>
+<td>Whether force was used to enter, in a burglary.<br><strong>In:</strong> <code>offenses</code> · <strong>From:</strong> offense segment (02), position 45<br><strong>Codes:</strong> <code>F</code> Force, <code>N</code> No Force</td>
+<td>categorical<br><small>NIBRS codes if <code>decode = False</code>, else full labels</small></td>
+</tr>
+<tr>
+<td><code>exceptional_clearance_date</code></td>
+<td>The date that the incident was cleared exceptionally.<br><strong>In:</strong> every table · <strong>From:</strong> administrative segment (01), positions 51-58</td>
+<td>datetime<br><small>missing if blank or impossible</small></td>
+</tr>
+<tr>
+<td><code>firearm</code></td>
+<td>Whether a firearm was used in any offense of the incident (weapon codes 11 to 15). Added by <code>crimepy</code>.<br><strong>In:</strong> <code>incidents</code></td>
+<td>boolean</td>
+</tr>
+<tr>
+<td><code>first_arrest_date</code></td>
+<td>The date of the first arrest for the incident. Added by <code>crimepy</code>.<br><strong>In:</strong> <code>incidents</code></td>
+<td>datetime</td>
+</tr>
+<tr>
+<td><code>has_all_other_offenses</code></td>
+<td>Whether the incident had an offense in the category "All Other Offenses". Added by <code>crimepy</code> (unless <code>categories = False</code> is passed to <code>build</code>).<br><strong>In:</strong> <code>incidents</code></td>
+<td>boolean</td>
+</tr>
+<tr>
+<td><code>has_animal_cruelty</code></td>
+<td>Whether the incident had an offense in the category "Animal Cruelty". Added by <code>crimepy</code> (unless <code>categories = False</code> is passed to <code>build</code>).<br><strong>In:</strong> <code>incidents</code></td>
+<td>boolean</td>
+</tr>
+<tr>
+<td><code>has_arson</code></td>
+<td>Whether the incident had an offense in the category "Arson". Added by <code>crimepy</code> (unless <code>categories = False</code> is passed to <code>build</code>).<br><strong>In:</strong> <code>incidents</code></td>
+<td>boolean</td>
+</tr>
+<tr>
+<td><code>has_assault_offenses</code></td>
+<td>Whether the incident had an offense in the category "Assault Offenses". Added by <code>crimepy</code> (unless <code>categories = False</code> is passed to <code>build</code>).<br><strong>In:</strong> <code>incidents</code></td>
+<td>boolean</td>
+</tr>
+<tr>
+<td><code>has_bad_checks</code></td>
+<td>Whether the incident had an offense in the category "Bad Checks". Added by <code>crimepy</code> (unless <code>categories = False</code> is passed to <code>build</code>).<br><strong>In:</strong> <code>incidents</code></td>
+<td>boolean</td>
+</tr>
+<tr>
+<td><code>has_bribery</code></td>
+<td>Whether the incident had an offense in the category "Bribery". Added by <code>crimepy</code> (unless <code>categories = False</code> is passed to <code>build</code>).<br><strong>In:</strong> <code>incidents</code></td>
+<td>boolean</td>
+</tr>
+<tr>
+<td><code>has_burglary_breaking_entering</code></td>
+<td>Whether the incident had an offense in the category "Burglary/Breaking &amp; Entering". Added by <code>crimepy</code> (unless <code>categories = False</code> is passed to <code>build</code>).<br><strong>In:</strong> <code>incidents</code></td>
+<td>boolean</td>
+</tr>
+<tr>
+<td><code>has_counterfeiting_forgery</code></td>
+<td>Whether the incident had an offense in the category "Counterfeiting/Forgery". Added by <code>crimepy</code> (unless <code>categories = False</code> is passed to <code>build</code>).<br><strong>In:</strong> <code>incidents</code></td>
+<td>boolean</td>
+</tr>
+<tr>
+<td><code>has_curfew_loitering_vagrancy_violations</code></td>
+<td>Whether the incident had an offense in the category "Curfew/Loitering/Vagrancy Violations". Added by <code>crimepy</code> (unless <code>categories = False</code> is passed to <code>build</code>).<br><strong>In:</strong> <code>incidents</code></td>
+<td>boolean</td>
+</tr>
+<tr>
+<td><code>has_destruction_damage_vandalism_of_property</code></td>
+<td>Whether the incident had an offense in the category "Destruction/Damage/Vandalism of Property". Added by <code>crimepy</code> (unless <code>categories = False</code> is passed to <code>build</code>).<br><strong>In:</strong> <code>incidents</code></td>
+<td>boolean</td>
+</tr>
+<tr>
+<td><code>has_disorderly_conduct</code></td>
+<td>Whether the incident had an offense in the category "Disorderly Conduct". Added by <code>crimepy</code> (unless <code>categories = False</code> is passed to <code>build</code>).<br><strong>In:</strong> <code>incidents</code></td>
+<td>boolean</td>
+</tr>
+<tr>
+<td><code>has_driving_under_the_influence</code></td>
+<td>Whether the incident had an offense in the category "Driving Under the Influence". Added by <code>crimepy</code> (unless <code>categories = False</code> is passed to <code>build</code>).<br><strong>In:</strong> <code>incidents</code></td>
+<td>boolean</td>
+</tr>
+<tr>
+<td><code>has_drug_narcotic_offenses</code></td>
+<td>Whether the incident had an offense in the category "Drug/Narcotic Offenses". Added by <code>crimepy</code> (unless <code>categories = False</code> is passed to <code>build</code>).<br><strong>In:</strong> <code>incidents</code></td>
+<td>boolean</td>
+</tr>
+<tr>
+<td><code>has_drunkenness</code></td>
+<td>Whether the incident had an offense in the category "Drunkenness". Added by <code>crimepy</code> (unless <code>categories = False</code> is passed to <code>build</code>).<br><strong>In:</strong> <code>incidents</code></td>
+<td>boolean</td>
+</tr>
+<tr>
+<td><code>has_embezzlement</code></td>
+<td>Whether the incident had an offense in the category "Embezzlement". Added by <code>crimepy</code> (unless <code>categories = False</code> is passed to <code>build</code>).<br><strong>In:</strong> <code>incidents</code></td>
+<td>boolean</td>
+</tr>
+<tr>
+<td><code>has_extortion_blackmail</code></td>
+<td>Whether the incident had an offense in the category "Extortion/Blackmail". Added by <code>crimepy</code> (unless <code>categories = False</code> is passed to <code>build</code>).<br><strong>In:</strong> <code>incidents</code></td>
+<td>boolean</td>
+</tr>
+<tr>
+<td><code>has_family_offenses_nonviolent</code></td>
+<td>Whether the incident had an offense in the category "Family Offenses, Nonviolent". Added by <code>crimepy</code> (unless <code>categories = False</code> is passed to <code>build</code>).<br><strong>In:</strong> <code>incidents</code></td>
+<td>boolean</td>
+</tr>
+<tr>
+<td><code>has_fraud_offenses</code></td>
+<td>Whether the incident had an offense in the category "Fraud Offenses". Added by <code>crimepy</code> (unless <code>categories = False</code> is passed to <code>build</code>).<br><strong>In:</strong> <code>incidents</code></td>
+<td>boolean</td>
+</tr>
+<tr>
+<td><code>has_gambling_offenses</code></td>
+<td>Whether the incident had an offense in the category "Gambling Offenses". Added by <code>crimepy</code> (unless <code>categories = False</code> is passed to <code>build</code>).<br><strong>In:</strong> <code>incidents</code></td>
+<td>boolean</td>
+</tr>
+<tr>
+<td><code>has_homicide_offenses</code></td>
+<td>Whether the incident had an offense in the category "Homicide Offenses". Added by <code>crimepy</code> (unless <code>categories = False</code> is passed to <code>build</code>).<br><strong>In:</strong> <code>incidents</code></td>
+<td>boolean</td>
+</tr>
+<tr>
+<td><code>has_human_trafficking</code></td>
+<td>Whether the incident had an offense in the category "Human Trafficking". Added by <code>crimepy</code> (unless <code>categories = False</code> is passed to <code>build</code>).<br><strong>In:</strong> <code>incidents</code></td>
+<td>boolean</td>
+</tr>
+<tr>
+<td><code>has_kidnapping_abduction</code></td>
+<td>Whether the incident had an offense in the category "Kidnapping/Abduction". Added by <code>crimepy</code> (unless <code>categories = False</code> is passed to <code>build</code>).<br><strong>In:</strong> <code>incidents</code></td>
+<td>boolean</td>
+</tr>
+<tr>
+<td><code>has_larceny_theft_offenses</code></td>
+<td>Whether the incident had an offense in the category "Larceny/Theft Offenses". Added by <code>crimepy</code> (unless <code>categories = False</code> is passed to <code>build</code>).<br><strong>In:</strong> <code>incidents</code></td>
+<td>boolean</td>
+</tr>
+<tr>
+<td><code>has_liquor_law_violations</code></td>
+<td>Whether the incident had an offense in the category "Liquor Law Violations". Added by <code>crimepy</code> (unless <code>categories = False</code> is passed to <code>build</code>).<br><strong>In:</strong> <code>incidents</code></td>
+<td>boolean</td>
+</tr>
+<tr>
+<td><code>has_motor_vehicle_theft</code></td>
+<td>Whether the incident had an offense in the category "Motor Vehicle Theft". Added by <code>crimepy</code> (unless <code>categories = False</code> is passed to <code>build</code>).<br><strong>In:</strong> <code>incidents</code></td>
+<td>boolean</td>
+</tr>
+<tr>
+<td><code>has_other_offenses</code></td>
+<td>Whether the incident had an offense in the category "Other Offenses". Added by <code>crimepy</code> (unless <code>categories = False</code> is passed to <code>build</code>).<br><strong>In:</strong> <code>incidents</code></td>
+<td>boolean</td>
+</tr>
+<tr>
+<td><code>has_peeping_tom</code></td>
+<td>Whether the incident had an offense in the category "Peeping Tom". Added by <code>crimepy</code> (unless <code>categories = False</code> is passed to <code>build</code>).<br><strong>In:</strong> <code>incidents</code></td>
+<td>boolean</td>
+</tr>
+<tr>
+<td><code>has_pornography_obscene_material</code></td>
+<td>Whether the incident had an offense in the category "Pornography/Obscene Material". Added by <code>crimepy</code> (unless <code>categories = False</code> is passed to <code>build</code>).<br><strong>In:</strong> <code>incidents</code></td>
+<td>boolean</td>
+</tr>
+<tr>
+<td><code>has_prostitution_offenses</code></td>
+<td>Whether the incident had an offense in the category "Prostitution Offenses". Added by <code>crimepy</code> (unless <code>categories = False</code> is passed to <code>build</code>).<br><strong>In:</strong> <code>incidents</code></td>
+<td>boolean</td>
+</tr>
+<tr>
+<td><code>has_robbery</code></td>
+<td>Whether the incident had an offense in the category "Robbery". Added by <code>crimepy</code> (unless <code>categories = False</code> is passed to <code>build</code>).<br><strong>In:</strong> <code>incidents</code></td>
+<td>boolean</td>
+</tr>
+<tr>
+<td><code>has_sex_offenses</code></td>
+<td>Whether the incident had an offense in the category "Sex Offenses". Added by <code>crimepy</code> (unless <code>categories = False</code> is passed to <code>build</code>).<br><strong>In:</strong> <code>incidents</code></td>
+<td>boolean</td>
+</tr>
+<tr>
+<td><code>has_sex_offenses_non_forcible</code></td>
+<td>Whether the incident had an offense in the category "Sex Offenses, Non-forcible". Added by <code>crimepy</code> (unless <code>categories = False</code> is passed to <code>build</code>).<br><strong>In:</strong> <code>incidents</code></td>
+<td>boolean</td>
+</tr>
+<tr>
+<td><code>has_stolen_property_offenses</code></td>
+<td>Whether the incident had an offense in the category "Stolen Property Offenses". Added by <code>crimepy</code> (unless <code>categories = False</code> is passed to <code>build</code>).<br><strong>In:</strong> <code>incidents</code></td>
+<td>boolean</td>
+</tr>
+<tr>
+<td><code>has_trespass_of_real_property</code></td>
+<td>Whether the incident had an offense in the category "Trespass of Real Property". Added by <code>crimepy</code> (unless <code>categories = False</code> is passed to <code>build</code>).<br><strong>In:</strong> <code>incidents</code></td>
+<td>boolean</td>
+</tr>
+<tr>
+<td><code>has_weapon_law_violations</code></td>
+<td>Whether the incident had an offense in the category "Weapon Law Violations". Added by <code>crimepy</code> (unless <code>categories = False</code> is passed to <code>build</code>).<br><strong>In:</strong> <code>incidents</code></td>
+<td>boolean</td>
+</tr>
+<tr>
+<td><code>incident_date</code></td>
+<td>The date of the incident, or the date that it was reported if <code>report_date</code> is true.<br><strong>In:</strong> every table · <strong>From:</strong> every segment, positions 26-33</td>
+<td>datetime<br><small>missing if blank or impossible</small></td>
+</tr>
+<tr>
+<td><code>incident_hour</code></td>
+<td>The hour of the day (0 to 23) of the incident, missing if unknown.<br><strong>In:</strong> every table · <strong>From:</strong> administrative segment (01), positions 35-36</td>
+<td>integer<br><small>missing if blank</small></td>
+</tr>
+<tr>
+<td><code>incident_month</code></td>
+<td>The month (1 to 12) of <code>incident_date</code>. Added by <code>crimepy</code>.<br><strong>In:</strong> <code>incidents</code></td>
+<td>integer</td>
+</tr>
+<tr>
+<td><code>incident_number</code></td>
+<td>The agency's number for the incident, which the FBI encrypts in most years. With <code>data_year</code> and <code>ori</code>, it identifies an incident.<br><strong>In:</strong> every table · <strong>From:</strong> every segment, positions 14-25</td>
+<td>string</td>
+</tr>
+<tr>
+<td><code>incident_weekday</code></td>
+<td>The day of the week of <code>incident_date</code>. Added by <code>crimepy</code>.<br><strong>In:</strong> <code>incidents</code></td>
+<td>categorical</td>
+</tr>
+<tr>
+<td><code>injury_1</code> to <code>injury_5</code></td>
+<td>Up to five types of injury of the victim.<br><strong>In:</strong> <code>victims</code> · <strong>From:</strong> victim segment (04), positions 79-83 (1 character each)<br><details><summary>Codes (8)</summary><code>B</code> Apparent Broken Bones<br><code>I</code> Possible Internal Injury<br><code>L</code> Severe Laceration<br><code>M</code> Apparent Minor Injury<br><code>N</code> None<br><code>O</code> Other Major Injury<br><code>T</code> Loss of Teeth<br><code>U</code> Unconsciousness</details></td>
+<td>categorical<br><small>NIBRS codes if <code>decode = False</code>, else full labels</small></td>
+</tr>
+<tr>
+<td><code>justifiable_homicide</code></td>
+<td>The circumstance of a justifiable homicide.<br><strong>In:</strong> <code>victims</code> · <strong>From:</strong> victim segment (04), position 78<br><details><summary>Codes (7)</summary><code>A</code> Criminal Attacked Police Officer and That Officer Killed Criminal<br><code>B</code> Criminal Attacked Police Officer and Criminal Killed by Another Police Officer<br><code>C</code> Criminal Attacked a Civilian<br><code>D</code> Criminal Attempted Flight From a Crime<br><code>E</code> Criminal Killed in Commission of a Crime<br><code>F</code> Criminal Resisted Arrest<br><code>G</code> Unable to Determine/Not Enough Information</details></td>
+<td>categorical<br><small>NIBRS codes if <code>decode = False</code>, else full labels</small></td>
+</tr>
+<tr>
+<td><code>juvenile_disposition</code></td>
+<td>The disposition of an arrestee under 18.<br><strong>In:</strong> <code>arrestees</code> · <strong>From:</strong> arrestee segment (06), position 73<br><strong>Codes:</strong> <code>H</code> Handled Within Department, <code>R</code> Referred to Other Authorities</td>
+<td>categorical<br><small>NIBRS codes if <code>decode = False</code>, else full labels</small></td>
+</tr>
+<tr>
+<td><code>location</code></td>
+<td>The type of location of the offense.<br><strong>In:</strong> <code>offenses</code> · <strong>From:</strong> offense segment (02), positions 41-42<br><details><summary>Codes (46)</summary><code>01</code> Air/Bus/Train Terminal<br><code>02</code> Bank/Savings and Loan<br><code>03</code> Bar/Nightclub<br><code>04</code> Church/Synagogue/Temple/Mosque<br><code>05</code> Commercial/Office Building<br><code>06</code> Construction Site<br><code>07</code> Convenience Store<br><code>08</code> Department/Discount Store<br><code>09</code> Drug Store/Doctor&#x27;s Office/Hospital<br><code>10</code> Field/Woods<br><code>11</code> Government/Public Building<br><code>12</code> Grocery/Supermarket<br><code>13</code> Highway/Road/Alley/Street/Sidewalk<br><code>14</code> Hotel/Motel/Etc.<br><code>15</code> Jail/Prison/Penitentiary/Corrections Facility<br><code>16</code> Lake/Waterway/Beach<br><code>17</code> Liquor Store<br><code>18</code> Parking/Drop Lot/Garage<br><code>19</code> Rental Storage Facility<br><code>20</code> Residence/Home<br><code>21</code> Restaurant<br><code>22</code> School/College<br><code>23</code> Service/Gas Station<br><code>24</code> Specialty Store<br><code>25</code> Other/Unknown<br><code>37</code> Abandoned/Condemned Structure<br><code>38</code> Amusement Park<br><code>39</code> Arena/Stadium/Fairgrounds/Coliseum<br><code>40</code> ATM Separate from Bank<br><code>41</code> Auto Dealership New/Used<br><code>42</code> Camp/Campground<br><code>44</code> Daycare Facility<br><code>45</code> Dock/Wharf/Freight/Modal Terminal<br><code>46</code> Farm Facility<br><code>47</code> Gambling Facility/Casino/Race Track<br><code>48</code> Industrial Site<br><code>49</code> Military Installation<br><code>50</code> Park/Playground<br><code>51</code> Rest Area<br><code>52</code> School-College/University<br><code>53</code> School-Elementary/Secondary<br><code>54</code> Shelter-Mission/Homeless<br><code>55</code> Shopping Mall<br><code>56</code> Tribal Lands<br><code>57</code> Community Center<br><code>58</code> Cyberspace</details></td>
+<td>categorical<br><small>NIBRS codes if <code>decode = False</code>, else full labels</small></td>
+</tr>
+<tr>
+<td><code>multiple_arrestee</code></td>
+<td>Whether the arrestee is counted in this incident when they were arrested for more than one.<br><strong>In:</strong> <code>arrestees</code> · <strong>From:</strong> arrestee segment (06), position 57<br><strong>Codes:</strong> <code>C</code> Count Arrestee, <code>M</code> Multiple, <code>N</code> Not Applicable</td>
+<td>categorical<br><small>NIBRS codes if <code>decode = False</code>, else full labels</small></td>
+</tr>
+<tr>
+<td><code>offender_1</code> to <code>offender_10</code></td>
+<td>The sequence numbers of up to ten offenders whom the victim is related to (matching <code>offender_sequence</code>).<br><strong>In:</strong> <code>victims</code> · <strong>From:</strong> victim segment (04), positions 84-85, 88-89, 92-93, 96-97, 100-101, 104-105, 108-109, 112-113, 116-117, 120-121</td>
+<td>integer<br><small>missing if blank</small></td>
+</tr>
+<tr>
+<td><code>offender_age</code></td>
+<td>The age of the offender in years, from <code>offender_age_code</code> (in <code>victims</code>, of the first offender that the victim is related to). Added by <code>crimepy</code>.<br><strong>In:</strong> <code>offenders</code>, <code>victims</code></td>
+<td>integer</td>
+</tr>
+<tr>
+<td><code>offender_age_code</code></td>
+<td>The age code of the offender.<br><strong>In:</strong> <code>offenders</code> · <strong>From:</strong> offender segment (05), positions 36-37<br><strong>Codes:</strong> <code>NN</code> Under 24 Hours, <code>NB</code> 1-6 Days Old, <code>BB</code> 7-364 Days Old, <code>00</code> Unknown, <code>01</code>–<code>98</code> 1–98 Years Old, <code>99</code> Over 98 Years Old</td>
+<td>categorical<br><small>codes</small></td>
+</tr>
+<tr>
+<td><code>offender_count</code></td>
+<td>The number of known offenders of the incident (those whose <code>offender_sequence</code> is not 0). Added by <code>crimepy</code>.<br><strong>In:</strong> <code>incidents</code></td>
+<td>integer</td>
+</tr>
+<tr>
+<td><code>offender_ethnicity</code></td>
+<td>The ethnicity of the offender (in <code>victims</code>, of the first offender that the victim is related to). In the files for 2013 and later.<br><strong>In:</strong> <code>offenders</code>, <code>victims</code> · <strong>From:</strong> offender segment (05), position 40<br><strong>Codes:</strong> <code>H</code> Hispanic or Latino, <code>N</code> Not Hispanic or Latino, <code>M</code> Multiple, <code>U</code> Unknown</td>
+<td>categorical<br><small>NIBRS codes if <code>decode = False</code>, else full labels</small></td>
+</tr>
+<tr>
+<td><code>offender_race</code></td>
+<td>The race of the offender (in <code>victims</code>, of the first offender that the victim is related to).<br><strong>In:</strong> <code>offenders</code>, <code>victims</code> · <strong>From:</strong> offender segment (05), position 39<br><details><summary>Codes (7)</summary><code>W</code> White<br><code>B</code> Black or African American<br><code>I</code> American Indian or Alaska Native<br><code>A</code> Asian<br><code>P</code> Native Hawaiian or Other Pacific Islander<br><code>M</code> Multiple<br><code>U</code> Unknown</details></td>
+<td>categorical<br><small>NIBRS codes if <code>decode = False</code>, else full labels</small></td>
+</tr>
+<tr>
+<td><code>offender_sequence</code></td>
+<td>In <code>offenders</code>, the number of the offender within the incident, where 0 means that nothing is known about the offender. In <code>victims</code>, the number of the first offender that the victim is related to (<code>offender_1</code>).<br><strong>In:</strong> <code>offenders</code>, <code>victims</code> · <strong>From:</strong> offender segment (05), positions 34-35</td>
+<td>integer<br><small>missing if blank</small></td>
+</tr>
+<tr>
+<td><code>offender_sex</code></td>
+<td>The sex of the offender (in <code>victims</code>, of the first offender that the victim is related to).<br><strong>In:</strong> <code>offenders</code>, <code>victims</code> · <strong>From:</strong> offender segment (05), position 38<br><strong>Codes:</strong> <code>F</code> Female, <code>M</code> Male, <code>U</code> Unknown</td>
+<td>categorical<br><small>NIBRS codes if <code>decode = False</code>, else full labels</small></td>
+</tr>
+<tr>
+<td><code>offense_1</code> to <code>offense_10</code></td>
+<td>The UCR codes of up to ten offenses committed against the victim.<br><strong>In:</strong> <code>victims</code> · <strong>From:</strong> victim segment (04), positions 37-66 (3 characters each)<br><details><summary>Codes (85)</summary><code>09A</code> Murder and Nonnegligent Manslaughter<br><code>09B</code> Negligent Manslaughter<br><code>09C</code> Justifiable Homicide<br><code>100</code> Kidnapping/Abduction<br><code>101</code> Treason<br><code>103</code> Espionage<br><code>11A</code> Rape<br><code>11B</code> Sodomy<br><code>11C</code> Sexual Assault With An Object<br><code>11D</code> Criminal Sexual Contact<br><code>120</code> Robbery<br><code>13A</code> Aggravated Assault<br><code>13B</code> Simple Assault<br><code>13C</code> Intimidation<br><code>200</code> Arson<br><code>210</code> Extortion/Blackmail<br><code>220</code> Burglary/Breaking &amp; Entering<br><code>23A</code> Pocket-picking<br><code>23B</code> Purse-snatching<br><code>23C</code> Shoplifting<br><code>23D</code> Theft From Building<br><code>23E</code> Theft From Coin-Operated Machine or Device<br><code>23F</code> Theft From Motor Vehicle<br><code>23G</code> Theft of Motor Vehicle Parts or Accessories<br><code>23H</code> All Other Larceny<br><code>240</code> Motor Vehicle Theft<br><code>250</code> Counterfeiting/Forgery<br><code>26A</code> False Pretenses/Swindle/Confidence Game<br><code>26B</code> Credit Card/Automated Teller Machine Fraud<br><code>26C</code> Impersonation<br><code>26D</code> Welfare Fraud<br><code>26E</code> Wire Fraud<br><code>26F</code> Identity Theft<br><code>26G</code> Hacking/Computer Invasion<br><code>26H</code> Money Laundering<br><code>270</code> Embezzlement<br><code>280</code> Stolen Property Offenses<br><code>290</code> Destruction/Damage/Vandalism of Property<br><code>30A</code> Illegal Entry into the United States<br><code>30B</code> False Citizenship<br><code>30C</code> Smuggling Aliens<br><code>30D</code> Re-entry after Deportation<br><code>35A</code> Drug/Narcotic Violations<br><code>35B</code> Drug Equipment Violations<br><code>360</code> Failure to Register as a Sex Offender<br><code>36A</code> Incest<br><code>36B</code> Statutory Rape<br><code>370</code> Pornography/Obscene Material<br><code>39A</code> Betting/Wagering<br><code>39B</code> Operating/Promoting/Assisting Gambling<br><code>39C</code> Gambling Equipment Violation<br><code>39D</code> Sports Tampering<br><code>40A</code> Prostitution<br><code>40B</code> Assisting or Promoting Prostitution<br><code>40C</code> Purchasing Prostitution<br><code>49A</code> Harboring Escapee/Concealing from Arrest<br><code>49B</code> Flight to Avoid Prosecution<br><code>49C</code> Flight to Avoid Deportation<br><code>510</code> Bribery<br><code>520</code> Weapon Law Violations<br><code>521</code> Violation of National Firearm Act of 1934<br><code>522</code> Weapons of Mass Destruction<br><code>526</code> Explosives Violation<br><code>58A</code> Import Violations<br><code>58B</code> Export Violations<br><code>61A</code> Federal Liquor Offenses<br><code>61B</code> Federal Tobacco Offenses<br><code>620</code> Wildlife Trafficking<br><code>64A</code> Human Trafficking, Commercial Sex Acts<br><code>64B</code> Human Trafficking, Involuntary Servitude<br><code>720</code> Animal Cruelty<br><code>90A</code> Bad Checks<br><code>90B</code> Curfew/Loitering/Vagrancy Violations<br><code>90C</code> Disorderly Conduct<br><code>90D</code> Driving Under the Influence<br><code>90E</code> Drunkenness<br><code>90F</code> Family Offenses, Nonviolent<br><code>90G</code> Liquor Law Violations<br><code>90H</code> Peeping Tom<br><code>90I</code> Runaway<br><code>90J</code> Trespass of Real Property<br><code>90K</code> Failure to Appear<br><code>90L</code> Federal Resource Violations<br><code>90M</code> Perjury<br><code>90Z</code> All Other Offenses</details></td>
+<td>categorical<br><small>NIBRS codes if <code>decode = False</code>, else full labels</small></td>
+</tr>
+<tr>
+<td><code>offense_category</code></td>
+<td>The category of the offense (such as "Assault Offenses"), from the CDE's table of offenses. Added by <code>crimepy</code>.<br><strong>In:</strong> <code>offenses</code></td>
+<td>categorical</td>
+</tr>
+<tr>
+<td><code>offense_code</code></td>
+<td>The UCR code of the offense.<br><strong>In:</strong> <code>offenses</code> · <strong>From:</strong> offense segment (02), positions 34-36<br><details><summary>Codes (85)</summary><code>09A</code> Murder and Nonnegligent Manslaughter<br><code>09B</code> Negligent Manslaughter<br><code>09C</code> Justifiable Homicide<br><code>100</code> Kidnapping/Abduction<br><code>101</code> Treason<br><code>103</code> Espionage<br><code>11A</code> Rape<br><code>11B</code> Sodomy<br><code>11C</code> Sexual Assault With An Object<br><code>11D</code> Criminal Sexual Contact<br><code>120</code> Robbery<br><code>13A</code> Aggravated Assault<br><code>13B</code> Simple Assault<br><code>13C</code> Intimidation<br><code>200</code> Arson<br><code>210</code> Extortion/Blackmail<br><code>220</code> Burglary/Breaking &amp; Entering<br><code>23A</code> Pocket-picking<br><code>23B</code> Purse-snatching<br><code>23C</code> Shoplifting<br><code>23D</code> Theft From Building<br><code>23E</code> Theft From Coin-Operated Machine or Device<br><code>23F</code> Theft From Motor Vehicle<br><code>23G</code> Theft of Motor Vehicle Parts or Accessories<br><code>23H</code> All Other Larceny<br><code>240</code> Motor Vehicle Theft<br><code>250</code> Counterfeiting/Forgery<br><code>26A</code> False Pretenses/Swindle/Confidence Game<br><code>26B</code> Credit Card/Automated Teller Machine Fraud<br><code>26C</code> Impersonation<br><code>26D</code> Welfare Fraud<br><code>26E</code> Wire Fraud<br><code>26F</code> Identity Theft<br><code>26G</code> Hacking/Computer Invasion<br><code>26H</code> Money Laundering<br><code>270</code> Embezzlement<br><code>280</code> Stolen Property Offenses<br><code>290</code> Destruction/Damage/Vandalism of Property<br><code>30A</code> Illegal Entry into the United States<br><code>30B</code> False Citizenship<br><code>30C</code> Smuggling Aliens<br><code>30D</code> Re-entry after Deportation<br><code>35A</code> Drug/Narcotic Violations<br><code>35B</code> Drug Equipment Violations<br><code>360</code> Failure to Register as a Sex Offender<br><code>36A</code> Incest<br><code>36B</code> Statutory Rape<br><code>370</code> Pornography/Obscene Material<br><code>39A</code> Betting/Wagering<br><code>39B</code> Operating/Promoting/Assisting Gambling<br><code>39C</code> Gambling Equipment Violation<br><code>39D</code> Sports Tampering<br><code>40A</code> Prostitution<br><code>40B</code> Assisting or Promoting Prostitution<br><code>40C</code> Purchasing Prostitution<br><code>49A</code> Harboring Escapee/Concealing from Arrest<br><code>49B</code> Flight to Avoid Prosecution<br><code>49C</code> Flight to Avoid Deportation<br><code>510</code> Bribery<br><code>520</code> Weapon Law Violations<br><code>521</code> Violation of National Firearm Act of 1934<br><code>522</code> Weapons of Mass Destruction<br><code>526</code> Explosives Violation<br><code>58A</code> Import Violations<br><code>58B</code> Export Violations<br><code>61A</code> Federal Liquor Offenses<br><code>61B</code> Federal Tobacco Offenses<br><code>620</code> Wildlife Trafficking<br><code>64A</code> Human Trafficking, Commercial Sex Acts<br><code>64B</code> Human Trafficking, Involuntary Servitude<br><code>720</code> Animal Cruelty<br><code>90A</code> Bad Checks<br><code>90B</code> Curfew/Loitering/Vagrancy Violations<br><code>90C</code> Disorderly Conduct<br><code>90D</code> Driving Under the Influence<br><code>90E</code> Drunkenness<br><code>90F</code> Family Offenses, Nonviolent<br><code>90G</code> Liquor Law Violations<br><code>90H</code> Peeping Tom<br><code>90I</code> Runaway<br><code>90J</code> Trespass of Real Property<br><code>90K</code> Failure to Appear<br><code>90L</code> Federal Resource Violations<br><code>90M</code> Perjury<br><code>90Z</code> All Other Offenses</details></td>
+<td>categorical<br><small>NIBRS codes if <code>decode = False</code>, else full labels</small></td>
+</tr>
+<tr>
+<td><code>offense_count</code></td>
+<td>The number of offenses of the incident in the offenses table. Added by <code>crimepy</code>.<br><strong>In:</strong> <code>incidents</code></td>
+<td>integer</td>
+</tr>
+<tr>
+<td><code>offense_group</code></td>
+<td>The group of the offense: "A" or "B". Added by <code>crimepy</code>.<br><strong>In:</strong> <code>offenses</code></td>
+<td>categorical</td>
+</tr>
+<tr>
+<td><code>officer_activity</code></td>
+<td>What a law enforcement officer who was a victim was doing.<br><strong>In:</strong> <code>victims</code> · <strong>From:</strong> victim segment (04), positions 124-125<br><details><summary>Codes (11)</summary><code>01</code> Responding to Disturbance Call<br><code>02</code> Burglaries in Progress or Pursuing Burglary Suspects<br><code>03</code> Robberies in Progress or Pursuing Robbery Suspects<br><code>04</code> Attempting Other Arrests<br><code>05</code> Civil Disorder<br><code>06</code> Handling, Transporting, Custody of Prisoners<br><code>07</code> Investigating Suspicious Persons or Circumstances<br><code>08</code> Ambush - No Warning<br><code>09</code> Handling Persons with Mental Illness<br><code>10</code> Traffic Pursuits and Stops<br><code>11</code> All Other</details></td>
+<td>categorical<br><small>NIBRS codes if <code>decode = False</code>, else full labels</small></td>
+</tr>
+<tr>
+<td><code>officer_assignment</code></td>
+<td>The assignment of a law enforcement officer who was a victim.<br><strong>In:</strong> <code>victims</code> · <strong>From:</strong> victim segment (04), position 126<br><details><summary>Codes (7)</summary><code>F</code> Two-Officer Vehicle<br><code>G</code> One-Officer Vehicle (Alone)<br><code>H</code> One-Officer Vehicle (Assisted)<br><code>I</code> Detective or Special Assignment (Alone)<br><code>J</code> Detective or Special Assignment (Assisted)<br><code>K</code> Other (Alone)<br><code>L</code> Other (Assisted)</details></td>
+<td>categorical<br><small>NIBRS codes if <code>decode = False</code>, else full labels</small></td>
+</tr>
+<tr>
+<td><code>officer_other_ori</code></td>
+<td>The ORI of another jurisdiction of a law enforcement officer who was a victim (handwritten into the FBI's record descriptions).<br><strong>In:</strong> <code>victims</code> · <strong>From:</strong> victim segment (04), positions 127-135</td>
+<td>string</td>
+</tr>
+<tr>
+<td><code>ori</code></td>
+<td>The ORI (the FBI's nine-character identifier of an agency) that submitted the record.<br><strong>In:</strong> every table · <strong>From:</strong> every segment, positions 5-13</td>
+<td>string</td>
+</tr>
+<tr>
+<td><code>premises_entered</code></td>
+<td>The number of premises entered in a burglary of a hotel, motel, or rental storage facility.<br><strong>In:</strong> <code>offenses</code> · <strong>From:</strong> offense segment (02), positions 43-44</td>
+<td>integer<br><small>missing if blank</small></td>
+</tr>
+<tr>
+<td><code>relationship</code></td>
+<td>The relationship of the victim to the first offender that the victim is related to (<code>relationship_1</code>). Added by <code>crimepy</code>.<br><strong>In:</strong> <code>victims</code> · <strong>From:</strong> victim segment (04), positions 86-87<br><details><summary>Codes (30)</summary><code>AQ</code> Acquaintance<br><code>BE</code> Babysittee<br><code>BG</code> Boyfriend/Girlfriend<br><code>CF</code> Child of Boyfriend/Girlfriend<br><code>CH</code> Child<br><code>CO</code> Cohabitant (Non-intimate)<br><code>CS</code> Common-Law Spouse<br><code>EE</code> Employee<br><code>ER</code> Employer<br><code>FC</code> Foster Child<br><code>FP</code> Foster Parent<br><code>FR</code> Friend<br><code>GC</code> Grandchild<br><code>GP</code> Grandparent<br><code>HR</code> Homosexual Relationship<br><code>IL</code> In-law<br><code>NE</code> Neighbor<br><code>OF</code> Other Family Member<br><code>OK</code> Otherwise Known<br><code>PA</code> Parent<br><code>RU</code> Relationship Unknown<br><code>SB</code> Sibling<br><code>SC</code> Stepchild<br><code>SE</code> Spouse<br><code>SP</code> Stepparent<br><code>SS</code> Stepsibling<br><code>ST</code> Stranger<br><code>VO</code> Victim Was Offender<br><code>XR</code> Ex-Relationship (Ex-Boyfriend/Girlfriend)<br><code>XS</code> Ex-Spouse</details></td>
+<td>categorical<br><small>NIBRS codes if <code>decode = False</code>, else full labels</small></td>
+</tr>
+<tr>
+<td><code>relationship_1</code> to <code>relationship_10</code></td>
+<td>The relationship of the victim to each offender in <code>offender_1</code> to <code>offender_10</code>.<br><strong>In:</strong> <code>victims</code> · <strong>From:</strong> victim segment (04), positions 86-87, 90-91, 94-95, 98-99, 102-103, 106-107, 110-111, 114-115, 118-119, 122-123<br><details><summary>Codes (30)</summary><code>AQ</code> Acquaintance<br><code>BE</code> Babysittee<br><code>BG</code> Boyfriend/Girlfriend<br><code>CF</code> Child of Boyfriend/Girlfriend<br><code>CH</code> Child<br><code>CO</code> Cohabitant (Non-intimate)<br><code>CS</code> Common-Law Spouse<br><code>EE</code> Employee<br><code>ER</code> Employer<br><code>FC</code> Foster Child<br><code>FP</code> Foster Parent<br><code>FR</code> Friend<br><code>GC</code> Grandchild<br><code>GP</code> Grandparent<br><code>HR</code> Homosexual Relationship<br><code>IL</code> In-law<br><code>NE</code> Neighbor<br><code>OF</code> Other Family Member<br><code>OK</code> Otherwise Known<br><code>PA</code> Parent<br><code>RU</code> Relationship Unknown<br><code>SB</code> Sibling<br><code>SC</code> Stepchild<br><code>SE</code> Spouse<br><code>SP</code> Stepparent<br><code>SS</code> Stepsibling<br><code>ST</code> Stranger<br><code>VO</code> Victim Was Offender<br><code>XR</code> Ex-Relationship (Ex-Boyfriend/Girlfriend)<br><code>XS</code> Ex-Spouse</details></td>
+<td>categorical<br><small>NIBRS codes if <code>decode = False</code>, else full labels</small></td>
+</tr>
+<tr>
+<td><code>report_date</code></td>
+<td>Whether <code>incident_date</code> is the date that the incident was reported, because the date that it happened is not known.<br><strong>In:</strong> every table · <strong>From:</strong> administrative segment (01), position 34</td>
+<td>boolean<br><small>"R" is true, and anything else false</small></td>
+</tr>
+<tr>
+<td><code>state</code></td>
+<td>The postal abbreviation of the state, from <code>state_code</code>. Added by <code>crimepy</code>.<br><strong>In:</strong> every table</td>
+<td>categorical</td>
+</tr>
+<tr>
+<td><code>state_code</code></td>
+<td>The FBI's numeric code of the state.<br><strong>In:</strong> every table · <strong>From:</strong> every segment, positions 3-4<br><details><summary>Codes (59)</summary><code>01</code> Alabama<br><code>02</code> Arizona<br><code>03</code> Arkansas<br><code>04</code> California<br><code>05</code> Colorado<br><code>06</code> Connecticut<br><code>07</code> Delaware<br><code>08</code> District of Columbia<br><code>09</code> Florida<br><code>10</code> Georgia<br><code>11</code> Idaho<br><code>12</code> Illinois<br><code>13</code> Indiana<br><code>14</code> Iowa<br><code>15</code> Kansas<br><code>16</code> Kentucky<br><code>17</code> Louisiana<br><code>18</code> Maine<br><code>19</code> Maryland<br><code>20</code> Massachusetts<br><code>21</code> Michigan<br><code>22</code> Minnesota<br><code>23</code> Mississippi<br><code>24</code> Missouri<br><code>25</code> Montana<br><code>26</code> Nebraska<br><code>27</code> Nevada<br><code>28</code> New Hampshire<br><code>29</code> New Jersey<br><code>30</code> New Mexico<br><code>31</code> New York<br><code>32</code> North Carolina<br><code>33</code> North Dakota<br><code>34</code> Ohio<br><code>35</code> Oklahoma<br><code>36</code> Oregon<br><code>37</code> Pennsylvania<br><code>38</code> Rhode Island<br><code>39</code> South Carolina<br><code>40</code> South Dakota<br><code>41</code> Tennessee<br><code>42</code> Texas<br><code>43</code> Utah<br><code>44</code> Vermont<br><code>45</code> Virginia<br><code>46</code> Washington<br><code>47</code> West Virginia<br><code>48</code> Wisconsin<br><code>49</code> Wyoming<br><code>50</code> Alaska<br><code>51</code> Hawaii<br><code>52</code> Canal Zone<br><code>53</code> Puerto Rico<br><code>54</code> American Samoa<br><code>55</code> Guam<br><code>62</code> U.S. Virgin Islands<br><code>69</code> Mariana Islands<br><code>98</code> Federal<br><code>99</code> Other</details></td>
+<td>categorical<br><small>NIBRS codes if <code>decode = False</code>, else full labels</small></td>
+</tr>
+<tr>
+<td><code>suspected_using_1</code> to <code>suspected_using_3</code></td>
+<td>Up to three things that the offender was suspected of using in the offense.<br><strong>In:</strong> <code>offenses</code> · <strong>From:</strong> offense segment (02), positions 38-40 (1 character each)<br><strong>Codes:</strong> <code>A</code> Alcohol, <code>C</code> Computer Equipment, <code>D</code> Drugs/Narcotics, <code>N</code> Not Applicable, <code>R</code> Drone/Unmanned Aircraft System</td>
+<td>categorical<br><small>NIBRS codes if <code>decode = False</code>, else full labels</small></td>
+</tr>
+<tr>
+<td><code>total_arrestees</code></td>
+<td>The number of arrestee segments of the incident.<br><strong>In:</strong> <code>incidents</code> · <strong>From:</strong> administrative segment (01), positions 44-45</td>
+<td>integer<br><small>missing if blank</small></td>
+</tr>
+<tr>
+<td><code>total_offenders</code></td>
+<td>The number of offender segments of the incident.<br><strong>In:</strong> <code>incidents</code> · <strong>From:</strong> administrative segment (01), positions 42-43</td>
+<td>integer<br><small>missing if blank</small></td>
+</tr>
+<tr>
+<td><code>total_offenses</code></td>
+<td>The number of offense segments of the incident.<br><strong>In:</strong> <code>incidents</code> · <strong>From:</strong> administrative segment (01), positions 37-38</td>
+<td>integer<br><small>missing if blank</small></td>
+</tr>
+<tr>
+<td><code>total_victims</code></td>
+<td>The number of victim segments of the incident.<br><strong>In:</strong> <code>incidents</code> · <strong>From:</strong> administrative segment (01), positions 39-41</td>
+<td>integer<br><small>missing if blank</small></td>
+</tr>
+<tr>
+<td><code>victim_age</code></td>
+<td>The age of the victim in years, from <code>victim_age_code</code>: 0 for a baby under a year old, 99 for 99 or older, and missing if unknown. Added by <code>crimepy</code>.<br><strong>In:</strong> <code>victims</code></td>
+<td>integer</td>
+</tr>
+<tr>
+<td><code>victim_age_code</code></td>
+<td>The age code of the victim.<br><strong>In:</strong> <code>victims</code> · <strong>From:</strong> victim segment (04), positions 68-69<br><strong>Codes:</strong> <code>NN</code> Under 24 Hours, <code>NB</code> 1-6 Days Old, <code>BB</code> 7-364 Days Old, <code>00</code> Unknown, <code>01</code>–<code>98</code> 1–98 Years Old, <code>99</code> Over 98 Years Old</td>
+<td>categorical<br><small>codes</small></td>
+</tr>
+<tr>
+<td><code>victim_count</code></td>
+<td>The number of victims of the incident in the victims table. Added by <code>crimepy</code>.<br><strong>In:</strong> <code>incidents</code></td>
+<td>integer</td>
+</tr>
+<tr>
+<td><code>victim_ethnicity</code></td>
+<td>The ethnicity of the victim.<br><strong>In:</strong> <code>victims</code> · <strong>From:</strong> victim segment (04), position 72<br><strong>Codes:</strong> <code>H</code> Hispanic or Latino, <code>N</code> Not Hispanic or Latino, <code>M</code> Multiple, <code>U</code> Unknown</td>
+<td>categorical<br><small>NIBRS codes if <code>decode = False</code>, else full labels</small></td>
+</tr>
+<tr>
+<td><code>victim_race</code></td>
+<td>The race of the victim. "A" meant "Asian or Pacific Islander" before 2013, when "P" was added.<br><strong>In:</strong> <code>victims</code> · <strong>From:</strong> victim segment (04), position 71<br><details><summary>Codes (7)</summary><code>W</code> White<br><code>B</code> Black or African American<br><code>I</code> American Indian or Alaska Native<br><code>A</code> Asian<br><code>P</code> Native Hawaiian or Other Pacific Islander<br><code>M</code> Multiple<br><code>U</code> Unknown</details></td>
+<td>categorical<br><small>NIBRS codes if <code>decode = False</code>, else full labels</small></td>
+</tr>
+<tr>
+<td><code>victim_resident</code></td>
+<td>Whether the victim is a resident of the agency's jurisdiction.<br><strong>In:</strong> <code>victims</code> · <strong>From:</strong> victim segment (04), position 73<br><strong>Codes:</strong> <code>R</code> Resident, <code>N</code> Nonresident, <code>U</code> Unknown</td>
+<td>categorical<br><small>NIBRS codes if <code>decode = False</code>, else full labels</small></td>
+</tr>
+<tr>
+<td><code>victim_sequence</code></td>
+<td>The number of the victim within the incident.<br><strong>In:</strong> <code>victims</code> · <strong>From:</strong> victim segment (04), positions 34-36</td>
+<td>integer<br><small>missing if blank</small></td>
+</tr>
+<tr>
+<td><code>victim_sex</code></td>
+<td>The sex of the victim.<br><strong>In:</strong> <code>victims</code> · <strong>From:</strong> victim segment (04), position 70<br><strong>Codes:</strong> <code>F</code> Female, <code>M</code> Male, <code>U</code> Unknown</td>
+<td>categorical<br><small>NIBRS codes if <code>decode = False</code>, else full labels</small></td>
+</tr>
+<tr>
+<td><code>victim_type</code></td>
+<td>The type of victim.<br><strong>In:</strong> <code>victims</code> · <strong>From:</strong> victim segment (04), position 67<br><details><summary>Codes (9)</summary><code>B</code> Business<br><code>F</code> Financial Institution<br><code>G</code> Government<br><code>I</code> Individual<br><code>L</code> Law Enforcement Officer<br><code>O</code> Other<br><code>R</code> Religious Organization<br><code>S</code> Society/Public<br><code>U</code> Unknown</details></td>
+<td>categorical<br><small>NIBRS codes if <code>decode = False</code>, else full labels</small></td>
+</tr>
+<tr>
+<td><code>weapon_1</code> to <code>weapon_3</code></td>
+<td>Up to three types of weapon or force used.<br><strong>In:</strong> <code>offenses</code> · <strong>From:</strong> offense segment (02), positions 49-50, 52-53, 55-56<br><details><summary>Codes (20)</summary><code>01</code> Unarmed<br><code>11</code> Firearm<br><code>12</code> Handgun<br><code>13</code> Rifle<br><code>14</code> Shotgun<br><code>15</code> Other Firearm<br><code>16</code> Lethal Cutting Instrument<br><code>17</code> Club/Blackjack/Brass Knuckles<br><code>20</code> Knife/Cutting Instrument<br><code>30</code> Blunt Object<br><code>35</code> Motor Vehicle/Vessel<br><code>40</code> Personal Weapons<br><code>50</code> Poison<br><code>60</code> Explosives<br><code>65</code> Fire/Incendiary Device<br><code>70</code> Drugs/Narcotics/Sleeping Pills<br><code>85</code> Asphyxiation<br><code>90</code> Other<br><code>95</code> Unknown<br><code>99</code> None</details></td>
+<td>categorical<br><small>NIBRS codes if <code>decode = False</code>, else full labels</small></td>
+</tr>
+<tr>
+<td><code>weapon_1_automatic</code> to <code>weapon_3_automatic</code></td>
+<td>Whether each weapon was an automatic firearm (false when there is no weapon).<br><strong>In:</strong> <code>offenses</code> · <strong>From:</strong> offense segment (02), positions 51, 54, 57</td>
+<td>boolean<br><small>"A" is true, and anything else false</small></td>
+</tr>
+</tbody>
+</table>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+  <script>var tabs=__md_get("__tabs");if(Array.isArray(tabs))e:for(var set of document.querySelectorAll(".tabbed-set")){var labels=set.querySelector(".tabbed-labels");for(var tab of tabs)for(var label of labels.getElementsByTagName("label"))if(label.innerText.trim()===tab){var input=document.getElementById(label.htmlFor);input.checked=!0;continue e}}</script>
+
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    
+      
+      <nav class="md-footer__inner md-grid" aria-label="Footer" >
+        
+          
+          <a href="../conversion/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Conversion">
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+            </div>
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Previous
+              </span>
+              <div class="md-ellipsis">
+                Conversion
+              </div>
+            </div>
+          </a>
+        
+        
+          
+          <a href="../../advanced/" class="md-footer__link md-footer__link--next" aria-label="Next: Advanced User Guide">
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Next
+              </span>
+              <div class="md-ellipsis">
+                Advanced User Guide
+              </div>
+            </div>
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11z"/></svg>
+            </div>
+          </a>
+        
+      </nav>
+    
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      Copyright, 2026 Corey Rayburn Yung
+    </div>
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+        
+<div class="md-social">
+  
+    
+    
+    
+    
+      
+      
+    
+    <a href="https://github.com/WithPrecedent" target="_blank" rel="noopener" title="github.com" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+    </a>
+  
+    
+    
+    
+    
+      
+      
+    
+    <a href="https://pypi.org/project/crimepy/" target="_blank" rel="noopener" title="pypi.org" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.8 200.5c-7.7-30.9-22.3-54.2-53.4-54.2h-40.1v47.4c0 36.8-31.2 67.8-66.8 67.8H172.7c-29.2 0-53.4 25-53.4 54.3v101.8c0 29 25.2 46 53.4 54.3 33.8 9.9 66.3 11.7 106.8 0 26.9-7.8 53.4-23.5 53.4-54.3v-40.7H226.2v-13.6h160.2c31.1 0 42.6-21.7 53.4-54.2 11.2-33.5 10.7-65.7 0-108.6M286.2 444.7a20.4 20.4 0 1 1 0-40.7 20.4 20.4 0 1 1 0 40.7M167.8 248.1h106.8c29.7 0 53.4-24.5 53.4-54.3V91.9c0-29-24.4-50.7-53.4-55.6-35.8-5.9-74.7-5.6-106.8.1-45.2 8-53.4 24.7-53.4 55.6v40.7h106.9v13.6h-147c-31.1 0-58.3 18.7-66.8 54.2-9.8 40.7-10.2 66.1 0 108.6 7.6 31.6 25.7 54.2 56.8 54.2H101v-48.8c0-35.3 30.5-66.4 66.8-66.4m-6.6-183.4a20.4 20.4 0 1 1 0 40.8 20.4 20.4 0 1 1 0-40.8"/></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["announce.dismiss", "content.action.edit", "content.action.view", "content.code.annotate", "content.code.copy", "content.tabs.link", "content.tooltips", "navigation.footer", "navigation.indexes", "navigation.path", "navigation.sections", "navigation.tabs", "navigation.tabs.sticky", "navigation.top", "navigation.tracking", "search.highlight", "search.suggest", "toc.follow"], "search": "../../assets/javascripts/workers/search.a7633da7.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.c21346df.min.js"></script>
+      
+        <script src="../../assets/_markdown_exec_pyodide.js"></script>
+      
+    
+  </body>
+</html>
